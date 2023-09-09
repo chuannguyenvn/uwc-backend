@@ -43,3 +43,4 @@ uwc-backend/bin/
 uwc-backend/Migrations/
 
 uwc-backend/Communications/BlockScopedDummyFile.cs
+Migrations/
