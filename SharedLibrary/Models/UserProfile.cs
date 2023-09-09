@@ -1,6 +1,6 @@
-﻿namespace SharedLibrary.Models;
+﻿namespace Commons.Models;
 
-public class UserProfile
+public class UserProfile : IndexedEntity
 {
     public string FirstName { get; set; }
     public string LastName { get; set; }

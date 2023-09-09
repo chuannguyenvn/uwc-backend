@@ -1,6 +1,6 @@
-﻿namespace SharedLibrary.Models;
+﻿namespace Commons.Models;
 
-public class Message
+public class Message : IndexedEntity
 {
     public int SenderAccountID { get; set; }
     public Account SenderAccount { get; set; }
