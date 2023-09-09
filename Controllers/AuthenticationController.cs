@@ -6,7 +6,7 @@ namespace Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class AuthenticationController : ControllerBase
+public class AuthenticationController : Controller
 {
     private readonly IAuthenticationService _authenticationService;
 
@@ -19,25 +19,13 @@ public class AuthenticationController : ControllerBase
     public IActionResult Login(LoginRequest request)
     {
         var result = _authenticationService.Login(request);
-
-        if (!result.Success)
-        {
-            return BadRequest(result);
-        }
-
-        return Ok();
+        return ProcessRequestResult(result);
     }
 
     [HttpPost("register")]
     public IActionResult Register(RegisterRequest request)
     {
         var result = _authenticationService.Register(request);
-
-        if (!result.Success)
-        {
-            return BadRequest(result);
-        }
-
-        return Ok();
+        return ProcessRequestResult(result);
     }
 }

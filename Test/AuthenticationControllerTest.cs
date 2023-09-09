@@ -2,6 +2,8 @@ using Commons.Communications.Authentication;
 using Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using RequestStatuses;
+using RequestStatuses.Authentication;
 using Services;
 using Services.Authentication;
 
@@ -32,26 +34,29 @@ public class AuthenticationControllerTest
     }
 
     [Test]
-    public void Login()
+    public void NewRegister()
     {
-        var authenticationService = new Mock<IAuthenticationService>();
+        _authenticationServiceMock.Setup(service => service.Register(_registerRequestMock.Object)).Returns(new RequestResult(new Success(), null));
 
-        var loginRequest = new LoginRequest
-        {
-            Username = "test",
-            Password = "test"
-        };
-        var expectedResult = new RequestResult(true, "", null);
+        var result = _authenticationController.Register(_registerRequestMock.Object);
 
-        authenticationService
-            .Setup(service => service.Login(loginRequest))
-            .Returns(expectedResult);
+        Assert.IsInstanceOf<OkResult>(result);
     }
 
     [Test]
-    public void Register()
+    public void Login()
     {
-        _authenticationServiceMock.Setup(service => service.Register(_registerRequestMock.Object)).Returns(new RequestResult(true, "", null));
+        _authenticationServiceMock.Setup(service => service.Login(_loginRequestMock.Object)).Returns(new RequestResult(new Success(), null));
+
+        var result = _authenticationController.Login(_loginRequestMock.Object);
+
+        Assert.IsInstanceOf<OkResult>(result);
+    }
+    
+    [Test]
+    public void DuplicatedRegister()
+    {
+        _authenticationServiceMock.Setup(service => service.Register(_registerRequestMock.Object)).Returns(new RequestResult(new UsernameAlreadyExist(), null));
 
         var result = _authenticationController.Register(_registerRequestMock.Object);
 

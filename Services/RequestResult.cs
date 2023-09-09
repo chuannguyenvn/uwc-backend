@@ -1,15 +1,17 @@
-﻿namespace Services;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using RequestStatuses;
 
-public struct RequestResult
+namespace Services;
+
+public class RequestResult
 {
-    public bool Success { get; private set; }
-    public string Message { get; private set; }
+    public RequestStatus RequestStatus { get; private set; }
     public object? Data { get; private set; }
-
-    public RequestResult(bool success, string message, object? data)
+    
+    public RequestResult(RequestStatus requestStatus, object? data)
     {
-        Success = success;
-        Message = message;
+        RequestStatus = requestStatus;
         Data = data;
     }
 }
