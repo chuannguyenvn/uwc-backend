@@ -21,7 +21,7 @@ public class AuthenticationService : IAuthenticationService
 
         var account = _unitOfWork.Accounts.GetByUsername(request.Username);
         if (account.PasswordHash != request.Password) return new RequestResult(new IncorrectPassword(), null);
-        
+
         return new RequestResult(new Success(), null);
     }
 
@@ -32,7 +32,8 @@ public class AuthenticationService : IAuthenticationService
         var account = new Account
         {
             Username = request.Username,
-            PasswordHash = request.Password
+            PasswordHash = request.Password,
+            PasswordSalt = "TODO",
         };
         _unitOfWork.Accounts.Add(account);
         _unitOfWork.Complete();

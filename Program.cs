@@ -1,4 +1,5 @@
-using Controllers;
+using System.Data.SQLite;
+using Microsoft.EntityFrameworkCore;
 using Repositories;
 using Services.Authentication;
 
@@ -8,7 +9,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<UwcDbContext>();
+builder.Services.AddDbContext<UwcDbContext>(options => options.UseSqlite("Data Source=MyDatabase.sqlite;"));
 builder.Services.AddTransient<UnitOfWork>();
 
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
@@ -22,7 +23,8 @@ if (app.Environment.IsDevelopment())
     {
         options.SwaggerEndpoint("./swagger/v1/swagger.json", "v1");
         options.RoutePrefix = string.Empty;
-    });}
+    });
+}
 
 app.UseHttpsRedirection();
 
