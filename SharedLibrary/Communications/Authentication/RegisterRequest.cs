@@ -2,6 +2,6 @@
 
 public class RegisterRequest
 {
-    public string Username { get; set; }
-    public string Password { get; set; }
+    public virtual string Username { get; set; }
+    public virtual string Password { get; set; }
 }

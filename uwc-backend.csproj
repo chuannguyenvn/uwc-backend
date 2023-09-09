@@ -22,5 +22,24 @@
       <_ContentIncludedByDefault Remove="SharedLibrary\obj\project.assets.json" />
       <_ContentIncludedByDefault Remove="SharedLibrary\obj\project.packagespec.json" />
       <_ContentIncludedByDefault Remove="SharedLibrary\obj\SharedLibrary.csproj.nuget.dgspec.json" />
+      <_ContentIncludedByDefault Remove="Test\obj\project.assets.json" />
+      <_ContentIncludedByDefault Remove="Test\obj\project.packagespec.json" />
+      <_ContentIncludedByDefault Remove="Test\obj\Test.csproj.nuget.dgspec.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Test\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="Test\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="Test\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Test\**" />
     </ItemGroup>    
 </Project>

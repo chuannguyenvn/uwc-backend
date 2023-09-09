@@ -7,13 +7,5 @@
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
         <RootNamespace>Commons</RootNamespace>
-    <ItemGroup>
-      <PackageReference Include="Moq" Version="4.20.69" />
-    </ItemGroup>
-
     </PropertyGroup>
-
-
-
-
 </Project>
