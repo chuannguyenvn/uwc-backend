@@ -1,4 +1,3 @@
-using System.Data.SQLite;
 using Microsoft.EntityFrameworkCore;
 using Repositories;
 using Services.Authentication;
