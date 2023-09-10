@@ -1,3 +1,4 @@
+using Helpers;
 using Microsoft.EntityFrameworkCore;
 using Repositories;
 using Services.Authentication;
@@ -32,5 +33,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.SeedData();
 
 app.Run();

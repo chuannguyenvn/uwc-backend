@@ -2,7 +2,7 @@
 
 namespace Commons.Models;
 
-public class VehicleInformation : IndexedEntity
+public class VehicleData : IndexedEntity
 {
     public string LicensePlate { get; set; }
     public string Model { get; set; }

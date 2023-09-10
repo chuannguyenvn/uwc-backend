@@ -11,9 +11,17 @@ public class UnitOfWork : IDisposable
         _uwcDbContext = uwcDbContext;
 
         Accounts = new AccountRepository(_uwcDbContext);
+        McpData = new McpDataRepository(_uwcDbContext);
+        VehicleData = new VehicleDataRepository(_uwcDbContext);
+        Messages = new MessageRepository(_uwcDbContext);
+        UserProfiles = new UserProfileRepository(_uwcDbContext);
     }
 
     public AccountRepository Accounts { get; }
+    public McpDataRepository McpData { get; }
+    public VehicleDataRepository VehicleData { get; }
+    public MessageRepository Messages { get; }
+    public UserProfileRepository UserProfiles { get; }
 
     public void Dispose()
     {

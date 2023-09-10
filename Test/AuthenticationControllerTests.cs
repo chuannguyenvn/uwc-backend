@@ -9,7 +9,7 @@ using Services.Authentication;
 
 namespace Test;
 
-public class AuthenticationControllerTest
+public class AuthenticationControllerTests
 {
     private AuthenticationController _authenticationController;
     private Mock<IAuthenticationService> _authenticationServiceMock;
@@ -36,7 +36,7 @@ public class AuthenticationControllerTest
     [Test]
     public void NewRegister()
     {
-        _authenticationServiceMock.Setup(service => service.Register(_registerRequestMock.Object)).Returns(new RequestResult(new Success(), null));
+        _authenticationServiceMock.Setup(service => service.Register(_registerRequestMock.Object)).Returns(new RequestResult(new Success()));
 
         var result = _authenticationController.Register(_registerRequestMock.Object);
 
@@ -46,7 +46,7 @@ public class AuthenticationControllerTest
     [Test]
     public void Login()
     {
-        _authenticationServiceMock.Setup(service => service.Login(_loginRequestMock.Object)).Returns(new RequestResult(new Success(), null));
+        _authenticationServiceMock.Setup(service => service.Login(_loginRequestMock.Object)).Returns(new RequestResult(new Success()));
 
         var result = _authenticationController.Login(_loginRequestMock.Object);
 
@@ -56,7 +56,7 @@ public class AuthenticationControllerTest
     [Test]
     public void DuplicatedRegister()
     {
-        _authenticationServiceMock.Setup(service => service.Register(_registerRequestMock.Object)).Returns(new RequestResult(new UsernameAlreadyExist(), null));
+        _authenticationServiceMock.Setup(service => service.Register(_registerRequestMock.Object)).Returns(new RequestResult(new UsernameAlreadyExist()));
 
         var result = _authenticationController.Register(_registerRequestMock.Object);
 
