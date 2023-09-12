@@ -1,5 +1,4 @@
-﻿using Commons.Categories;
-using Commons.Models;
+﻿using Commons.Models;
 using Commons.Types;
 
 namespace Repositories.Implementations;

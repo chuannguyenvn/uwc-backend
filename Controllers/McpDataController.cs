@@ -1,7 +1,5 @@
-﻿using Commons.Communications.Authentication;
-using Commons.Communications.Mcps;
+﻿using Commons.Communications.Mcps;
 using Commons.Types;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Services.Mcps;
 
@@ -22,6 +20,20 @@ public class McpDataController : Controller
     public IActionResult AddNewMcp(AddNewMcpRequest request)
     {
         var result = _mcpDataService.AddNewMcp(request);
+        return ProcessRequestResult(result);
+    }
+
+    [HttpPost("update")]
+    public IActionResult UpdateMcp(UpdateMcpRequest request)
+    {
+        var result = _mcpDataService.UpdateMcp(request);
+        return ProcessRequestResult(result);
+    }
+
+    [HttpPost("remove")]
+    public IActionResult RemoveMcp(RemoveMcpRequest request)
+    {
+        var result = _mcpDataService.RemoveMcp(request);
         return ProcessRequestResult(result);
     }
 

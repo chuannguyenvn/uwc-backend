@@ -2,7 +2,7 @@
 
 public enum VehicleType
 {
-    Sideloader,
-    Frontloader,
-    Rearloader,
+    SideLoader,
+    FrontLoader,
+    RearLoader,
 }
