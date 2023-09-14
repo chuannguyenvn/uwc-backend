@@ -2,6 +2,8 @@ using Commons.Communications.Authentication;
 using Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Repositories;
+using Repositories.Implementations.Accounts;
 using RequestStatuses;
 using RequestStatuses.Authentication;
 using Services;
@@ -34,32 +36,47 @@ public class AuthenticationControllerTests
     }
 
     [Test]
-    public void NewRegister()
+    public void CorrectLogin()
     {
-        _authenticationServiceMock.Setup(service => service.Register(_registerRequestMock.Object)).Returns(new RequestResult(new Success()));
+        var mockUnitOfWork = new MockUnitOfWork();
+        var authenticationService = new AuthenticationService(mockUnitOfWork);
 
-        var result = _authenticationController.Register(_registerRequestMock.Object);
+        var result = authenticationService.Login(new LoginRequest()
+        {
+            Username = "admin",
+            Password = "password",
+        });
 
-        Assert.IsInstanceOf<OkResult>(result);
+        Assert.IsInstanceOf<Success>(result.RequestStatus);
     }
 
     [Test]
-    public void Login()
+    public void WrongUsernameLogin()
     {
-        _authenticationServiceMock.Setup(service => service.Login(_loginRequestMock.Object)).Returns(new RequestResult(new Success()));
+        var mockUnitOfWork = new MockUnitOfWork();
+        var authenticationService = new AuthenticationService(mockUnitOfWork);
 
-        var result = _authenticationController.Login(_loginRequestMock.Object);
+        var result = authenticationService.Login(new LoginRequest()
+        {
+            Username = "weird_username",
+            Password = "password",
+        });
 
-        Assert.IsInstanceOf<OkResult>(result);
+        Assert.IsInstanceOf<UsernameNotExist>(result.RequestStatus);
     }
-    
+
     [Test]
-    public void DuplicatedRegister()
+    public void WrongPasswordLogin()
     {
-        _authenticationServiceMock.Setup(service => service.Register(_registerRequestMock.Object)).Returns(new RequestResult(new UsernameAlreadyExist()));
+        var mockUnitOfWork = new MockUnitOfWork();
+        var authenticationService = new AuthenticationService(mockUnitOfWork);
 
-        var result = _authenticationController.Register(_registerRequestMock.Object);
+        var result = authenticationService.Login(new LoginRequest()
+        {
+            Username = "admin",
+            Password = "wrong_password",
+        });
 
-        Assert.IsInstanceOf<OkResult>(result);
+        Assert.IsInstanceOf<IncorrectPassword>(result.RequestStatus);
     }
 }

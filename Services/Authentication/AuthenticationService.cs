@@ -8,9 +8,9 @@ namespace Services.Authentication;
 
 public class AuthenticationService : IAuthenticationService
 {
-    private readonly UnitOfWork _unitOfWork;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public AuthenticationService(UnitOfWork unitOfWork)
+    public AuthenticationService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
     }

@@ -1,5 +1,4 @@
 ﻿using Commons.Communications.Mcps;
-using Commons.Types;
 using Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -44,5 +43,20 @@ public class McpDataControllerTests
         // var result = _mcpDataController.GetAllStableData(new McpQueryParameters());
         //
         // Assert.IsInstanceOf<OkResult>(result);
+    }
+
+    [Test]
+    public void RemoveNonExistingMcp()
+    {
+        var mock = new Mock<IMcpDataService>();
+        mock.Setup(service => service.RemoveMcp(It.Is<RemoveMcpRequest>(request => request.McpId == It.IsAny<int>())))
+            .Returns(It.Is<RequestResult>(result=> result.RequestStatus.StatusType == HttpResponseStatusType.BadRequest));
+        mock.SetupAllProperties();
+
+        var controller = new McpDataController(mock.Object);
+
+        var result = controller.RemoveMcp(new RemoveMcpRequest { McpId = 10000000 });
+
+        Assert.IsInstanceOf<NotFoundResult>(result);
     }
 }
