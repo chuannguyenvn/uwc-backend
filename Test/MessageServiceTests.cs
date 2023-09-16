@@ -1,6 +1,7 @@
 ﻿using Commons.Communications.Messages;
-using Commons.Models;
 using Repositories;
+using RequestStatuses;
+using RequestStatuses.Authentication;
 using Services.Messaging;
 
 namespace Test;
@@ -8,29 +9,11 @@ namespace Test;
 public class MessageServiceTests
 {
     private MockUnitOfWork _mockUnitOfWork;
-
-    private Account _senderAccount = new Account()
-    {
-        Username = "sender",
-        PasswordHash = "password",
-        PasswordSalt = "salt",
-        UserProfileID = 1,
-    };
-    
-    private Account _receiverAccount = new Account()
-    {
-        Username = "receiver",
-        PasswordHash = "password",
-        PasswordSalt = "salt",
-        UserProfileID = 2,
-    };
     
     [SetUp]
     public void Setup()
     {
         _mockUnitOfWork = new MockUnitOfWork();
-        _mockUnitOfWork.Accounts.Add(_senderAccount);
-        _mockUnitOfWork.Accounts.Add(_receiverAccount);
     }
 
     [Test]
@@ -40,19 +23,62 @@ public class MessageServiceTests
 
         var messageContent = "hello";
 
+        var result = messageService.SendMessage(new SendMessageRequest()
+        {
+            SenderAccountID = _mockUnitOfWork.Accounts.GetById(1).UserProfileID,
+            ReceiverAccountID = _mockUnitOfWork.Accounts.GetById(2).UserProfileID,
+            Content = messageContent,
+        });
+
+        Assert.IsInstanceOf<Success>(result.RequestStatus);
+    }
+
+    [Test]
+    public void SendAndGetMessages()
+    {
+        var messageService = new MessagingService(_mockUnitOfWork);
+
+        var messageContent = "hello";
+
         messageService.SendMessage(new SendMessageRequest()
         {
-            SenderAccountID = _senderAccount.UserProfileID,
-            ReceiverAccountID = _receiverAccount.UserProfileID,
+            SenderAccountID = _mockUnitOfWork.Accounts.GetById(1).UserProfileID,
+            ReceiverAccountID = _mockUnitOfWork.Accounts.GetById(2).UserProfileID,
             Content = messageContent,
         });
 
         var result = messageService.GetMessagesBetweenTwoUsers(new GetMessagesBetweenTwoUsersRequest()
         {
-            SenderAccountID = _senderAccount.UserProfileID,
-            ReceiverAccountID = _receiverAccount.UserProfileID,
+            SenderAccountID = _mockUnitOfWork.Accounts.GetById(1).UserProfileID,
+            ReceiverAccountID = _mockUnitOfWork.Accounts.GetById(2).UserProfileID,
         });
 
         Assert.AreEqual(result.Data.Messages[0].Content, messageContent);
+    }
+
+    [Test]
+    public void GetPreviewMessagesFromNewAccount()
+    {
+        var messageService = new MessagingService(_mockUnitOfWork);
+
+        var result = messageService.GetPreviewMessages(new GetPreviewMessagesRequest()
+        {
+            UserAccountId = 1,
+        });
+
+        Assert.AreEqual(result.Data.PreviewMessagesByUserProfile.Count, 0);
+    }
+
+    [Test]
+    public void GetPreviewMessagesFromImaginaryAccount()
+    {
+        var messageService = new MessagingService(_mockUnitOfWork);
+
+        var result = messageService.GetPreviewMessages(new GetPreviewMessagesRequest()
+        {
+            UserAccountId = 9999999,
+        });
+
+        Assert.IsInstanceOf<UsernameNotExist>(result.RequestStatus);
     }
 }

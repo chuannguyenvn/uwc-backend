@@ -4,7 +4,11 @@ namespace Services;
 
 public class ParamRequestResult<T> : RequestResult
 {
-    public T Data { get; protected set; }
+    public T? Data { get; protected set; }
+
+    public ParamRequestResult(RequestStatus requestStatus) : base(requestStatus)
+    {
+    }
 
     public ParamRequestResult(RequestStatus requestStatus, T data) : base(requestStatus)
     {

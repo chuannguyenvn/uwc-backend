@@ -2,6 +2,7 @@
 using Commons.Models;
 using Repositories;
 using RequestStatuses;
+using RequestStatuses.Authentication;
 
 namespace Services.Messaging;
 
@@ -40,6 +41,9 @@ public class MessagingService : IMessagingService
 
     public ParamRequestResult<GetPreviewMessagesResponse> GetPreviewMessages(GetPreviewMessagesRequest request)
     {
+        if (!_unitOfWork.Accounts.DoesIdExist(request.UserAccountId))
+            return new ParamRequestResult<GetPreviewMessagesResponse>(new UsernameNotExist());
+        
         var messages = _unitOfWork.Messages.GetPreviewMessages(request.UserAccountId);
         var dictionary = new Dictionary<UserProfile, Message>();
         foreach (var message in messages)
