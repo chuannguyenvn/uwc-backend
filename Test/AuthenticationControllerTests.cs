@@ -1,40 +1,13 @@
 using Commons.Communications.Authentication;
-using Controllers;
-using Microsoft.AspNetCore.Mvc;
-using Moq;
 using Repositories;
-using Repositories.Implementations.Accounts;
 using RequestStatuses;
 using RequestStatuses.Authentication;
-using Services;
 using Services.Authentication;
 
 namespace Test;
 
 public class AuthenticationControllerTests
 {
-    private AuthenticationController _authenticationController;
-    private Mock<IAuthenticationService> _authenticationServiceMock;
-
-    private Mock<RegisterRequest> _registerRequestMock;
-    private Mock<LoginRequest> _loginRequestMock;
-
-    [SetUp]
-    public void Setup()
-    {
-        _authenticationServiceMock = new Mock<IAuthenticationService>();
-        _authenticationController = new AuthenticationController(_authenticationServiceMock.Object);
-
-        _registerRequestMock = new Mock<RegisterRequest>();
-        _loginRequestMock = new Mock<LoginRequest>();
-
-        _registerRequestMock.Setup(request => request.Username).Returns("test_username");
-        _registerRequestMock.Setup(request => request.Password).Returns("test_password");
-
-        _loginRequestMock.Setup(request => request.Username).Returns("test_username");
-        _loginRequestMock.Setup(request => request.Password).Returns("test_password");
-    }
-
     [Test]
     public void CorrectLogin()
     {
@@ -78,5 +51,51 @@ public class AuthenticationControllerTests
         });
 
         Assert.IsInstanceOf<IncorrectPassword>(result.RequestStatus);
+    }
+    
+    [Test]
+    public void RegisterThenLogin()
+    {
+        var mockUnitOfWork = new MockUnitOfWork();
+        var authenticationService = new AuthenticationService(mockUnitOfWork);
+
+        var registerResult = authenticationService.Register(new RegisterRequest()
+        {
+            Username = "new_user",
+            Password = "new_password",
+        });
+
+        Assert.IsInstanceOf<Success>(registerResult.RequestStatus);
+        
+        var loginResult = authenticationService.Login(new LoginRequest()
+        {
+            Username = "new_user",
+            Password = "new_password",
+        });
+        
+        Assert.IsInstanceOf<Success>(loginResult.RequestStatus);
+    }
+
+    [Test]
+    public void DuplicatedRegister()
+    {
+        var mockUnitOfWork = new MockUnitOfWork();
+        var authenticationService = new AuthenticationService(mockUnitOfWork);
+
+        var firstRegisterResult = authenticationService.Register(new RegisterRequest()
+        {
+            Username = "new_user",
+            Password = "new_password",
+        });
+
+        Assert.IsInstanceOf<Success>(firstRegisterResult.RequestStatus);
+        
+        var secondRegisterResult = authenticationService.Register(new RegisterRequest()
+        {
+            Username = "new_user",
+            Password = "new_password",
+        });
+        
+        Assert.IsInstanceOf<UsernameAlreadyExist>(secondRegisterResult.RequestStatus);
     }
 }

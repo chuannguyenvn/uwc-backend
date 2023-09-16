@@ -5,6 +5,7 @@ namespace Repositories;
 
 public class MockGenericRepository<T> : IGenericRepository<T> where T : IndexedEntity
 {
+    private int _nextId = 1;
     protected readonly MockUwcDbContext Context;
 
     public MockGenericRepository(MockUwcDbContext mockUwcDbContext)
@@ -14,6 +15,7 @@ public class MockGenericRepository<T> : IGenericRepository<T> where T : IndexedE
 
     public void Add(T entity)
     {
+        entity.Id = _nextId++;
         Context.Set<T>().Add(entity);
     }
 

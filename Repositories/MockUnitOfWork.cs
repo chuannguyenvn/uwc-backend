@@ -1,5 +1,6 @@
 ﻿using Repositories.Implementations;
 using Repositories.Implementations.Accounts;
+using Repositories.Implementations.Mcps;
 
 namespace Repositories;
 
@@ -11,10 +12,11 @@ public class MockUnitOfWork : IUnitOfWork
     {
         _uwcDbContext = new MockUwcDbContext();
         Accounts = new MockAccountRepository(_uwcDbContext);
+        McpData = new MockMcpDataRepository(_uwcDbContext);
     }
 
     public IAccountRepository Accounts { get; }
-    public McpDataRepository McpData { get; }
+    public IMcpDataRepository McpData { get; }
     public VehicleDataRepository VehicleData { get; }
     public MessageRepository Messages { get; }
     public UserProfileRepository UserProfiles { get; }

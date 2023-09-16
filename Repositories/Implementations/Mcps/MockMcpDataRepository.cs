@@ -1,11 +1,11 @@
 ﻿using Commons.Models;
 using Commons.Types;
 
-namespace Repositories.Implementations;
+namespace Repositories.Implementations.Mcps;
 
-public class McpDataRepository : GenericRepository<McpData>
+public class MockMcpDataRepository : MockGenericRepository<McpData>, IMcpDataRepository
 {
-    public McpDataRepository(UwcDbContext context) : base(context)
+    public MockMcpDataRepository(MockUwcDbContext context) : base(context)
     {
     }
 

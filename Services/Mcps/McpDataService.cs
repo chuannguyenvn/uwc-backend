@@ -8,9 +8,9 @@ namespace Services.Mcps;
 
 public class McpDataService : IMcpDataService
 {
-    private readonly UnitOfWork _unitOfWork;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public McpDataService(UnitOfWork unitOfWork)
+    public McpDataService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
     }
