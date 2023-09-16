@@ -1,15 +1,24 @@
 ﻿using Commons.Communications.Messages;
 using Microsoft.AspNetCore.Mvc;
+using Services.Messaging;
 
 namespace Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class MessageController : ControllerBase
+public class MessageController : Controller
 {
+    private readonly IMessagingService _messagingService;
+
+    public MessageController(IMessagingService messagingService)
+    {
+        _messagingService = messagingService;
+    }
+
     [HttpPost("send")]
     public IActionResult SendMessage(SendMessageRequest request)
     {
-        return Ok();
+        var result = _messagingService.SendMessage(request);
+        return ProcessRequestResult(result);
     }
 }

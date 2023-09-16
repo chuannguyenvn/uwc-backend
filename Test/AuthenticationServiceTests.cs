@@ -6,7 +6,7 @@ using Services.Authentication;
 
 namespace Test;
 
-public class AuthenticationControllerTests
+public class AuthenticationServiceTests
 {
     [Test]
     public void CorrectLogin()

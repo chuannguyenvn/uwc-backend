@@ -1,6 +1,7 @@
 ﻿using Repositories.Implementations;
 using Repositories.Implementations.Accounts;
 using Repositories.Implementations.Mcps;
+using Repositories.Implementations.Messages;
 
 namespace Repositories;
 
@@ -22,7 +23,7 @@ public class UnitOfWork : IUnitOfWork, IDisposable
     public IAccountRepository Accounts { get; }
     public IMcpDataRepository McpData { get; }
     public VehicleDataRepository VehicleData { get; }
-    public MessageRepository Messages { get; }
+    public IMessageRepository Messages { get; }
     public UserProfileRepository UserProfiles { get; }
 
     public void Dispose()

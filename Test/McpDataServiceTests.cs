@@ -10,7 +10,7 @@ using Services.Mcps;
 
 namespace Test;
 
-public class McpDataControllerTests
+public class McpDataServiceTests
 {
     [Test]
     public void AddNewMcp()
