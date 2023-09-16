@@ -1,4 +1,4 @@
-﻿using RequestStatuses;
+﻿using Commons.RequestStatuses;
 
 namespace Services;
 

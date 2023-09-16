@@ -1,6 +1,6 @@
-﻿using Commons.Communications.Vehicles;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Services.Vehicles;
+using Commons.Communications.Vehicles;
 
 namespace Controllers;
 

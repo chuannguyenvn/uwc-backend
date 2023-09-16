@@ -1,7 +1,6 @@
-﻿using System.Linq.Expressions;
-using Commons.Models;
+﻿using Commons.Models;
 
-namespace Repositories;
+namespace Repositories.Generics;
 
 public interface IGenericRepository<T> where T : IndexedEntity
 {

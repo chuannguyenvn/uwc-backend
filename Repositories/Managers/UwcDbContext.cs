@@ -1,7 +1,7 @@
-﻿using Commons.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using Commons.Models;
 
-namespace Repositories;
+namespace Repositories.Managers;
 
 public class UwcDbContext : DbContext
 {

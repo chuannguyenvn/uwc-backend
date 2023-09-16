@@ -1,6 +1,6 @@
-﻿using Commons.Communications.Messages;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Services.Messaging;
+using Commons.Communications.Messages;
 
 namespace Controllers;
 

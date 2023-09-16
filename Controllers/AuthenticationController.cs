@@ -1,6 +1,6 @@
-﻿using Commons.Communications.Authentication;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Services.Authentication;
+using Commons.Communications.Authentication;
 
 namespace Controllers;
 

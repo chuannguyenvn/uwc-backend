@@ -1,6 +1,6 @@
 using Helpers;
 using Microsoft.EntityFrameworkCore;
-using Repositories;
+using Repositories.Managers;
 using Services.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);

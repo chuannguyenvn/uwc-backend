@@ -1,7 +1,7 @@
-﻿using Commons.Communications.Vehicles;
+﻿using Repositories.Managers;
+using Commons.Communications.Vehicles;
 using Commons.Models;
-using Repositories;
-using RequestStatuses;
+using Commons.RequestStatuses;
 
 namespace Services.Vehicles;
 

@@ -1,4 +1,5 @@
-﻿using Commons.Models;
+﻿using Repositories.Generics;
+using Commons.Models;
 using Commons.Types;
 
 namespace Repositories.Implementations.Mcps;

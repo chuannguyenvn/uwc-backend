@@ -1,4 +1,4 @@
-﻿namespace RequestStatuses.Authentication;
+﻿namespace Commons.RequestStatuses.Authentication;
 
 public class IncorrectPassword : BadRequest
 {

@@ -1,6 +1,6 @@
 ﻿using Commons.Models;
 
-namespace Repositories;
+namespace Repositories.Managers;
 
 public class MockUwcDbContext
 {

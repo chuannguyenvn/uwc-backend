@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using RequestStatuses;
 using Services;
+using Commons.RequestStatuses;
 
 namespace Controllers;
 

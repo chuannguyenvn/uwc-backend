@@ -3,7 +3,7 @@ using Repositories.Implementations.Accounts;
 using Repositories.Implementations.Mcps;
 using Repositories.Implementations.Messages;
 
-namespace Repositories;
+namespace Repositories.Managers;
 
 public class UnitOfWork : IUnitOfWork, IDisposable
 {

@@ -1,8 +1,8 @@
-﻿using Commons.Communications.Messages;
+﻿using Repositories.Managers;
+using Commons.Communications.Messages;
 using Commons.Models;
-using Repositories;
-using RequestStatuses;
-using RequestStatuses.Authentication;
+using Commons.RequestStatuses;
+using Commons.RequestStatuses.Authentication;
 
 namespace Services.Messaging;
 

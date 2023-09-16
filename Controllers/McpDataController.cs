@@ -1,7 +1,7 @@
-﻿using Commons.Communications.Mcps;
-using Commons.Types;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Services.Mcps;
+using Commons.Communications.Mcps;
+using Commons.Types;
 
 namespace Controllers;
 

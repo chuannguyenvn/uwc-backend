@@ -1,24 +1,22 @@
-﻿using System.Linq.Expressions;
+﻿using Repositories.Managers;
 using Commons.Models;
 
-namespace Repositories;
+namespace Repositories.Generics;
 
-public class MockGenericRepository<T> : IGenericRepository<T> where T : IndexedEntity
+public abstract class GenericRepository<T> : IGenericRepository<T> where T : IndexedEntity
 {
-    private int _nextId = 1;
-    protected readonly MockUwcDbContext Context;
+    protected readonly UwcDbContext Context;
 
-    public MockGenericRepository(MockUwcDbContext mockUwcDbContext)
+    public GenericRepository(UwcDbContext context)
     {
-        Context = mockUwcDbContext;
+        Context = context;
     }
-
+    
     public void Add(T entity)
     {
-        entity.Id = _nextId++;
         Context.Set<T>().Add(entity);
     }
-
+    
     public void AddRange(IEnumerable<T> entities)
     {
         Context.Set<T>().AddRange(entities);
@@ -28,7 +26,7 @@ public class MockGenericRepository<T> : IGenericRepository<T> where T : IndexedE
     {
         return Context.Set<T>().Where(condition);
     }
-
+    
     public T GetUnique(Func<T, bool> condition)
     {
         var possibleEntities = Context.Set<T>().Where(condition);
@@ -42,20 +40,20 @@ public class MockGenericRepository<T> : IGenericRepository<T> where T : IndexedE
     {
         return Context.Set<T>().ToList();
     }
-
+    
     public T GetById(int id)
     {
-        return Context.Set<T>().Find(t=> t.Id == id);
+        return Context.Set<T>().Find(id);
     }
-
+    
     public void Remove(T entity)
     {
         Context.Set<T>().Remove(entity);
     }
-
+    
     public void RemoveRange(IEnumerable<T> entities)
     {
-        Context.Set<T>(Context.Set<T>().Where(t => !entities.Contains(t)));
+        Context.Set<T>().RemoveRange(entities);
     }
 
     public bool DoesIdExist(int id)

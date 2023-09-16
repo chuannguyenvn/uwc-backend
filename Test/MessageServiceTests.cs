@@ -1,8 +1,8 @@
-﻿using Commons.Communications.Messages;
-using Repositories;
-using RequestStatuses;
-using RequestStatuses.Authentication;
+﻿using Repositories.Managers;
 using Services.Messaging;
+using Commons.Communications.Messages;
+using Commons.RequestStatuses;
+using Commons.RequestStatuses.Authentication;
 
 namespace Test;
 
