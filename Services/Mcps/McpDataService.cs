@@ -18,7 +18,7 @@ public class McpDataService : IMcpDataService
     public RequestResult AddNewMcp(AddNewMcpRequest request)
     {
         // TODO: Somehow check if the data entry already exist
-        
+
         var mcpData = new McpData
         {
             Address = request.Address,
@@ -57,15 +57,15 @@ public class McpDataService : IMcpDataService
         return new RequestResult(new Success());
     }
 
-    public RequestResult GetAllStableData(McpQueryParameters parameters)
+    public ParamRequestResult<GetAllStableDataResponse> GetAllStableData(McpQueryParameters parameters)
     {
         var result = _unitOfWork.McpData.GetData(parameters);
-        return new RequestResult(new Success(), result);
+        return new ParamRequestResult<GetAllStableDataResponse>(new Success(), new GetAllStableDataResponse() { Results = result.ToList() });
     }
 
     public RequestResult GetAllVolatileData(McpQueryParameters parameters)
     {
         var result = _unitOfWork.McpData.GetData(parameters);
-        return new RequestResult(new Success(), result);
+        return new ParamRequestResult<GetAllVolatileDataResponse>(new Success(), new GetAllVolatileDataResponse() { Results = result.ToList() });
     }
 }

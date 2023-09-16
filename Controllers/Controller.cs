@@ -11,7 +11,7 @@ public class Controller : ControllerBase
         switch (requestResult.RequestStatus.StatusType)
         {
             case HttpResponseStatusType.Ok:
-                return Ok(requestResult.Data);
+                return Ok(requestResult.Payload);
             case HttpResponseStatusType.BadRequest:
                 return BadRequest(requestResult.RequestStatus);
             default:

@@ -5,11 +5,10 @@ namespace Services;
 public class RequestResult
 {
     public RequestStatus RequestStatus { get; private set; }
-    public object? Data { get; private set; }
+    public object? Payload { get; protected set; }
     
-    public RequestResult(RequestStatus requestStatus, object? data = null)
+    public RequestResult(RequestStatus requestStatus)
     {
         RequestStatus = requestStatus;
-        Data = data;
     }
 }

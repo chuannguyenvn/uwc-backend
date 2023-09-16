@@ -28,15 +28,37 @@ public class MessagingService : IMessagingService
         return new RequestResult(new Success());
     }
 
-    public RequestResult GetMessagesBetweenTwoUsers(GetMessagesBetweenTwoUsersRequest request)
+    public ParamRequestResult<GetMessagesBetweenTwoUsersResponse> GetMessagesBetweenTwoUsers(GetMessagesBetweenTwoUsersRequest request)
     {
         var messages = _unitOfWork.Messages.GetMessagesBetweenTwoUsers(request.SenderAccountID, request.ReceiverAccountID);
-        return new RequestResult(new Success(), messages);
+        var response = new GetMessagesBetweenTwoUsersResponse()
+        {
+            Messages = messages.ToList(),
+        };
+        return new ParamRequestResult<GetMessagesBetweenTwoUsersResponse>(new Success(), response);
     }
 
-    public RequestResult GetPreviewMessages(GetPreviewMessagesRequest request)
+    public ParamRequestResult<GetPreviewMessagesResponse> GetPreviewMessages(GetPreviewMessagesRequest request)
     {
         var messages = _unitOfWork.Messages.GetPreviewMessages(request.UserAccountId);
-        return new RequestResult(new Success(), messages);
+        var dictionary = new Dictionary<UserProfile, Message>();
+        foreach (var message in messages)
+        {
+            if (message.SenderAccountID == request.UserAccountId)
+            {
+                dictionary.Add(message.ReceiverAccount.UserProfile, message);
+            }
+            else
+            {
+                dictionary.Add(message.SenderAccount.UserProfile, message);
+            }
+        }
+
+        var response = new GetPreviewMessagesResponse()
+        {
+            PreviewMessagesByUserProfile = dictionary,
+        };
+        
+        return new ParamRequestResult<GetPreviewMessagesResponse>(new Success(), response);
     }
 }

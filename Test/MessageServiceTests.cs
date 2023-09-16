@@ -53,6 +53,6 @@ public class MessageServiceTests
             ReceiverAccountID = _receiverAccount.UserProfileID,
         });
 
-        Assert.AreEqual((result.Data as IEnumerable<Message>).ToList()[0].Content, messageContent);
+        Assert.AreEqual(result.Data.Messages[0].Content, messageContent);
     }
 }

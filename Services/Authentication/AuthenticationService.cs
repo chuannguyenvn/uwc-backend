@@ -17,17 +17,17 @@ public class AuthenticationService : IAuthenticationService
 
     public RequestResult Login(LoginRequest request)
     {
-        if (!_unitOfWork.Accounts.DoesUsernameExist(request.Username)) return new RequestResult(new UsernameNotExist(), null);
+        if (!_unitOfWork.Accounts.DoesUsernameExist(request.Username)) return new RequestResult(new UsernameNotExist());
 
         var account = _unitOfWork.Accounts.GetByUsername(request.Username);
-        if (account.PasswordHash != request.Password) return new RequestResult(new IncorrectPassword(), null);
+        if (account.PasswordHash != request.Password) return new RequestResult(new IncorrectPassword());
 
-        return new RequestResult(new Success(), null);
+        return new RequestResult(new Success());
     }
 
     public RequestResult Register(RegisterRequest request)
     {
-        if (_unitOfWork.Accounts.DoesUsernameExist(request.Username)) return new RequestResult(new UsernameAlreadyExist(), null);
+        if (_unitOfWork.Accounts.DoesUsernameExist(request.Username)) return new RequestResult(new UsernameAlreadyExist());
 
         var account = new Account
         {
@@ -38,6 +38,6 @@ public class AuthenticationService : IAuthenticationService
         _unitOfWork.Accounts.Add(account);
         _unitOfWork.Complete();
 
-        return new RequestResult(new Success(), null);
+        return new RequestResult(new Success());
     }
 }
