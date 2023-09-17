@@ -8,15 +8,6 @@ public class MockAccountRepository : MockGenericRepository<Account>, IAccountRep
 {
     public MockAccountRepository(MockUwcDbContext mockUwcDbContext) : base(mockUwcDbContext)
     {
-        for (int i = 0; i < 20; i++)
-        {
-            Add(new Account()
-            {
-                Username = "account_" + i,
-                PasswordHash = "password",
-                PasswordSalt = "",
-            });
-        }
     }
 
     public bool DoesUsernameExist(string username)
