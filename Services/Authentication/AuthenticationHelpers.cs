@@ -46,7 +46,7 @@ public static class AuthenticationHelpers
         return salt;
     }
 
-    private static string ComputeHash(string password, string saltString)
+    public static string ComputeHash(string password, string saltString)
     {
         var salt = Convert.FromBase64String(saltString);
 

@@ -22,7 +22,8 @@ public class AuthenticationService : IAuthenticationService
         if (!_unitOfWork.Accounts.DoesUsernameExist(request.Username)) return new ParamRequestResult<string>(new UsernameNotExist());
 
         var account = _unitOfWork.Accounts.GetByUsername(request.Username);
-        if (account.PasswordHash != request.Password) return new ParamRequestResult<string>(new IncorrectPassword());
+        if (account.PasswordHash != AuthenticationHelpers.ComputeHash(request.Password, account.PasswordSalt))
+            return new ParamRequestResult<string>(new IncorrectPassword());
 
         return new ParamRequestResult<string>(new Success(), AuthenticationHelpers.GenerateJwtToken(account, _settings.BearerKey));
     }
@@ -34,6 +35,7 @@ public class AuthenticationService : IAuthenticationService
         var account = new Account
         {
             Username = request.Username,
+            PasswordHash = request.Password,
         };
         account.GenerateSaltAndHash();
         _unitOfWork.Accounts.Add(account);
