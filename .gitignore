@@ -46,3 +46,7 @@ uwc-backend/Communications/BlockScopedDummyFile.cs
 Migrations/
 
 *.sqlite
+
+*.sqlite-shm
+
+*.sqlite-wal
