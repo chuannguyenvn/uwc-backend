@@ -4,6 +4,6 @@ namespace Services.Authentication;
 
 public interface IAuthenticationService
 {
-    public ParamRequestResult<string> Login(LoginRequest request);
-    public ParamRequestResult<string> Register(RegisterRequest request);
+    public ParamRequestResult<LoginResponse> Login(LoginRequest request);
+    public ParamRequestResult<RegisterResponse> Register(RegisterRequest request);
 }

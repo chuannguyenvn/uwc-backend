@@ -17,20 +17,25 @@ public class AuthenticationService : IAuthenticationService
         _settings = settings;
     }
 
-    public ParamRequestResult<string> Login(LoginRequest request)
+    public ParamRequestResult<LoginResponse> Login(LoginRequest request)
     {
-        if (!_unitOfWork.Accounts.DoesUsernameExist(request.Username)) return new ParamRequestResult<string>(new UsernameNotExist());
+        if (!_unitOfWork.Accounts.DoesUsernameExist(request.Username)) return new ParamRequestResult<LoginResponse>(new UsernameNotExist());
 
         var account = _unitOfWork.Accounts.GetByUsername(request.Username);
         if (account.PasswordHash != AuthenticationHelpers.ComputeHash(request.Password, account.PasswordSalt))
-            return new ParamRequestResult<string>(new IncorrectPassword());
+            return new ParamRequestResult<LoginResponse>(new IncorrectPassword());
 
-        return new ParamRequestResult<string>(new Success(), AuthenticationHelpers.GenerateJwtToken(account, _settings.BearerKey));
+        var loginResponse = new LoginResponse
+        {
+            JwtToken = AuthenticationHelpers.GenerateJwtToken(account, _settings.BearerKey)
+        };
+
+        return new ParamRequestResult<LoginResponse>(new Success(), loginResponse);
     }
 
-    public ParamRequestResult<string> Register(RegisterRequest request)
+    public ParamRequestResult<RegisterResponse> Register(RegisterRequest request)
     {
-        if (_unitOfWork.Accounts.DoesUsernameExist(request.Username)) return new ParamRequestResult<string>(new UsernameAlreadyExist());
+        if (_unitOfWork.Accounts.DoesUsernameExist(request.Username)) return new ParamRequestResult<RegisterResponse>(new UsernameAlreadyExist());
 
         var account = new Account
         {
@@ -41,6 +46,11 @@ public class AuthenticationService : IAuthenticationService
         _unitOfWork.Accounts.Add(account);
         _unitOfWork.Complete();
 
-        return new ParamRequestResult<string>(new Success(), AuthenticationHelpers.GenerateJwtToken(account, _settings.BearerKey));
+        var registerResponse = new RegisterResponse
+        {
+            JwtToken = AuthenticationHelpers.GenerateJwtToken(account, _settings.BearerKey)
+        };
+
+        return new ParamRequestResult<RegisterResponse>(new Success(), registerResponse);
     }
 }
