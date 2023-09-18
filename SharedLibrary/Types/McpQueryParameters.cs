@@ -1,12 +1,15 @@
-﻿using Commons.Categories;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Commons.Categories;
 using Commons.Models;
 
 namespace Commons.Types
 {
     public class McpQueryParameters
     {
-        public FilterBy Filter { get; } = new();
-        public Dictionary<SortBy, SortStrategy> Sort { get; } = new();
+        public FilterBy Filter { get; } = new FilterBy();
+        public Dictionary<SortBy, SortStrategy> Sort { get; } = new Dictionary<SortBy, SortStrategy>();
         public int PageIndex { get; set; } = 0;
 
         public enum SortBy
@@ -19,10 +22,10 @@ namespace Commons.Types
 
         public class FilterBy
         {
-            public Zone? Zone { get; init; } = null;
-            public Range<float>? CapacityRange { get; init; } = null;
-            public Range<float>? CurrentLoadRange { get; init; } = null;
-            public Range<float>? CurrentLoadPercentageRange { get; init; } = null;
+            public Zone? Zone { get; set; } = null;
+            public Range<float>? CapacityRange { get; set; } = null;
+            public Range<float>? CurrentLoadRange { get; set; } = null;
+            public Range<float>? CurrentLoadPercentageRange { get; set; } = null;
         }
 
         public IEnumerable<McpData> Execute(IEnumerable<McpData> startingData)

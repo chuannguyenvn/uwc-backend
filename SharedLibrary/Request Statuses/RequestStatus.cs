@@ -1,4 +1,6 @@
-﻿namespace Commons.RequestStatuses
+﻿using System;
+
+namespace Commons.RequestStatuses
 {
     public abstract class RequestStatus
     {

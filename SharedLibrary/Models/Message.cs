@@ -1,4 +1,6 @@
-﻿namespace Commons.Models
+﻿using System;
+
+namespace Commons.Models
 {
     public class Message : IndexedEntity
     {

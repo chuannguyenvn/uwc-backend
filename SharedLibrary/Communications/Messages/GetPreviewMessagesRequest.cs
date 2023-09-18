@@ -1,4 +1,5 @@
-﻿using Commons.Models;
+﻿using System.Collections.Generic;
+using Commons.Models;
 
 namespace Commons.Communications.Messages
 {

@@ -1,4 +1,8 @@
-﻿namespace Commons.Types
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Commons.Types
 {
     public class PagedList<T> : List<T>
     {

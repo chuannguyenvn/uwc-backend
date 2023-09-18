@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+#if NET7_0
+using System.ComponentModel.DataAnnotations.Schema;
+#endif
 using Commons.Categories;
 
 namespace Commons.Models
@@ -13,7 +16,9 @@ namespace Commons.Models
 
         public UserRole UserRole { get; set; }
 
+#if NET7_0
         [ForeignKey("Account")]
+#endif
         public int AccountID { get; set; }
         public Account Account { get; set; }
     }

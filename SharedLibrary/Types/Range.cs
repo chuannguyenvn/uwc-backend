@@ -1,4 +1,6 @@
-﻿namespace Commons.Types
+﻿using System;
+
+namespace Commons.Types
 {
     public struct Range<T> where T : IComparable<T>
     {

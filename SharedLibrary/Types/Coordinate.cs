@@ -1,8 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
+#if NET7_0
+using System.ComponentModel.DataAnnotations.Schema;
+#endif
 
 namespace Commons.Types
 {
+#if NET7_0
     [NotMapped]
+#endif
     public class Coordinate
     {
         public double Latitude;
@@ -22,22 +28,22 @@ namespace Commons.Types
 
         public static Coordinate operator +(Coordinate a, Coordinate b)
         {
-            return new(a.Latitude + b.Latitude, a.Longitude + b.Longitude);
+            return new Coordinate(a.Latitude + b.Latitude, a.Longitude + b.Longitude);
         }
 
         public static Coordinate operator -(Coordinate a, Coordinate b)
         {
-            return new(a.Latitude - b.Latitude, a.Longitude - b.Longitude);
+            return new Coordinate(a.Latitude - b.Latitude, a.Longitude - b.Longitude);
         }
 
         public static Coordinate operator *(Coordinate a, float b)
         {
-            return new(a.Latitude * b, a.Longitude * b);
+            return new Coordinate(a.Latitude * b, a.Longitude * b);
         }
 
         public static Coordinate operator *(Coordinate a, double b)
         {
-            return new(a.Latitude * b, a.Longitude * b);
+            return new Coordinate(a.Latitude * b, a.Longitude * b);
         }
 
         public static Coordinate Lerp(Coordinate from, Coordinate to, float t)
