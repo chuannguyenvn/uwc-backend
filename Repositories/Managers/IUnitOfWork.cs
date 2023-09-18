@@ -11,9 +11,9 @@ public interface IUnitOfWork
 {
     IAccountRepository Accounts { get; }
     IMcpDataRepository McpData { get; }
-    VehicleDataRepository VehicleData { get; }
+    IVehicleDataRepository VehicleData { get; }
     IMessageRepository Messages { get; }
-    UserProfileRepository UserProfiles { get; }
+    IUserProfileRepository UserProfiles { get; }
     int Complete();
     Task<int> CompleteAsync();
 }

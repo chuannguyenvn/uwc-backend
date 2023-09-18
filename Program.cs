@@ -1,7 +1,12 @@
+using System.Net;
 using Helpers;
+using Hubs;
 using Microsoft.EntityFrameworkCore;
 using Repositories.Managers;
 using Services.Authentication;
+using Services.Mcps;
+using Services.Messaging;
+using Services.Vehicles;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,11 +15,18 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<UwcDbContext>(options => options.UseSqlite("Data Source=MyDatabase.sqlite;"));
-builder.Services.AddTransient<UnitOfWork>();
+builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<IMessagingService, MessagingService>();
+builder.Services.AddScoped<IMcpDataService, McpDataService>();
+builder.Services.AddScoped<IVehicleDataService, VehicleDataService>();
+
+builder.Services.AddSignalR();
 
 var app = builder.Build();
+
+app.MapHub<MessagingHub>("/chat");
 
 if (app.Environment.IsDevelopment())
 {

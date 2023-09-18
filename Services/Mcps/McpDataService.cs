@@ -38,7 +38,7 @@ public class McpDataService : IMcpDataService
 
         var mcpData = _unitOfWork.McpData.GetById(request.McpId);
         if (request.NewAddress != null) mcpData.Address = request.NewAddress;
-        if (request.NewCoordinate != null) mcpData.Coordinate = request.NewCoordinate.Value;
+        if (request.NewCoordinate != null) mcpData.Coordinate = request.NewCoordinate;
         if (request.NewZone != null) mcpData.Zone = request.NewZone;
         if (request.NewCapacity != null) mcpData.Capacity = request.NewCapacity.Value;
         _unitOfWork.Complete();

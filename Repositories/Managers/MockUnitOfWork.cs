@@ -17,13 +17,14 @@ public class MockUnitOfWork : IUnitOfWork
         Accounts = new MockAccountRepository(_uwcDbContext);
         McpData = new MockMcpDataRepository(_uwcDbContext);
         Messages = new MockMessageRepository(_uwcDbContext);
+        UserProfiles = new MockUserProfileRepository(_uwcDbContext);
     }
 
     public IAccountRepository Accounts { get; }
     public IMcpDataRepository McpData { get; }
-    public VehicleDataRepository VehicleData { get; }
+    public IVehicleDataRepository VehicleData { get; }
     public IMessageRepository Messages { get; }
-    public UserProfileRepository UserProfiles { get; }
+    public IUserProfileRepository UserProfiles { get; }
 
     public int Complete()
     {

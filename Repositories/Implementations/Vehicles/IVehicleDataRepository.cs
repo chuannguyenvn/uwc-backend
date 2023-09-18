@@ -1,5 +1,8 @@
-﻿namespace Repositories.Implementations.Vehicles;
+﻿using Commons.Models;
+using Repositories.Generics;
 
-public interface IVehicleDataRepository
+namespace Repositories.Implementations.Vehicles;
+
+public interface IVehicleDataRepository : IGenericRepository<VehicleData>
 {
 }

@@ -3,16 +3,25 @@ using Commons.Communications.Messages;
 using Commons.Models;
 using Commons.RequestStatuses;
 using Commons.RequestStatuses.Authentication;
+using Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Services.Messaging;
 
 public class MessagingService : IMessagingService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IHubContext<MessagingHub> _messagingHub;
 
-    public MessagingService(IUnitOfWork unitOfWork)
+    public MessagingService(IUnitOfWork unitOfWork, IHubContext<MessagingHub> messagingHub)
     {
         _unitOfWork = unitOfWork;
+        _messagingHub = messagingHub;
+    }
+
+    public void Ping()
+    {
+        _messagingHub.Clients.All.SendAsync("ReceiveMessage", "ping");
     }
 
     public RequestResult SendMessage(SendMessageRequest request)
@@ -25,7 +34,7 @@ public class MessagingService : IMessagingService
         };
         _unitOfWork.Messages.Add(message);
         _unitOfWork.Complete();
-
+        
         return new RequestResult(new Success());
     }
 
@@ -43,7 +52,7 @@ public class MessagingService : IMessagingService
     {
         if (!_unitOfWork.Accounts.DoesIdExist(request.UserAccountId))
             return new ParamRequestResult<GetPreviewMessagesResponse>(new UsernameNotExist());
-        
+
         var messages = _unitOfWork.Messages.GetPreviewMessages(request.UserAccountId);
         var dictionary = new Dictionary<UserProfile, Message>();
         foreach (var message in messages)
@@ -62,7 +71,7 @@ public class MessagingService : IMessagingService
         {
             PreviewMessagesByUserProfile = dictionary,
         };
-        
+
         return new ParamRequestResult<GetPreviewMessagesResponse>(new Success(), response);
     }
 }

@@ -1,6 +1,9 @@
-﻿namespace Commons.Types;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
-public struct Coordinate
+namespace Commons.Types;
+
+[NotMapped]
+public class Coordinate
 {
     public double Latitude;
     public double Longitude;

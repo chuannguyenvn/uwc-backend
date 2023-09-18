@@ -7,9 +7,9 @@ namespace Services.Vehicles;
 
 public class VehicleDataService : IVehicleDataService
 {
-    private readonly UnitOfWork _unitOfWork;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public VehicleDataService(UnitOfWork unitOfWork)
+    public VehicleDataService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
     }
