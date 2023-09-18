@@ -1,6 +1,10 @@
+using System.Text;
+using Commons.Models;
 using Helpers;
 using Hubs;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Repositories.Managers;
 using Services.Authentication;
 using Services.Mcps;
@@ -8,6 +12,25 @@ using Services.Messaging;
 using Services.Vehicles;
 
 var builder = WebApplication.CreateBuilder(args);
+
+#region Security
+
+var settings = new Settings();
+builder.Configuration.Bind("Settings", settings);
+builder.Services.AddSingleton(settings);
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters()
+        {
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(settings.BearerKey)),
+            ValidateIssuerSigningKey = true,
+            ValidateIssuer = false,
+            ValidateAudience = false,
+        };
+    });
+
+#endregion
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

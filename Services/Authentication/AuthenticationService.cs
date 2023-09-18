@@ -9,35 +9,36 @@ namespace Services.Authentication;
 public class AuthenticationService : IAuthenticationService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly Settings _settings;
 
-    public AuthenticationService(IUnitOfWork unitOfWork)
+    public AuthenticationService(IUnitOfWork unitOfWork, Settings settings)
     {
         _unitOfWork = unitOfWork;
+        _settings = settings;
     }
 
-    public RequestResult Login(LoginRequest request)
+    public ParamRequestResult<string> Login(LoginRequest request)
     {
-        if (!_unitOfWork.Accounts.DoesUsernameExist(request.Username)) return new RequestResult(new UsernameNotExist());
+        if (!_unitOfWork.Accounts.DoesUsernameExist(request.Username)) return new ParamRequestResult<string>(new UsernameNotExist());
 
         var account = _unitOfWork.Accounts.GetByUsername(request.Username);
-        if (account.PasswordHash != request.Password) return new RequestResult(new IncorrectPassword());
+        if (account.PasswordHash != request.Password) return new ParamRequestResult<string>(new IncorrectPassword());
 
-        return new RequestResult(new Success());
+        return new ParamRequestResult<string>(new Success(), AuthenticationHelpers.GenerateJwtToken(account, _settings.BearerKey));
     }
 
-    public RequestResult Register(RegisterRequest request)
+    public ParamRequestResult<string> Register(RegisterRequest request)
     {
-        if (_unitOfWork.Accounts.DoesUsernameExist(request.Username)) return new RequestResult(new UsernameAlreadyExist());
+        if (_unitOfWork.Accounts.DoesUsernameExist(request.Username)) return new ParamRequestResult<string>(new UsernameAlreadyExist());
 
         var account = new Account
         {
             Username = request.Username,
-            PasswordHash = request.Password,
-            PasswordSalt = "TODO",
         };
+        account.GenerateSaltAndHash();
         _unitOfWork.Accounts.Add(account);
         _unitOfWork.Complete();
 
-        return new RequestResult(new Success());
+        return new ParamRequestResult<string>(new Success(), AuthenticationHelpers.GenerateJwtToken(account, _settings.BearerKey));
     }
 }

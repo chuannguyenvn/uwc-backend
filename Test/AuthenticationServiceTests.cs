@@ -1,6 +1,7 @@
 using Repositories.Managers;
 using Services.Authentication;
 using Commons.Communications.Authentication;
+using Commons.Models;
 using Commons.RequestStatuses;
 using Commons.RequestStatuses.Authentication;
 
@@ -8,11 +9,22 @@ namespace Test;
 
 public class AuthenticationServiceTests
 {
+    private Settings _mockSettings;
+
+    [SetUp]
+    public void SetUp()
+    {
+        _mockSettings = new Settings()
+        {
+            BearerKey = "mock_key",
+        };
+    }
+
     [Test]
     public void CorrectLogin()
     {
         var mockUnitOfWork = new MockUnitOfWork();
-        var authenticationService = new AuthenticationService(mockUnitOfWork);
+        var authenticationService = new AuthenticationService(mockUnitOfWork, _mockSettings);
 
         var result = authenticationService.Login(new LoginRequest()
         {
@@ -27,7 +39,7 @@ public class AuthenticationServiceTests
     public void WrongUsernameLogin()
     {
         var mockUnitOfWork = new MockUnitOfWork();
-        var authenticationService = new AuthenticationService(mockUnitOfWork);
+        var authenticationService = new AuthenticationService(mockUnitOfWork, _mockSettings);
 
         var result = authenticationService.Login(new LoginRequest()
         {
@@ -42,7 +54,7 @@ public class AuthenticationServiceTests
     public void WrongPasswordLogin()
     {
         var mockUnitOfWork = new MockUnitOfWork();
-        var authenticationService = new AuthenticationService(mockUnitOfWork);
+        var authenticationService = new AuthenticationService(mockUnitOfWork, _mockSettings);
 
         var result = authenticationService.Login(new LoginRequest()
         {
@@ -52,12 +64,12 @@ public class AuthenticationServiceTests
 
         Assert.IsInstanceOf<IncorrectPassword>(result.RequestStatus);
     }
-    
+
     [Test]
     public void RegisterThenLogin()
     {
         var mockUnitOfWork = new MockUnitOfWork();
-        var authenticationService = new AuthenticationService(mockUnitOfWork);
+        var authenticationService = new AuthenticationService(mockUnitOfWork, _mockSettings);
 
         var registerResult = authenticationService.Register(new RegisterRequest()
         {
@@ -66,13 +78,13 @@ public class AuthenticationServiceTests
         });
 
         Assert.IsInstanceOf<Success>(registerResult.RequestStatus);
-        
+
         var loginResult = authenticationService.Login(new LoginRequest()
         {
             Username = "new_user",
             Password = "new_password",
         });
-        
+
         Assert.IsInstanceOf<Success>(loginResult.RequestStatus);
     }
 
@@ -80,7 +92,7 @@ public class AuthenticationServiceTests
     public void DuplicatedRegister()
     {
         var mockUnitOfWork = new MockUnitOfWork();
-        var authenticationService = new AuthenticationService(mockUnitOfWork);
+        var authenticationService = new AuthenticationService(mockUnitOfWork, _mockSettings);
 
         var firstRegisterResult = authenticationService.Register(new RegisterRequest()
         {
@@ -89,13 +101,13 @@ public class AuthenticationServiceTests
         });
 
         Assert.IsInstanceOf<Success>(firstRegisterResult.RequestStatus);
-        
+
         var secondRegisterResult = authenticationService.Register(new RegisterRequest()
         {
             Username = "new_user",
             Password = "new_password",
         });
-        
+
         Assert.IsInstanceOf<UsernameAlreadyExist>(secondRegisterResult.RequestStatus);
     }
 }

@@ -3,16 +3,20 @@ using Commons.Communications.Messages;
 using Commons.Models;
 using Commons.RequestStatuses;
 using Commons.RequestStatuses.Authentication;
+using Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Services.Messaging;
 
 public class MessagingService : IMessagingService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IHubContext<MessagingHub> _messagingHub;
 
-    public MessagingService(IUnitOfWork unitOfWork)
+    public MessagingService(IUnitOfWork unitOfWork, IHubContext<MessagingHub> messagingHub)
     {
         _unitOfWork = unitOfWork;
+        _messagingHub = messagingHub;
     }
 
     public RequestResult SendMessage(SendMessageRequest request)
@@ -25,7 +29,7 @@ public class MessagingService : IMessagingService
         };
         _unitOfWork.Messages.Add(message);
         _unitOfWork.Complete();
-
+        
         return new RequestResult(new Success());
     }
 
