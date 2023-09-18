@@ -1,6 +1,7 @@
-﻿namespace Commons.Models;
-
-public class Zone : IndexedEntity
+﻿namespace Commons.Models
 {
-    public string Name { get; set; }
+    public class Zone : IndexedEntity
+    {
+        public string Name { get; set; }
+    }
 }

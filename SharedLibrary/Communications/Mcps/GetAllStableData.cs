@@ -1,8 +1,9 @@
 ﻿using Commons.Models;
 
-namespace Commons.Communications.Mcps;
-
-public class GetAllStableDataResponse
+namespace Commons.Communications.Mcps
 {
-    public List<McpData> Results { get; set; }
+    public class GetAllStableDataResponse
+    {
+        public List<McpData> Results { get; set; }
+    }
 }

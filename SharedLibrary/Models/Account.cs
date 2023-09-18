@@ -1,11 +1,12 @@
-﻿namespace Commons.Models;
-
-public class Account : IndexedEntity
+﻿namespace Commons.Models
 {
-    public string Username { get; set; }
-    public string PasswordHash { get; set; }
-    public string PasswordSalt { get; set; }
+    public class Account : IndexedEntity
+    {
+        public string Username { get; set; }
+        public string PasswordHash { get; set; }
+        public string PasswordSalt { get; set; }
     
-    public int UserProfileID { get; set; }
-    public UserProfile UserProfile { get; set; }
+        public int UserProfileID { get; set; }
+        public UserProfile UserProfile { get; set; }
+    }
 }

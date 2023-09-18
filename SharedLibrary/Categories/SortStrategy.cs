@@ -1,7 +1,8 @@
-﻿namespace Commons.Categories;
-
-public enum SortStrategy
+﻿namespace Commons.Categories
 {
-    Ascending,
-    Descending,
+    public enum SortStrategy
+    {
+        Ascending,
+        Descending,
+    }
 }

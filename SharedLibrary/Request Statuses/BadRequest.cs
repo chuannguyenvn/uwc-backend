@@ -1,6 +1,7 @@
-﻿namespace Commons.RequestStatuses;
-
-public abstract class BadRequest : RequestStatus
+﻿namespace Commons.RequestStatuses
 {
-    public override HttpResponseStatusType StatusType { get; protected set; } = HttpResponseStatusType.BadRequest;
+    public abstract class BadRequest : RequestStatus
+    {
+        public override HttpResponseStatusType StatusType { get; protected set; } = HttpResponseStatusType.BadRequest;
+    }
 }

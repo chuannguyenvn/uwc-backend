@@ -1,8 +1,9 @@
 ﻿using Commons.Models;
 
-namespace Commons.Communications.Mcps;
-
-public class GetAllVolatileDataResponse
+namespace Commons.Communications.Mcps
 {
-    public List<McpData> Results { get; set; }
+    public class GetAllVolatileDataResponse
+    {
+        public List<McpData> Results { get; set; }
+    }
 }

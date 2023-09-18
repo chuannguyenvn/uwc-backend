@@ -1,6 +1,7 @@
-﻿namespace Commons.Communications.Vehicles;
-
-public class RemoveVehicleRequest
+﻿namespace Commons.Communications.Vehicles
 {
-    public int VehicleId { get; set; }
+    public class RemoveVehicleRequest
+    {
+        public int VehicleId { get; set; }
+    }
 }

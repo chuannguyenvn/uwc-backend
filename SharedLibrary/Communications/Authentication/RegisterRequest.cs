@@ -1,7 +1,8 @@
-﻿namespace Commons.Communications.Authentication;
-
-public class RegisterRequest
+﻿namespace Commons.Communications.Authentication
 {
-    public virtual string Username { get; set; }
-    public virtual string Password { get; set; }
+    public class RegisterRequest
+    {
+        public virtual string Username { get; set; }
+        public virtual string Password { get; set; }
+    }
 }

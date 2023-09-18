@@ -1,8 +1,9 @@
-﻿namespace Commons.Categories;
-
-public enum VehicleType
+﻿namespace Commons.Categories
 {
-    SideLoader,
-    FrontLoader,
-    RearLoader,
+    public enum VehicleType
+    {
+        SideLoader,
+        FrontLoader,
+        RearLoader,
+    }
 }

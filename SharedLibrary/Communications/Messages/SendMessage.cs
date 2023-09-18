@@ -1,8 +1,9 @@
-﻿namespace Commons.Communications.Messages;
-
-public class SendMessageRequest
+﻿namespace Commons.Communications.Messages
 {
-    public int SenderAccountID { get; set; }
-    public int ReceiverAccountID { get; set; }
-    public string Content { get; set; }
+    public class SendMessageRequest
+    {
+        public int SenderAccountID { get; set; }
+        public int ReceiverAccountID { get; set; }
+        public string Content { get; set; }
+    }
 }

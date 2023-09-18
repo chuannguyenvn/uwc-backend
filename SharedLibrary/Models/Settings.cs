@@ -1,6 +1,7 @@
-﻿namespace Commons.Models;
-
-public class Settings
+﻿namespace Commons.Models
 {
-    public string BearerKey { get; set; }
+    public class Settings
+    {
+        public string BearerKey { get; set; }
+    }
 }

@@ -1,8 +1,9 @@
-﻿namespace Commons.Categories;
-
-public enum Gender
+﻿namespace Commons.Categories
 {
-    Male,
-    Female,
-    Other,
+    public enum Gender
+    {
+        Male,
+        Female,
+        Other,
+    }
 }

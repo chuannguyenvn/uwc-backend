@@ -1,10 +1,11 @@
-﻿namespace Commons.Categories;
-
-public enum UserRole
+﻿namespace Commons.Categories
 {
-    Admin,
-    Supervisor,
-    Driver,
-    Cleaner,
-    Guest,
+    public enum UserRole
+    {
+        Admin,
+        Supervisor,
+        Driver,
+        Cleaner,
+        Guest,
+    }
 }

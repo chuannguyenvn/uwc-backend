@@ -1,15 +1,16 @@
-﻿namespace Commons.RequestStatuses;
-
-public enum HttpResponseStatusType
+﻿namespace Commons.RequestStatuses
 {
-    Ok,
-    BadRequest,
-    // Unauthorized,
-    // Forbidden,
-    // NotFound,
-    // InternalServerError,
-    // NotImplemented,
-    // BadGateway,
-    // ServiceUnavailable,
-    // GatewayTimeout,
+    public enum HttpResponseStatusType
+    {
+        Ok,
+        BadRequest,
+        // Unauthorized,
+        // Forbidden,
+        // NotFound,
+        // InternalServerError,
+        // NotImplemented,
+        // BadGateway,
+        // ServiceUnavailable,
+        // GatewayTimeout,
+    }
 }

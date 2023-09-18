@@ -1,6 +1,7 @@
-﻿namespace Commons.Communications.Mcps;
-
-public class RemoveMcpRequest
+﻿namespace Commons.Communications.Mcps
 {
-    public int McpId { get; set; }
+    public class RemoveMcpRequest
+    {
+        public int McpId { get; set; }
+    }
 }
