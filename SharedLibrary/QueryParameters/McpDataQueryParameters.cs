@@ -6,11 +6,10 @@ using Commons.Models;
 
 namespace Commons.Types
 {
-    public class McpQueryParameters
+    public class McpDataQueryParameters : QueryParameters<McpData>
     {
         public FilterBy Filter { get; } = new FilterBy();
         public Dictionary<SortBy, SortStrategy> Sort { get; } = new Dictionary<SortBy, SortStrategy>();
-        public int PageIndex { get; set; } = 0;
 
         public enum SortBy
         {
@@ -28,45 +27,46 @@ namespace Commons.Types
             public Range<float>? CurrentLoadPercentageRange { get; set; } = null;
         }
 
-        public IEnumerable<McpData> Execute(IEnumerable<McpData> startingData)
+        public override void ExecuteFilter(ref IEnumerable<McpData> data)
         {
-            var result = startingData;
-
             if (Filter.Zone != null)
             {
-                result = result.Where(mcp => mcp.Zone == Filter.Zone);
+                data = data.Where(mcp => mcp.Zone == Filter.Zone);
             }
 
             if (Filter.CapacityRange != null)
             {
-                result = result.Where(mcp => Filter.CapacityRange.Value.Contains(mcp.Capacity));
+                data = data.Where(mcp => Filter.CapacityRange.Value.Contains(mcp.Capacity));
             }
 
             // if (parameters.Filter.CurrentLoadRange != null)
             // {
-            //     result = result.Where(mcp => parameters.Filter.CurrentLoadRange.Value.Contains(mcp.CurrentLoad));
+            //     data = data.Where(mcp => parameters.Filter.CurrentLoadRange.Value.Contains(mcp.CurrentLoad));
             // }
 
             // if (parameters.Filter.CurrentLoadPercentageRange != null)
             // {
-            //     result = result.Where(mcp => parameters.Filter.CurrentLoadPercentageRange.Value.Contains(mcp.CurrentLoadPercentage));
+            //     data = data.Where(mcp => parameters.Filter.CurrentLoadPercentageRange.Value.Contains(mcp.CurrentLoadPercentage));
             // }
+        }
 
+        public override void ExecuteSort(ref IEnumerable<McpData> data)
+        {
             foreach (var (sortBy, strategy) in Sort)
             {
                 switch (sortBy)
                 {
                     case SortBy.Address:
                         if (strategy == SortStrategy.Ascending)
-                            result = result.OrderBy(mcp => mcp.Address);
+                            data = data.OrderBy(mcp => mcp.Address);
                         else
-                            result = result.OrderByDescending(mcp => mcp.Address);
+                            data = data.OrderByDescending(mcp => mcp.Address);
                         break;
                     case SortBy.Capacity:
                         if (strategy == SortStrategy.Ascending)
-                            result = result.OrderBy(mcp => mcp.Capacity);
+                            data = data.OrderBy(mcp => mcp.Capacity);
                         else
-                            result = result.OrderByDescending(mcp => mcp.Capacity);
+                            data = data.OrderByDescending(mcp => mcp.Capacity);
                         break;
                     case SortBy.CurrentLoad:
                         break;
@@ -76,8 +76,11 @@ namespace Commons.Types
                         throw new ArgumentOutOfRangeException();
                 }
             }
+        }
 
-            return result;
+        public override void ExecutePaginate(ref IEnumerable<McpData> data)
+        {
+            
         }
     }
 }

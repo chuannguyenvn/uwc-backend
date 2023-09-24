@@ -11,9 +11,8 @@ public class McpDataRepository : GenericRepository<McpData>, IMcpDataRepository
     {
     }
 
-    public IEnumerable<McpData> GetData(McpQueryParameters parameters)
+    public IEnumerable<McpData> GetData(McpDataQueryParameters parameters)
     {
-        var enumerable = Context.Set<McpData>().AsEnumerable();
-        return parameters.Execute(enumerable);
+        return parameters.Execute(Context.Set<McpData>());
     }
 }

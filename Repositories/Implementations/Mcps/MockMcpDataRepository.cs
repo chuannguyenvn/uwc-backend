@@ -11,7 +11,7 @@ public class MockMcpDataRepository : MockGenericRepository<McpData>, IMcpDataRep
     {
     }
 
-    public IEnumerable<McpData> GetData(McpQueryParameters parameters)
+    public IEnumerable<McpData> GetData(McpDataQueryParameters parameters)
     {
         var enumerable = Context.Set<McpData>().AsEnumerable();
         return parameters.Execute(enumerable);

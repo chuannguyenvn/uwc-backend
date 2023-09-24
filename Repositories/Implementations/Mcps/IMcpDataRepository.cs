@@ -6,5 +6,5 @@ namespace Repositories.Implementations.Mcps;
 
 public interface IMcpDataRepository : IGenericRepository<McpData>
 {
-    public IEnumerable<McpData> GetData(McpQueryParameters parameters);
+    public IEnumerable<McpData> GetData(McpDataQueryParameters parameters);
 }

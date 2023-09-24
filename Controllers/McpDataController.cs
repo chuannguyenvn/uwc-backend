@@ -15,7 +15,7 @@ public class McpDataController : Controller
     {
         _mcpDataService = mcpDataService;
     }
-
+    
     [HttpPost("add")]
     public IActionResult AddNewMcp(AddNewMcpRequest request)
     {
@@ -34,20 +34,6 @@ public class McpDataController : Controller
     public IActionResult RemoveMcp(RemoveMcpRequest request)
     {
         var result = _mcpDataService.RemoveMcp(request);
-        return ProcessRequestResult(result);
-    }
-
-    [HttpGet("get/stable")]
-    public IActionResult GetAllStableData(McpQueryParameters parameters)
-    {
-        var result = _mcpDataService.GetAllStableData(parameters);
-        return ProcessRequestResult(result);
-    }
-
-    [HttpGet("get/volatile/{pageId}")]
-    public IActionResult GetAllVolatileData(McpQueryParameters parameters)
-    {
-        var result = _mcpDataService.GetAllVolatileData(parameters);
         return ProcessRequestResult(result);
     }
 }
