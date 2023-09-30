@@ -26,7 +26,7 @@ public static class WebApplicationExtensions
 
         var dataSeeder = new DatabaseSeeder(dbContext);
 
-        dataSeeder.SeedMcpData();
+        dataSeeder.SeedDatabase();
 
         return webApplication;
     }
