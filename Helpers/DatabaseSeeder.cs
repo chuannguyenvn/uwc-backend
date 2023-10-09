@@ -1,4 +1,4 @@
-﻿using Commons.Categories;
+using Commons.Categories;
 using Repositories.Managers;
 using Commons.Models;
 using Commons.Types;
@@ -32,6 +32,7 @@ public class DatabaseSeeder
         SeedDriverProfiles();
         SeedCleanerProfiles();
         SeedAccounts();
+        SeedMcpData();
         SeedVehicles();
         SeedMessages();
         FinishSeeding();
@@ -63,6 +64,8 @@ public class DatabaseSeeder
             _uwcDbContext.UserProfiles.Add(supervisorProfile);
             _allProfiles.Add(supervisorProfile);
         }
+
+        _uwcDbContext.SaveChanges();
     }
 
     public void SeedDriverProfiles()
@@ -91,6 +94,8 @@ public class DatabaseSeeder
             _uwcDbContext.UserProfiles.Add(driverProfile);
             _allProfiles.Add(driverProfile);
         }
+
+        _uwcDbContext.SaveChanges();
     }
 
     public void SeedCleanerProfiles()
@@ -119,6 +124,8 @@ public class DatabaseSeeder
             _uwcDbContext.UserProfiles.Add(cleanerProfile);
             _allProfiles.Add(cleanerProfile);
         }
+
+        _uwcDbContext.SaveChanges();
     }
 
     public void SeedAccounts()
@@ -134,9 +141,13 @@ public class DatabaseSeeder
             };
             account.GenerateSaltAndHash();
 
+            userProfile.Account = account;
+
             _allAccounts.Add(account);
             _uwcDbContext.Accounts.Add(account);
         }
+
+        _uwcDbContext.SaveChanges();
     }
 
     public void SeedMcpData()
