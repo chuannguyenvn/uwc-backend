@@ -36,4 +36,11 @@ public class McpDataController : Controller
         var result = _mcpDataService.RemoveMcp(request);
         return ProcessRequestResult(result);
     }
+    
+    [HttpPost("get")]
+    public IActionResult GetMcpData(McpDataQueryParameters parameters)
+    {
+        var result = _mcpDataService.GetMcpData(parameters);
+        return ProcessRequestResult(result);
+    }
 }
