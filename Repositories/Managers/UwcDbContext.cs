@@ -18,5 +18,17 @@ public class UwcDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Message>()
+            .HasOne(message => message.SenderAccount)
+            .WithMany()
+            .HasForeignKey(message => message.SenderAccountId)
+            .OnDelete(DeleteBehavior.NoAction);
+        
+        modelBuilder.Entity<Message>()
+            .HasOne(message => message.ReceiverAccount)
+            .WithMany()
+            .HasForeignKey(message => message.ReceiverAccountId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

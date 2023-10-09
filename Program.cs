@@ -99,6 +99,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.ResetData();
+
 app.SeedData();
 
 app.Run();
