@@ -19,7 +19,7 @@ namespace Commons.Models
 #if NET7_0
         [ForeignKey("Account")]
 #endif
-        public int AccountID { get; set; }
+        public int? AccountID { get; set; }
         public Account Account { get; set; }
     }
 }
