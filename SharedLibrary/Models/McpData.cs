@@ -6,7 +6,7 @@ namespace Commons.Models
     {
         public string Address { get; set; }
         public Coordinate Coordinate { get; set; }
-        public Zone Zone { get; set; }
+        public Zone? Zone { get; set; } = null;
         public float Capacity { get; set; }
     }
 }
