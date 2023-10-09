@@ -4,17 +4,15 @@ using Repositories.Managers;
 
 namespace Services.Mcps;
 
-public class McpFillLevelService : IMcpFillLevelService, IHostedService, IDisposable
+public class McpFillLevelService : IMcpFillLevelService
 {
-    private readonly IUnitOfWork _unitOfWork;
     private readonly IServiceProvider _serviceProvider;
     private readonly Dictionary<int, float> _fillLevelsById = new();
     private Timer? _databasePersistTimer;
     private Timer? _fillTimer;
 
-    public McpFillLevelService(IUnitOfWork unitOfWork, IServiceProvider serviceProvider)
+    public McpFillLevelService(IServiceProvider serviceProvider)
     {
-        _unitOfWork = unitOfWork;
         _serviceProvider = serviceProvider;
     }
 
@@ -36,21 +34,21 @@ public class McpFillLevelService : IMcpFillLevelService, IHostedService, IDispos
         return Task.CompletedTask;
     }
 
+    private void InitializeFillLevelDictionary()
+    {
+        using var scope = _serviceProvider.CreateScope();
+        var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+        foreach (var mcpData in unitOfWork.McpData.GetAll())
+        {
+            _fillLevelsById.Add(mcpData.Id, 0f);
+        }
+    }
+
     private void FillMcps(object? state)
     {
         foreach (var (id, _) in _fillLevelsById)
         {
-            _fillLevelsById[id] += (float)new Random().NextDouble();
-        }
-    }
-
-    private void InitializeFillLevelDictionary()
-    {
-        using var scope = _serviceProvider.CreateScope();
-        var unitOfWork = scope.ServiceProvider.GetRequiredService<UnitOfWork>();
-        foreach (var mcpData in unitOfWork.McpData.GetAll())
-        {
-            _fillLevelsById.Add(mcpData.Id, 0f);
+            _fillLevelsById[id] += (float)new Random().NextDouble() * 10;
         }
     }
 

@@ -3,7 +3,7 @@ using Commons.Types;
 
 namespace Services.Mcps;
 
-public interface IMcpFillLevelService
+public interface IMcpFillLevelService : IHostedService, IDisposable
 {
     public ParamRequestResult<GetFillLevelResponse> GetAllFillLevel();
 }
