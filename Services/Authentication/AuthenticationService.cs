@@ -1,4 +1,5 @@
-﻿using Repositories.Managers;
+using Commons.Categories;
+using Repositories.Managers;
 using Commons.Communications.Authentication;
 using Commons.Models;
 using Commons.RequestStatuses;
@@ -25,6 +26,12 @@ public class AuthenticationService : IAuthenticationService
         if (account.PasswordHash != AuthenticationHelpers.ComputeHash(request.Password, account.PasswordSalt))
             return new ParamRequestResult<LoginResponse>(new IncorrectPassword());
 
+        var userRole = _unitOfWork.UserProfiles.GetById(account.UserProfileID).UserRole;
+        if (request.IsFromDesktop && userRole != UserRole.Supervisor)
+            return new ParamRequestResult<LoginResponse>(new InvalidRoleWhenLogin());
+        if (!request.IsFromDesktop && userRole == UserRole.Supervisor)
+            return new ParamRequestResult<LoginResponse>(new InvalidRoleWhenLogin());
+        
         var loginResponse = new LoginResponse
         {
             JwtToken = AuthenticationHelpers.GenerateJwtToken(account, _settings.BearerKey)

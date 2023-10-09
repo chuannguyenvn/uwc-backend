@@ -2,10 +2,8 @@
 {
     public enum UserRole
     {
-        Admin,
         Supervisor,
         Driver,
         Cleaner,
-        Guest,
     }
 }
