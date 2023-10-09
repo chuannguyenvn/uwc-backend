@@ -68,6 +68,9 @@ builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IMessagingService, MessagingService>();
 builder.Services.AddScoped<IMcpDataService, McpDataService>();
+builder.Services.AddSingleton<McpFillLevelService>();
+builder.Services.AddSingleton<IMcpFillLevelService>(provider => provider.GetRequiredService<McpFillLevelService>());
+builder.Services.AddHostedService<McpFillLevelService>(provider => provider.GetRequiredService<McpFillLevelService>());
 builder.Services.AddScoped<IVehicleDataService, VehicleDataService>();
 
 #endregion
@@ -98,8 +101,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.ResetData();
-
-app.SeedData();
+// app.ResetData();
+//
+// app.SeedData();
 
 app.Run();
