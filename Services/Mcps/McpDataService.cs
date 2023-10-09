@@ -57,10 +57,10 @@ public class McpDataService : IMcpDataService
         return new RequestResult(new Success());
     }
 
-    public ParamRequestResult<GetAllStableDataResponse> GetAllStableData(McpDataQueryParameters parameters)
+    public ParamRequestResult<GetMcpDataResponse> GetMcpData(McpDataQueryParameters parameters)
     {
         var result = _unitOfWork.McpData.GetData(parameters);
-        return new ParamRequestResult<GetAllStableDataResponse>(new Success(), new GetAllStableDataResponse() { Results = result.ToList() });
+        return new ParamRequestResult<GetMcpDataResponse>(new Success(), new GetMcpDataResponse() { Results = result.ToList() });
     }
 
     public RequestResult GetAllVolatileData(McpDataQueryParameters parameters)
