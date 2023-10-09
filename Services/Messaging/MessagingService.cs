@@ -23,8 +23,8 @@ public class MessagingService : IMessagingService
     {
         var message = new Message
         {
-            SenderAccountID = request.SenderAccountID,
-            ReceiverAccountID = request.ReceiverAccountID,
+            SenderAccountId = request.SenderAccountID,
+            ReceiverAccountId = request.ReceiverAccountID,
             Content = request.Content
         };
         _unitOfWork.Messages.Add(message);
@@ -52,7 +52,7 @@ public class MessagingService : IMessagingService
         var dictionary = new Dictionary<UserProfile, Message>();
         foreach (var message in messages)
         {
-            if (message.SenderAccountID == request.UserAccountId)
+            if (message.SenderAccountId == request.UserAccountId)
             {
                 dictionary.Add(message.ReceiverAccount.UserProfile, message);
             }

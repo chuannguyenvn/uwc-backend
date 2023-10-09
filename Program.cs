@@ -58,7 +58,7 @@ builder.Services.AddSignalR();
 
 #region Database
 
-builder.Services.AddDbContext<UwcDbContext>(options => options.UseSqlite("Data Source=MyDatabase.sqlite;"));
+builder.Services.AddDbContext<UwcDbContext>(o => o.UseSqlServer(builder.Configuration.GetConnectionString("Database")));
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
 #endregion

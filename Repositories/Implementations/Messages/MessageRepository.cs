@@ -12,8 +12,8 @@ public class MessageRepository : GenericRepository<Message>, IMessageRepository
 
     public IEnumerable<Message> GetMessagesBetweenTwoUsers(int senderAccountId, int receiverAccountId)
     {
-        return Context.Messages.Where(m => (m.SenderAccountID == senderAccountId && m.ReceiverAccountID == receiverAccountId) ||
-                                           (m.ReceiverAccountID == senderAccountId && m.SenderAccountID == receiverAccountId));
+        return Context.Messages.Where(m => (m.SenderAccountId == senderAccountId && m.ReceiverAccountId == receiverAccountId) ||
+                                           (m.ReceiverAccountId == senderAccountId && m.SenderAccountId == receiverAccountId));
     }
 
     public IEnumerable<Message> GetPreviewMessages(int userAccountId)
