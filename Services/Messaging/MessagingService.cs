@@ -11,12 +11,10 @@ namespace Services.Messaging;
 public class MessagingService : IMessagingService
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IHubContext<MessagingHub> _messagingHub;
 
-    public MessagingService(IUnitOfWork unitOfWork, IHubContext<MessagingHub> messagingHub)
+    public MessagingService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
-        _messagingHub = messagingHub;
     }
 
     public RequestResult SendMessage(SendMessageRequest request)
