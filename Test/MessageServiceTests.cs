@@ -19,7 +19,7 @@ public class MessageServiceTests
     [Test]
     public void SendMessage()
     {
-        var messageService = new MessagingService(_mockUnitOfWork, null);
+        var messageService = new MessagingService(_mockUnitOfWork);
 
         var messageContent = "hello";
 
@@ -36,7 +36,7 @@ public class MessageServiceTests
     [Test]
     public void SendAndGetMessages()
     {
-        var messageService = new MessagingService(_mockUnitOfWork, null);
+        var messageService = new MessagingService(_mockUnitOfWork);
 
         var messageContent = "hello";
 
@@ -59,7 +59,7 @@ public class MessageServiceTests
     [Test]
     public void GetPreviewMessagesFromNewAccount()
     {
-        var messageService = new MessagingService(_mockUnitOfWork, null);
+        var messageService = new MessagingService(_mockUnitOfWork);
 
         var result = messageService.GetPreviewMessages(new GetPreviewMessagesRequest()
         {
@@ -72,7 +72,7 @@ public class MessageServiceTests
     [Test]
     public void GetPreviewMessagesFromImaginaryAccount()
     {
-        var messageService = new MessagingService(_mockUnitOfWork, null);
+        var messageService = new MessagingService(_mockUnitOfWork);
 
         var result = messageService.GetPreviewMessages(new GetPreviewMessagesRequest()
         {

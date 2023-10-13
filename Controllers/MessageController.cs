@@ -21,4 +21,11 @@ public class MessageController : Controller
         var result = _messagingService.SendMessage(request);
         return ProcessRequestResult(result);
     }
+    
+    [HttpGet("ping")]
+    public IActionResult Ping()
+    {
+        _messagingService.Ping(User);
+        return Ok();
+    }
 }
