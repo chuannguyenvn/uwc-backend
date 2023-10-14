@@ -11,10 +11,12 @@ namespace Services.Messaging;
 public class MessagingService : IMessagingService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IHubContext<BaseHub> _hubContext;
 
-    public MessagingService(IUnitOfWork unitOfWork)
+    public MessagingService(IUnitOfWork unitOfWork, IHubContext<BaseHub> hubContext)
     {
         _unitOfWork = unitOfWork;
+        _hubContext = hubContext;
     }
 
     public RequestResult SendMessage(SendMessageRequest request)
@@ -27,7 +29,9 @@ public class MessagingService : IMessagingService
         };
         _unitOfWork.Messages.Add(message);
         _unitOfWork.Complete();
-        
+
+        _hubContext.Clients.User(request.ReceiverAccountID.ToString()).SendAsync("ReceiveMessage", message);
+
         return new RequestResult(new Success());
     }
 
