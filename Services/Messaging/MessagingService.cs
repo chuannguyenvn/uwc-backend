@@ -1,4 +1,4 @@
-using Repositories.Managers;
+﻿using Repositories.Managers;
 using Commons.Communications.Messages;
 using Commons.HubHandlers;
 using Commons.Models;
@@ -24,9 +24,9 @@ public class MessagingService : IMessagingService
     {
         var message = new Message
         {
-            SenderAccountId = request.SenderAccountID,
-            ReceiverAccountId = request.ReceiverAccountID,
-            Content = request.Content
+            SenderAccountId = request.SenderAccountId,
+            ReceiverAccountId = request.ReceiverAccountId,
+            Content = request.Content,
             Timestamp = DateTime.Now,
         };
         _unitOfWork.Messages.Add(message);
@@ -43,7 +43,7 @@ public class MessagingService : IMessagingService
 
     public ParamRequestResult<GetMessagesBetweenTwoUsersResponse> GetMessagesBetweenTwoUsers(GetMessagesBetweenTwoUsersRequest request)
     {
-        var messages = _unitOfWork.Messages.GetMessagesBetweenTwoUsers(request.SenderAccountID, request.ReceiverAccountID);
+        var messages = _unitOfWork.Messages.GetMessagesBetweenTwoUsers(request.UserAccountId, request.OtherUserAccountId);
         var response = new GetMessagesBetweenTwoUsersResponse()
         {
             Messages = messages.ToList(),

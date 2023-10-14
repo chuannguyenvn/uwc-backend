@@ -2,8 +2,8 @@
 {
     public class SendMessageRequest
     {
-        public int SenderAccountID { get; set; }
-        public int ReceiverAccountID { get; set; }
+        public int SenderAccountId { get; set; }
+        public int ReceiverAccountId { get; set; }
         public string Content { get; set; }
     }
 }
