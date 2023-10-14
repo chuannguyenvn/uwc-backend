@@ -11,9 +11,9 @@ namespace Services.Messaging;
 public class MessagingService : IMessagingService
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly IHubContext<MessagingHub> _hubContext;
+    private readonly IHubContext<BaseHub> _hubContext;
 
-    public MessagingService(IUnitOfWork unitOfWork, IHubContext<MessagingHub> hubContext)
+    public MessagingService(IUnitOfWork unitOfWork, IHubContext<BaseHub> hubContext)
     {
         _unitOfWork = unitOfWork;
         _hubContext = hubContext;

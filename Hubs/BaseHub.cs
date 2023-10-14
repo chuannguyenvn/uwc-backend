@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.SignalR;
 namespace Hubs;
 
 [Authorize]
-public class MessagingHub : Hub
+public class BaseHub : Hub
 {
     public static Dictionary<int, string> ConnectionIds = new();
 

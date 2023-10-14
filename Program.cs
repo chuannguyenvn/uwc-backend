@@ -78,7 +78,7 @@ var app = builder.Build();
 
 #region SignalR
 
-app.MapHub<MessagingHub>("/messaging");
+app.MapHub<BaseHub>("/hub");
 
 #endregion
 
