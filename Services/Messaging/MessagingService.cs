@@ -27,6 +27,7 @@ public class MessagingService : IMessagingService
             SenderAccountId = request.SenderAccountID,
             ReceiverAccountId = request.ReceiverAccountID,
             Content = request.Content
+            Timestamp = DateTime.Now,
         };
         _unitOfWork.Messages.Add(message);
         _unitOfWork.Complete();
