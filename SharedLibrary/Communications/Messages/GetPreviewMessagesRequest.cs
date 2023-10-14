@@ -10,6 +10,7 @@ namespace Commons.Communications.Messages
 
     public class GetPreviewMessagesResponse
     {
-        public Dictionary<UserProfile, Message> PreviewMessagesByUserProfile { get; set; }
+        public List<string> FullNames { get; set; }
+        public List<Message> Messages { get; set; }
     }
 }

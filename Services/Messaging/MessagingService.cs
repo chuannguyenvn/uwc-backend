@@ -51,23 +51,23 @@ public class MessagingService : IMessagingService
         if (!_unitOfWork.Accounts.DoesIdExist(request.UserAccountId))
             return new ParamRequestResult<GetPreviewMessagesResponse>(new UsernameNotExist());
 
-        var messages = _unitOfWork.Messages.GetPreviewMessages(request.UserAccountId);
-        var dictionary = new Dictionary<UserProfile, Message>();
+        var fullNames = new List<string>();
+        var messages = _unitOfWork.Messages.GetPreviewMessages(request.UserAccountId).ToList();
         foreach (var message in messages)
         {
-            if (message.SenderAccountId == request.UserAccountId)
-            {
-                dictionary.Add(message.ReceiverAccount.UserProfile, message);
-            }
-            else
-            {
-                dictionary.Add(message.SenderAccount.UserProfile, message);
-            }
+            var account = _unitOfWork.Accounts.GetById(message.SenderAccountId == request.UserAccountId
+                ? message.ReceiverAccountId
+                : message.SenderAccountId);
+            var userProfile = _unitOfWork.UserProfiles.GetById(account.UserProfileID);
+            var fullName = userProfile.FirstName + " " + userProfile.LastName;
+
+            fullNames.Add(fullName);
         }
 
         var response = new GetPreviewMessagesResponse()
         {
-            PreviewMessagesByUserProfile = dictionary,
+            FullNames = fullNames,
+            Messages = messages,
         };
 
         return new ParamRequestResult<GetPreviewMessagesResponse>(new Success(), response);

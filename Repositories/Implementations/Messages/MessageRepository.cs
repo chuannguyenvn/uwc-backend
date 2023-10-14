@@ -1,6 +1,7 @@
 ﻿using Repositories.Generics;
 using Repositories.Managers;
 using Commons.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repositories.Implementations.Messages;
 
@@ -18,6 +19,8 @@ public class MessageRepository : GenericRepository<Message>, IMessageRepository
 
     public IEnumerable<Message> GetPreviewMessages(int userAccountId)
     {
-        return Context.Messages;
+        return Context.Messages.Where(message => message.SenderAccountId == userAccountId || message.ReceiverAccountId == userAccountId)
+            .GroupBy(message => message.SenderAccountId == userAccountId ? message.ReceiverAccountId : message.SenderAccountId)
+            .Select(group => group.OrderByDescending(message => message.Timestamp).First()).ToList();
     }
 }
