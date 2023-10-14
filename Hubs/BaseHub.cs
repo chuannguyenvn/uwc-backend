@@ -11,14 +11,16 @@ public class BaseHub : Hub
 
     public override Task OnConnectedAsync()
     {
-        ConnectionIds.Add(int.Parse(Context.User.FindFirstValue("id")), Context.ConnectionId);
+        var userId = int.Parse(Context.User.FindFirstValue("id"));
+        ConnectionIds[userId] = Context.ConnectionId;
         Console.WriteLine("[" + Context.User.FindFirstValue("id") + "|" + Context.ConnectionId + "] connected to messaging hub");
         return base.OnConnectedAsync();
     }
 
     public override Task OnDisconnectedAsync(Exception? exception)
     {
-        ConnectionIds.Remove(int.Parse(Context.User.FindFirstValue("id")));
+        var userId = int.Parse(Context.User.FindFirstValue("id"));
+        if (ConnectionIds.ContainsKey(userId)) ConnectionIds.Remove(userId);
         Console.WriteLine("[" + Context.User.FindFirstValue("id") + "|" + Context.ConnectionId + "] disconnected from messaging hub");
         return base.OnDisconnectedAsync(exception);
     }

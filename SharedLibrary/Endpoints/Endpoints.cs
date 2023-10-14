@@ -2,6 +2,8 @@ namespace Requests
 {
     public static partial class Endpoints
     {
-        public const string DOMAIN = "localhost:44394";
+        // Cloud: urban-waste-collection.azurewebsites.net
+        // Local: localhost:44394
+        public const string DOMAIN = "urban-waste-collection.azurewebsites.net";
     }
 }

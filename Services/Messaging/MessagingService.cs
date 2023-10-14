@@ -32,7 +32,7 @@ public class MessagingService : IMessagingService
         _unitOfWork.Messages.Add(message);
         _unitOfWork.Complete();
 
-        _hubContext.Clients.User(request.ReceiverAccountId.ToString())
+        _hubContext.Clients.Client(BaseHub.ConnectionIds[request.ReceiverAccountId])
             .SendAsync(HubHandlers.Messaging.SEND_MESSAGE, new SendMessageBroadcastData()
             {
                 NewMessage = message,
