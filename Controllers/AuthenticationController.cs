@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Services.Authentication;
 using Commons.Communications.Authentication;
+using Requests;
 
 namespace Controllers;
 
@@ -15,14 +16,14 @@ public class AuthenticationController : Controller
         _authenticationService = authenticationService;
     }
 
-    [HttpPost("login")]
+    [HttpPost(Endpoints.Authentication.LOGIN)]
     public IActionResult Login(LoginRequest request)
     {
         var result = _authenticationService.Login(request);
         return ProcessRequestResult(result);
     }
 
-    [HttpPost("register")]
+    [HttpPost(Endpoints.Authentication.REGISTER)]
     public IActionResult Register(RegisterRequest request)
     {
         var result = _authenticationService.Register(request);

@@ -3,6 +3,7 @@ using Services.Mcps;
 using Commons.Communications.Mcps;
 using Commons.Types;
 using Microsoft.AspNetCore.Authorization;
+using Requests;
 
 namespace Controllers;
 
@@ -17,29 +18,29 @@ public class McpDataController : Controller
     {
         _mcpDataService = mcpDataService;
     }
-    
-    [HttpPost("add")]
+
+    [HttpPost(Endpoints.McpData.ADD)]
     public IActionResult AddNewMcp(AddNewMcpRequest request)
     {
         var result = _mcpDataService.AddNewMcp(request);
         return ProcessRequestResult(result);
     }
 
-    [HttpPost("update")]
+    [HttpPost(Endpoints.McpData.UPDATE)]
     public IActionResult UpdateMcp(UpdateMcpRequest request)
     {
         var result = _mcpDataService.UpdateMcp(request);
         return ProcessRequestResult(result);
     }
 
-    [HttpPost("remove")]
+    [HttpPost(Endpoints.McpData.REMOVE)]
     public IActionResult RemoveMcp(RemoveMcpRequest request)
     {
         var result = _mcpDataService.RemoveMcp(request);
         return ProcessRequestResult(result);
     }
-    
-    [HttpPost("get")]
+
+    [HttpPost(Endpoints.McpData.GET)]
     public IActionResult GetMcpData(McpDataQueryParameters parameters)
     {
         var result = _mcpDataService.GetMcpData(parameters);
