@@ -1,4 +1,4 @@
-﻿using Repositories.Managers;
+using Repositories.Managers;
 using Commons.Communications.Messages;
 using Commons.HubHandlers;
 using Commons.Models;
@@ -31,7 +31,11 @@ public class MessagingService : IMessagingService
         _unitOfWork.Messages.Add(message);
         _unitOfWork.Complete();
 
-        _hubContext.Clients.User(request.ReceiverAccountID.ToString()).SendAsync(HubHandlers.Messaging.SEND_MESSAGE, message);
+        _hubContext.Clients.User(request.ReceiverAccountId.ToString())
+            .SendAsync(HubHandlers.Messaging.SEND_MESSAGE, new SendMessageBroadcastData()
+            {
+                NewMessage = message,
+            });
 
         return new RequestResult(new Success());
     }
