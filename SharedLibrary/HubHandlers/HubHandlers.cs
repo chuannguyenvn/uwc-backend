@@ -1,7 +1,6 @@
 ﻿namespace Commons.HubHandlers
 {
-    public class McpFillLevelHandlers
+    public static partial class HubHandlers
     {
-        
     }
 }

@@ -34,7 +34,8 @@ public class AuthenticationService : IAuthenticationService
         
         var loginResponse = new LoginResponse
         {
-            JwtToken = AuthenticationHelpers.GenerateJwtToken(account, _settings.BearerKey)
+            JwtToken = AuthenticationHelpers.GenerateJwtToken(account, _settings.BearerKey),
+            UserId = account.UserProfileID,
         };
 
         return new ParamRequestResult<LoginResponse>(new Success(), loginResponse);
@@ -55,7 +56,8 @@ public class AuthenticationService : IAuthenticationService
 
         var registerResponse = new RegisterResponse
         {
-            JwtToken = AuthenticationHelpers.GenerateJwtToken(account, _settings.BearerKey)
+            JwtToken = AuthenticationHelpers.GenerateJwtToken(account, _settings.BearerKey),
+            UserId = account.UserProfileID,
         };
 
         return new ParamRequestResult<RegisterResponse>(new Success(), registerResponse);

@@ -5,8 +5,8 @@ namespace Commons.Communications.Messages
 {
     public class GetMessagesBetweenTwoUsersRequest
     {
-        public int SenderAccountID { get; set; }
-        public int ReceiverAccountID { get; set; }
+        public int UserAccountId { get; set; }
+        public int OtherUserAccountId { get; set; }
     }
 
     public class GetMessagesBetweenTwoUsersResponse

@@ -2,6 +2,7 @@
 using Services.Vehicles;
 using Commons.Communications.Vehicles;
 using Microsoft.AspNetCore.Authorization;
+using Requests;
 
 namespace Controllers;
 
@@ -11,27 +12,27 @@ namespace Controllers;
 public class VehicleDataController : Controller
 {
     private readonly IVehicleDataService _vehicleDataService;
-    
+
     public VehicleDataController(IVehicleDataService vehicleDataService)
     {
         _vehicleDataService = vehicleDataService;
     }
-    
-    [HttpPost("add")]
+
+    [HttpPost(Endpoints.VehicleData.ADD)]
     public IActionResult AddNewVehicle(AddNewVehicleRequest request)
     {
         var result = _vehicleDataService.AddNewVehicle(request);
         return ProcessRequestResult(result);
     }
-    
-    [HttpPost("update")]
+
+    [HttpPost(Endpoints.VehicleData.UPDATE)]
     public IActionResult UpdateVehicle(UpdateVehicleRequest request)
     {
         var result = _vehicleDataService.UpdateVehicle(request);
         return ProcessRequestResult(result);
     }
-    
-    [HttpPost("remove")]
+
+    [HttpPost(Endpoints.VehicleData.REMOVE)]
     public IActionResult RemoveVehicle(RemoveVehicleRequest request)
     {
         var result = _vehicleDataService.RemoveVehicle(request);

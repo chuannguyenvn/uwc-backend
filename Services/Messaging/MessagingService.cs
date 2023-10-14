@@ -1,5 +1,6 @@
 ﻿using Repositories.Managers;
 using Commons.Communications.Messages;
+using Commons.HubHandlers;
 using Commons.Models;
 using Commons.RequestStatuses;
 using Commons.RequestStatuses.Authentication;
@@ -23,21 +24,26 @@ public class MessagingService : IMessagingService
     {
         var message = new Message
         {
-            SenderAccountId = request.SenderAccountID,
-            ReceiverAccountId = request.ReceiverAccountID,
-            Content = request.Content
+            SenderAccountId = request.SenderAccountId,
+            ReceiverAccountId = request.ReceiverAccountId,
+            Content = request.Content,
+            Timestamp = DateTime.Now,
         };
         _unitOfWork.Messages.Add(message);
         _unitOfWork.Complete();
 
-        _hubContext.Clients.User(request.ReceiverAccountID.ToString()).SendAsync("ReceiveMessage", message);
+        _hubContext.Clients.Client(BaseHub.ConnectionIds[request.ReceiverAccountId])
+            .SendAsync(HubHandlers.Messaging.SEND_MESSAGE, new SendMessageBroadcastData()
+            {
+                NewMessage = message,
+            });
 
         return new RequestResult(new Success());
     }
 
     public ParamRequestResult<GetMessagesBetweenTwoUsersResponse> GetMessagesBetweenTwoUsers(GetMessagesBetweenTwoUsersRequest request)
     {
-        var messages = _unitOfWork.Messages.GetMessagesBetweenTwoUsers(request.SenderAccountID, request.ReceiverAccountID);
+        var messages = _unitOfWork.Messages.GetMessagesBetweenTwoUsers(request.UserAccountId, request.OtherUserAccountId);
         var response = new GetMessagesBetweenTwoUsersResponse()
         {
             Messages = messages.ToList(),
@@ -50,23 +56,23 @@ public class MessagingService : IMessagingService
         if (!_unitOfWork.Accounts.DoesIdExist(request.UserAccountId))
             return new ParamRequestResult<GetPreviewMessagesResponse>(new UsernameNotExist());
 
-        var messages = _unitOfWork.Messages.GetPreviewMessages(request.UserAccountId);
-        var dictionary = new Dictionary<UserProfile, Message>();
+        var fullNames = new List<string>();
+        var messages = _unitOfWork.Messages.GetPreviewMessages(request.UserAccountId).ToList();
         foreach (var message in messages)
         {
-            if (message.SenderAccountId == request.UserAccountId)
-            {
-                dictionary.Add(message.ReceiverAccount.UserProfile, message);
-            }
-            else
-            {
-                dictionary.Add(message.SenderAccount.UserProfile, message);
-            }
+            var account = _unitOfWork.Accounts.GetById(message.SenderAccountId == request.UserAccountId
+                ? message.ReceiverAccountId
+                : message.SenderAccountId);
+            var userProfile = _unitOfWork.UserProfiles.GetById(account.UserProfileID);
+            var fullName = userProfile.FirstName + " " + userProfile.LastName;
+
+            fullNames.Add(fullName);
         }
 
         var response = new GetPreviewMessagesResponse()
         {
-            PreviewMessagesByUserProfile = dictionary,
+            FullNames = fullNames,
+            Messages = messages,
         };
 
         return new ParamRequestResult<GetPreviewMessagesResponse>(new Success(), response);

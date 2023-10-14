@@ -11,5 +11,6 @@
     public class LoginResponse
     {
         public string JwtToken { get; set; }
+        public int UserId { get; set; }
     }
 }
