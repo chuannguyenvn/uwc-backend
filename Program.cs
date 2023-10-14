@@ -1,6 +1,5 @@
 using System.Text;
 using Commons.Models;
-using Helpers;
 using Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -79,7 +78,6 @@ var app = builder.Build();
 
 #region SignalR
 
-app.MapHub<MessagingHub>("/messaging");
 app.MapHub<MessagingHub>("/messaging");
 
 #endregion

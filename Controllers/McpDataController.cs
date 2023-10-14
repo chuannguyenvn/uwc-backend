@@ -2,9 +2,11 @@
 using Services.Mcps;
 using Commons.Communications.Mcps;
 using Commons.Types;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Controllers;
 
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class McpDataController : Controller

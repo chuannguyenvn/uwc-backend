@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Services.Vehicles;
 using Commons.Communications.Vehicles;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Controllers;
 
+[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class VehicleDataController : Controller

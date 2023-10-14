@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using Repositories.Managers;
+﻿using Repositories.Managers;
 using Commons.Communications.Messages;
 using Commons.Models;
 using Commons.RequestStatuses;
@@ -32,7 +31,7 @@ public class MessagingService : IMessagingService
         _unitOfWork.Complete();
 
         _hubContext.Clients.User(request.ReceiverAccountID.ToString()).SendAsync("ReceiveMessage", message);
-        
+
         return new RequestResult(new Success());
     }
 
@@ -71,11 +70,5 @@ public class MessagingService : IMessagingService
         };
 
         return new ParamRequestResult<GetPreviewMessagesResponse>(new Success(), response);
-    }
-
-    public void Ping(ClaimsPrincipal user)
-    {
-        _hubContext.Clients.User(user.FindFirstValue("id"));
-        Console.WriteLine("Fuck: " + user.FindFirstValue("id"));
     }
 }
