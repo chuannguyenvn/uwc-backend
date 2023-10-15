@@ -1,11 +1,11 @@
-﻿using Commons.Communications.Location;
+﻿using Commons.Communications.Map;
 using Commons.HubHandlers;
 using Commons.RequestStatuses;
 using Commons.Types;
 using Hubs;
 using Microsoft.AspNetCore.SignalR;
 
-namespace Services.Location;
+namespace Services.Map;
 
 public class LocationService : ILocationService, IAsyncDisposable
 {
@@ -20,9 +20,9 @@ public class LocationService : ILocationService, IAsyncDisposable
         _serviceProvider = serviceProvider;
     }
 
-    public RequestResult UpdateLocation(int accountId, LocationUpdateRequest request)
+    public RequestResult UpdateLocation(LocationUpdateRequest request)
     {
-        _locationByIds[accountId] = request.NewLocation;
+        _locationByIds[request.AccountId] = request.NewLocation;
         return new RequestResult(new Success());
     }
 
@@ -55,5 +55,10 @@ public class LocationService : ILocationService, IAsyncDisposable
         {
             LocationByIds = _locationByIds,
         });
+    }
+    
+    private async void MockDrivingBehavior()
+    {
+        
     }
 }

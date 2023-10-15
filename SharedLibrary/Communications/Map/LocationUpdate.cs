@@ -1,9 +1,10 @@
 ﻿using Commons.Types;
 
-namespace Commons.Communications.Location
+namespace Commons.Communications.Map
 {
     public class LocationUpdateRequest
     {
+        public int AccountId { get; set; }
         public Coordinate NewLocation { get; set; }
     }
 }

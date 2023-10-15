@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Repositories.Managers;
 using Services.Authentication;
-using Services.Location;
+using Services.Map;
 using Services.Mcps;
 using Services.Messaging;
 using Services.Vehicles;
@@ -80,6 +80,7 @@ builder.Services.AddSingleton<LocationService>();
 builder.Services.AddSingleton<ILocationService>(provider => provider.GetRequiredService<LocationService>());
 builder.Services.AddHostedService<LocationService>(provider => provider.GetRequiredService<LocationService>());
 
+builder.Services.AddScoped<IDirectionService, DirectionService>();
 
 builder.Services.AddScoped<IVehicleDataService, VehicleDataService>();
 

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Commons.Types;
 
-namespace Commons.Communications.Location
+namespace Commons.Communications.Map
 {
     public class LocationBroadcastData
     {

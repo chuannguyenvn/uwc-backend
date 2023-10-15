@@ -60,6 +60,11 @@ namespace Commons.Types
         {
             return "Lat: " + Latitude + ". Longitude: " + Longitude;
         }
+        
+        public string ToStringApi()
+        {
+            return Longitude + "," + Latitude;
+        }
     
         public double DistanceTo(Coordinate other)
         {

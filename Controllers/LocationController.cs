@@ -1,9 +1,9 @@
 ﻿using System.Security.Claims;
-using Commons.Communications.Location;
+using Commons.Communications.Map;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services;
-using Services.Location;
+using Services.Map;
 
 namespace Controllers;
 
@@ -23,6 +23,6 @@ public class LocationController : Controller
     [Route("location/update")]
     public RequestResult UpdateLocation(LocationUpdateRequest request)
     {
-        return _locationService.UpdateLocation(int.Parse(User.FindFirstValue("id")), request);
+        return _locationService.UpdateLocation(request);
     }
 }
