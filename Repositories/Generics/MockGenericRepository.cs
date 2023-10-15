@@ -1,4 +1,5 @@
-﻿using Repositories.Managers;
+﻿using Commons.Extensions;
+using Repositories.Managers;
 using Commons.Models;
 
 namespace Repositories.Generics;
@@ -43,9 +44,23 @@ public class MockGenericRepository<T> : IGenericRepository<T> where T : IndexedE
         return Context.Set<T>().ToList();
     }
 
+    public IEnumerable<T> GetRandom(int count = 1)
+    {
+        var entities = Context.Set<T>().ToList();
+        if (count > entities.Count) return entities;
+        return entities.GetRandom(count);
+    }
+
+    public IEnumerable<T> GetRandomWithCondition(Func<T, bool> condition, int count = 1)
+    {
+        var entities = Context.Set<T>().Where(condition).ToList();
+        if (count > entities.Count) return entities;
+        return entities.GetRandom(count);
+    }
+
     public T GetById(int id)
     {
-        return Context.Set<T>().Find(t=> t.Id == id);
+        return Context.Set<T>().Find(t => t.Id == id);
     }
 
     public void Remove(T entity)

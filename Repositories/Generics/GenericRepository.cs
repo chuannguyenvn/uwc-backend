@@ -1,4 +1,5 @@
-﻿using Repositories.Managers;
+﻿using Commons.Extensions;
+using Repositories.Managers;
 using Commons.Models;
 
 namespace Repositories.Generics;
@@ -11,12 +12,12 @@ public abstract class GenericRepository<T> : IGenericRepository<T> where T : Ind
     {
         Context = context;
     }
-    
+
     public void Add(T entity)
     {
         Context.Set<T>().Add(entity);
     }
-    
+
     public void AddRange(IEnumerable<T> entities)
     {
         Context.Set<T>().AddRange(entities);
@@ -26,7 +27,7 @@ public abstract class GenericRepository<T> : IGenericRepository<T> where T : Ind
     {
         return Context.Set<T>().Where(condition);
     }
-    
+
     public T GetUnique(Func<T, bool> condition)
     {
         var possibleEntities = Context.Set<T>().Where(condition);
@@ -40,17 +41,31 @@ public abstract class GenericRepository<T> : IGenericRepository<T> where T : Ind
     {
         return Context.Set<T>().ToList();
     }
-    
+
+    public IEnumerable<T> GetRandom(int count = 1)
+    {
+        var entities = Context.Set<T>().ToList();
+        if (count > entities.Count) return entities;
+        return entities.GetRandom(count);
+    }
+
+    public IEnumerable<T> GetRandomWithCondition(Func<T, bool> condition, int count = 1)
+    {
+        var entities = Context.Set<T>().Where(condition).ToList();
+        if (count > entities.Count) return entities;
+        return entities.GetRandom(count);
+    }
+
     public T GetById(int id)
     {
         return Context.Set<T>().Find(id);
     }
-    
+
     public void Remove(T entity)
     {
         Context.Set<T>().Remove(entity);
     }
-    
+
     public void RemoveRange(IEnumerable<T> entities)
     {
         Context.Set<T>().RemoveRange(entities);
