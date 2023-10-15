@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Repositories.Managers;
 using Services.Authentication;
+using Services.Location;
 using Services.Mcps;
 using Services.Messaging;
 using Services.Vehicles;
@@ -66,11 +67,20 @@ builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 #region Services
 
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+
 builder.Services.AddScoped<IMessagingService, MessagingService>();
+
 builder.Services.AddScoped<IMcpDataService, McpDataService>();
+
 builder.Services.AddSingleton<McpFillLevelService>();
 builder.Services.AddSingleton<IMcpFillLevelService>(provider => provider.GetRequiredService<McpFillLevelService>());
 builder.Services.AddHostedService<McpFillLevelService>(provider => provider.GetRequiredService<McpFillLevelService>());
+
+builder.Services.AddSingleton<LocationService>();
+builder.Services.AddSingleton<ILocationService>(provider => provider.GetRequiredService<LocationService>());
+builder.Services.AddHostedService<LocationService>(provider => provider.GetRequiredService<LocationService>());
+
+
 builder.Services.AddScoped<IVehicleDataService, VehicleDataService>();
 
 #endregion

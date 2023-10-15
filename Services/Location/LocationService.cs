@@ -2,8 +2,8 @@
 using Commons.HubHandlers;
 using Commons.RequestStatuses;
 using Commons.Types;
+using Hubs;
 using Microsoft.AspNetCore.SignalR;
-using Repositories.Managers;
 
 namespace Services.Location;
 
@@ -50,7 +50,7 @@ public class LocationService : ILocationService, IAsyncDisposable
     private void BroadcastLocation()
     {
         using var scope = _serviceProvider.CreateScope();
-        var hubContext = scope.ServiceProvider.GetRequiredService<IHubContext>();
+        var hubContext = scope.ServiceProvider.GetRequiredService<IHubContext<BaseHub>>();
         hubContext.Clients.All.SendAsync(HubHandlers.Location.BROADCAST_LOCATION, new LocationBroadcastData()
         {
             LocationByIds = _locationByIds,
