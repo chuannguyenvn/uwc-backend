@@ -9,6 +9,7 @@ using Repositories.Managers;
 using Services.Authentication;
 using Services.Mcps;
 using Services.Messaging;
+using Services.Tasks;
 using Services.Vehicles;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -72,6 +73,7 @@ builder.Services.AddSingleton<McpFillLevelService>();
 builder.Services.AddSingleton<IMcpFillLevelService>(provider => provider.GetRequiredService<McpFillLevelService>());
 builder.Services.AddHostedService<McpFillLevelService>(provider => provider.GetRequiredService<McpFillLevelService>());
 builder.Services.AddScoped<IVehicleDataService, VehicleDataService>();
+builder.Services.AddScoped<ITaskService, TaskService>();
 
 #endregion
 
