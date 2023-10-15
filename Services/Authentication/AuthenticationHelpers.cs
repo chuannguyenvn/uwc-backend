@@ -25,9 +25,9 @@ public static class AuthenticationHelpers
         return tokenHandler.WriteToken(token);
     }
 
-    private static ClaimsIdentity AssembleClaimsIdentity(Account user)
+    private static ClaimsIdentity AssembleClaimsIdentity(Account account)
     {
-        var subject = new ClaimsIdentity(new[] { new Claim("id", user.Id.ToString()) });
+        var subject = new ClaimsIdentity(new[] { new Claim("id", account.Id.ToString()) });
         return subject;
     }
 
