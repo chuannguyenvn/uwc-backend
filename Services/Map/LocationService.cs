@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Services.Map;
 
-public class LocationService : ILocationService, IAsyncDisposable
+public class LocationService : ILocationService
 {
     private readonly IServiceProvider _serviceProvider;
 
@@ -31,11 +31,6 @@ public class LocationService : ILocationService, IAsyncDisposable
     public void Dispose()
     {
         _locationBroadcastTimer.Dispose();
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await _locationBroadcastTimer.DisposeAsync();
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
