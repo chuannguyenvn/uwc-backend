@@ -6,8 +6,14 @@ namespace Commons.Types
 {
     public class Coordinate
     {
-        public double Latitude;
-        public double Longitude;
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+
+        public Coordinate()
+        {
+            Latitude = 0.0;
+            Longitude = 0.0;
+        }
 
         public Coordinate(double latitude, double longitude)
         {
@@ -100,7 +106,7 @@ namespace Commons.Types
 
             return coordinates.Last();
         }
-        
+
         public static List<Coordinate> GetTraveledCoordinates(List<Coordinate> coordinates, double targetDistance)
         {
             if (coordinates == null || coordinates.Count < 2 || targetDistance <= 0.0)

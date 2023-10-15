@@ -43,5 +43,8 @@ public class UwcDbContext : DbContext
             .WithMany()
             .HasForeignKey(taskData => taskData.AssigneeAccountId)
             .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<Coordinate>()
+            .HasNoKey();
     }
 }
