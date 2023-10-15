@@ -15,7 +15,7 @@ public class LocationService : ILocationService
     private readonly Dictionary<int, Coordinate> _locationsById = new();
 
     private const int REFRESH_INTERVAL = 5;
-    private Timer _locationBroadcastTimer;
+    private Timer? _locationBroadcastTimer;
 
     public LocationService(IServiceProvider serviceProvider)
     {
@@ -30,7 +30,7 @@ public class LocationService : ILocationService
 
     public void Dispose()
     {
-        _locationBroadcastTimer.Dispose();
+        _locationBroadcastTimer?.Dispose();
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
