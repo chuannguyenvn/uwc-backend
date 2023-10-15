@@ -23,8 +23,8 @@ public class DatabaseSeeder
     public void ResetDatabase()
     {
         _uwcDbContext.Accounts.ExecuteDelete();
-        _uwcDbContext.McpData.ExecuteDelete();
-        _uwcDbContext.VehicleData.ExecuteDelete();
+        _uwcDbContext.McpDatas.ExecuteDelete();
+        _uwcDbContext.VehicleDatas.ExecuteDelete();
         _uwcDbContext.Messages.ExecuteDelete();
     }
 
@@ -161,7 +161,7 @@ public class DatabaseSeeder
 
         foreach (var mcpData in mcpDataList)
         {
-            _uwcDbContext.McpData.Add(mcpData);
+            _uwcDbContext.McpDatas.Add(mcpData);
         }
 
         _uwcDbContext.SaveChanges();
@@ -192,7 +192,7 @@ public class DatabaseSeeder
             };
 
             _allVehicles.Add(vehicle);
-            _uwcDbContext.VehicleData.Add(vehicle);
+            _uwcDbContext.VehicleDatas.Add(vehicle);
         }
 
         _uwcDbContext.SaveChanges();
