@@ -15,7 +15,5 @@ namespace Commons.Models
 
         public DateTime Timestamp { get; set; }
         public bool IsCompleted { get; set; }
-
-        public Route Route { get; set; }
     }
 }
