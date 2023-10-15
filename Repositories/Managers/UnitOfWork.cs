@@ -1,6 +1,7 @@
 ﻿using Repositories.Implementations.Accounts;
 using Repositories.Implementations.Mcps;
 using Repositories.Implementations.Messages;
+using Repositories.Implementations.Tasks;
 using Repositories.Implementations.Vehicles;
 
 namespace Repositories.Managers;
@@ -15,14 +16,16 @@ public class UnitOfWork : IUnitOfWork, IDisposable
 
         Accounts = new AccountRepository(_uwcDbContext);
         McpData = new McpDataRepository(_uwcDbContext);
-        VehicleData = new VehicleDataRepository(_uwcDbContext);
         Messages = new MessageRepository(_uwcDbContext);
+        TaskDatas = new TaskRepository(_uwcDbContext);
+        VehicleData = new VehicleDataRepository(_uwcDbContext);
     }
 
     public IAccountRepository Accounts { get; }
     public IMcpDataRepository McpData { get; }
-    public IVehicleDataRepository VehicleData { get; }
+    public ITaskRepository TaskDatas { get; }
     public IMessageRepository Messages { get; }
+    public IVehicleDataRepository VehicleData { get; }
 
     public void Dispose()
     {
