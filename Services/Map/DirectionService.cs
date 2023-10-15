@@ -16,12 +16,12 @@ public class DirectionService : IDirectionService
         return new ParamRequestResult<GetDirectionResponse>(new Success(), new GetDirectionResponse { Direction = direction });
     }
     
-    private Direction RequestMapboxDirection(Coordinate fromLocation, List<Coordinate> toLocations)
+    private RawMapboxDirectionResponse RequestMapboxDirection(Coordinate fromLocation, List<Coordinate> toLocations)
     {
         var client = new HttpClient();
         Console.WriteLine(ConstructMapboxDirectionRequest(fromLocation, toLocations));
         var httpResponse = client.GetStringAsync(ConstructMapboxDirectionRequest(fromLocation, toLocations)).Result;
-        var mapboxDirectionResponse = JsonConvert.DeserializeObject<Direction>(httpResponse);
+        var mapboxDirectionResponse = JsonConvert.DeserializeObject<RawMapboxDirectionResponse>(httpResponse);
         return mapboxDirectionResponse;
     }
 

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Commons.Types;
 
 namespace Commons.Models
 {
@@ -15,5 +17,7 @@ namespace Commons.Models
 
         public DateTime Timestamp { get; set; }
         public bool IsCompleted { get; set; }
+        
+        public List<Coordinate> Route { get; set; }
     }
 }

@@ -10,7 +10,9 @@ namespace Services.Map;
 public class LocationService : ILocationService, IAsyncDisposable
 {
     private readonly IServiceProvider _serviceProvider;
-    private readonly Dictionary<int, Coordinate> _locationByIds = new();
+
+    public Dictionary<int, Coordinate> LocationsById => _locationsById;
+    private readonly Dictionary<int, Coordinate> _locationsById = new();
 
     private const int REFRESH_INTERVAL = 5;
     private Timer _locationBroadcastTimer;
@@ -22,7 +24,7 @@ public class LocationService : ILocationService, IAsyncDisposable
 
     public RequestResult UpdateLocation(LocationUpdateRequest request)
     {
-        _locationByIds[request.AccountId] = request.NewLocation;
+        _locationsById[request.AccountId] = request.NewLocation;
         return new RequestResult(new Success());
     }
 
@@ -53,12 +55,7 @@ public class LocationService : ILocationService, IAsyncDisposable
         var hubContext = scope.ServiceProvider.GetRequiredService<IHubContext<BaseHub>>();
         hubContext.Clients.All.SendAsync(HubHandlers.Location.BROADCAST_LOCATION, new LocationBroadcastData()
         {
-            LocationByIds = _locationByIds,
+            LocationByIds = _locationsById,
         });
-    }
-    
-    private async void MockDrivingBehavior()
-    {
-        
     }
 }

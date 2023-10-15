@@ -83,6 +83,8 @@ builder.Services.AddHostedService<LocationService>(provider => provider.GetRequi
 
 builder.Services.AddScoped<IDirectionService, DirectionService>();
 
+builder.Services.AddHostedService<MockDrivingBehaviorService>();
+
 builder.Services.AddScoped<IVehicleDataService, VehicleDataService>();
 builder.Services.AddScoped<ITaskService, TaskService>();
 

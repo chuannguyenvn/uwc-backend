@@ -7,10 +7,13 @@ namespace Services.Mcps;
 public class McpFillLevelService : IMcpFillLevelService
 {
     private readonly IServiceProvider _serviceProvider;
+
+    public Dictionary<int, float> FillLevelsById => _fillLevelsById;
     private readonly Dictionary<int, float> _fillLevelsById = new();
+
     private Timer? _databasePersistTimer;
     private Timer? _fillTimer;
-
+    
     public McpFillLevelService(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
@@ -22,6 +25,12 @@ public class McpFillLevelService : IMcpFillLevelService
         {
             FillLevelsById = new Dictionary<int, float>(_fillLevelsById),
         });
+    }
+
+    public RequestResult EmptyMcp(int mcpId)
+    {
+        _fillLevelsById[mcpId] = 0f;
+        return new RequestResult(new Success());
     }
 
     public Task StartAsync(CancellationToken cancellationToken)

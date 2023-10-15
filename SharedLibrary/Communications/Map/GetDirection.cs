@@ -12,6 +12,6 @@ namespace Commons.Communications.Map
 
     public class GetDirectionResponse
     {
-        public Direction Direction { get; set; }
+        public RawMapboxDirectionResponse Direction { get; set; }
     }
 }
