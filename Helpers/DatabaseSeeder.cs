@@ -10,7 +10,6 @@ public class DatabaseSeeder
 {
     private readonly UwcDbContext _uwcDbContext;
 
-    private readonly List<UserProfile> _allProfiles = new();
     private readonly List<Account> _allAccounts = new();
     private readonly List<VehicleData> _allVehicles = new();
 
@@ -31,7 +30,6 @@ public class DatabaseSeeder
         SeedSupervisorProfiles();
         SeedDriverProfiles();
         SeedCleanerProfiles();
-        SeedAccounts();
         SeedMcpData();
         SeedVehicles();
         SeedMessages();
@@ -51,8 +49,10 @@ public class DatabaseSeeder
             var gender = i < 5 ? Gender.Male : Gender.Female;
             var dateOfBirth = DatabaseSeederHelper.GenerateRandomDate(1960, 2000);
 
-            var supervisorProfile = new UserProfile()
+            var account = new Account()
             {
+                Username = firstName.ToLower() + "_" + lastName.ToLower(),
+                PasswordHash = "password",
                 FirstName = firstName,
                 LastName = lastName,
                 Gender = gender,
@@ -60,9 +60,9 @@ public class DatabaseSeeder
                 UserRole = UserRole.Supervisor,
                 Address = "",
             };
+            account.GenerateSaltAndHash();
 
-            _uwcDbContext.UserProfiles.Add(supervisorProfile);
-            _allProfiles.Add(supervisorProfile);
+            _uwcDbContext.Accounts.Add(account);
         }
 
         _uwcDbContext.SaveChanges();
@@ -81,8 +81,10 @@ public class DatabaseSeeder
             var gender = i < 10 ? Gender.Male : Gender.Female;
             var dateOfBirth = DatabaseSeederHelper.GenerateRandomDate(1960, 2000);
 
-            var driverProfile = new UserProfile()
+            var account = new Account()
             {
+                Username = firstName.ToLower() + "_" + lastName.ToLower(),
+                PasswordHash = "password",
                 FirstName = firstName,
                 LastName = lastName,
                 Gender = gender,
@@ -90,9 +92,9 @@ public class DatabaseSeeder
                 UserRole = UserRole.Driver,
                 Address = "",
             };
+            account.GenerateSaltAndHash();
 
-            _uwcDbContext.UserProfiles.Add(driverProfile);
-            _allProfiles.Add(driverProfile);
+            _uwcDbContext.Accounts.Add(account);
         }
 
         _uwcDbContext.SaveChanges();
@@ -111,8 +113,10 @@ public class DatabaseSeeder
             var gender = i < 10 ? Gender.Male : Gender.Female;
             var dateOfBirth = DatabaseSeederHelper.GenerateRandomDate(1960, 2000);
 
-            var cleanerProfile = new UserProfile()
+            var account = new Account()
             {
+                Username = firstName.ToLower() + "_" + lastName.ToLower(),
+                PasswordHash = "password",
                 FirstName = firstName,
                 LastName = lastName,
                 Gender = gender,
@@ -120,30 +124,8 @@ public class DatabaseSeeder
                 UserRole = UserRole.Cleaner,
                 Address = "",
             };
-
-            _uwcDbContext.UserProfiles.Add(cleanerProfile);
-            _allProfiles.Add(cleanerProfile);
-        }
-
-        _uwcDbContext.SaveChanges();
-    }
-
-    public void SeedAccounts()
-    {
-        foreach (var userProfile in _allProfiles)
-        {
-            var account = new Account
-            {
-                Username = userProfile.FirstName.ToLower() + "_" + userProfile.LastName.ToLower(),
-                PasswordHash = "password",
-                UserProfileID = userProfile.Id,
-                UserProfile = userProfile,
-            };
             account.GenerateSaltAndHash();
 
-            userProfile.Account = account;
-
-            _allAccounts.Add(account);
             _uwcDbContext.Accounts.Add(account);
         }
 

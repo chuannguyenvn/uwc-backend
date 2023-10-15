@@ -26,7 +26,7 @@ public class AuthenticationService : IAuthenticationService
         if (account.PasswordHash != AuthenticationHelpers.ComputeHash(request.Password, account.PasswordSalt))
             return new ParamRequestResult<LoginResponse>(new IncorrectPassword());
 
-        var userRole = _unitOfWork.UserProfiles.GetById(account.UserProfileID).UserRole;
+        var userRole = account.UserRole;
         if (request.IsFromDesktop && userRole != UserRole.Supervisor)
             return new ParamRequestResult<LoginResponse>(new InvalidRoleWhenLogin());
         if (!request.IsFromDesktop && userRole == UserRole.Supervisor)
@@ -35,7 +35,7 @@ public class AuthenticationService : IAuthenticationService
         var loginResponse = new LoginResponse
         {
             JwtToken = AuthenticationHelpers.GenerateJwtToken(account, _settings.BearerKey),
-            UserId = account.UserProfileID,
+            AccountId = account.Id,
         };
 
         return new ParamRequestResult<LoginResponse>(new Success(), loginResponse);
@@ -57,7 +57,7 @@ public class AuthenticationService : IAuthenticationService
         var registerResponse = new RegisterResponse
         {
             JwtToken = AuthenticationHelpers.GenerateJwtToken(account, _settings.BearerKey),
-            UserId = account.UserProfileID,
+            AccountId = account.Id,
         };
 
         return new ParamRequestResult<RegisterResponse>(new Success(), registerResponse);
