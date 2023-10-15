@@ -101,8 +101,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-// app.ResetData();
+app.ResetData();
 
-// app.SeedData();
+app.SeedData();
 
 app.Run();

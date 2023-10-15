@@ -2,6 +2,7 @@ using Commons.Categories;
 using Repositories.Managers;
 using Commons.Models;
 using Commons.Types;
+using Microsoft.EntityFrameworkCore;
 using Services.Authentication;
 
 namespace Helpers;
@@ -21,8 +22,10 @@ public class DatabaseSeeder
 
     public void ResetDatabase()
     {
-        _uwcDbContext.Database.EnsureDeleted();
-        _uwcDbContext.Database.EnsureCreated();
+        _uwcDbContext.Accounts.ExecuteDelete();
+        _uwcDbContext.McpData.ExecuteDelete();
+        _uwcDbContext.VehicleData.ExecuteDelete();
+        _uwcDbContext.Messages.ExecuteDelete();
     }
 
     public void SeedDatabase()
@@ -63,6 +66,7 @@ public class DatabaseSeeder
             account.GenerateSaltAndHash();
 
             _uwcDbContext.Accounts.Add(account);
+            _allAccounts.Add(account);
         }
 
         _uwcDbContext.SaveChanges();
@@ -95,6 +99,7 @@ public class DatabaseSeeder
             account.GenerateSaltAndHash();
 
             _uwcDbContext.Accounts.Add(account);
+            _allAccounts.Add(account);
         }
 
         _uwcDbContext.SaveChanges();
@@ -127,6 +132,7 @@ public class DatabaseSeeder
             account.GenerateSaltAndHash();
 
             _uwcDbContext.Accounts.Add(account);
+            _allAccounts.Add(account);
         }
 
         _uwcDbContext.SaveChanges();
