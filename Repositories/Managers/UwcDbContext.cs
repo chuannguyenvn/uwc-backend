@@ -13,7 +13,6 @@ public class UwcDbContext : DbContext
     public DbSet<McpData> McpData { get; set; }
     public DbSet<VehicleData> VehicleData { get; set; }
     public DbSet<Message> Messages { get; set; }
-    public DbSet<UserProfile> UserProfiles { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
