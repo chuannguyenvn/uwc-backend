@@ -17,10 +17,11 @@ public class MockDrivingBehaviorService : IHostedService
         _serviceProvider = serviceProvider;
     }
 
-    public async Task StartAsync(CancellationToken cancellationToken)
+    public Task StartAsync(CancellationToken cancellationToken)
     {
         PickRandomDrivers(10);
-        await RandomizeDrivingBehavior();
+        RandomizeDrivingBehavior();
+        return Task.CompletedTask;
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
@@ -40,14 +41,13 @@ public class MockDrivingBehaviorService : IHostedService
         }
     }
 
-    private async Task RandomizeDrivingBehavior()
+    private async void RandomizeDrivingBehavior()
     {
         using var scope = _serviceProvider.CreateScope();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
         var locationService = scope.ServiceProvider.GetRequiredService<ILocationService>();
         var directionService = scope.ServiceProvider.GetRequiredService<IDirectionService>();
         var mcpFillLevelService = scope.ServiceProvider.GetRequiredService<IMcpFillLevelService>();
-        var random = new Random();
 
         while (true)
         {
@@ -60,7 +60,7 @@ public class MockDrivingBehaviorService : IHostedService
                     var newDirection = directionService.GetDirection(new GetDirectionRequest()
                     {
                         AccountId = id,
-                        CurrentLocation = locationService.LocationsById[id],
+                        CurrentLocation = locationService.LocationsByAccountId[id],
                         Destinations = waypoints,
                     }).Data?.Direction;
 
@@ -71,16 +71,18 @@ public class MockDrivingBehaviorService : IHostedService
                     }
 
                     _ongoingRouteByDriverAccountIds[id] = new MockCurrentRoute(
-                        locationService.LocationsById[id],
+                        locationService.LocationsByAccountId[id],
                         randomMcps.Select(mcp => mcp.Id).ToList(),
                         newDirection,
                         mcpId => mcpFillLevelService.EmptyMcp(mcpId));
                 }
                 else
                 {
-                    locationService.LocationsById[id] = _ongoingRouteByDriverAccountIds[id].TravelBy(0.001);
+                    locationService.LocationsByAccountId[id] = _ongoingRouteByDriverAccountIds[id].TravelBy(0.001);
                 }
             }
+
+            await Task.Delay(10000);
         }
     }
 }

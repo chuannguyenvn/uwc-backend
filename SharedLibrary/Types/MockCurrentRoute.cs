@@ -29,9 +29,9 @@ namespace Commons.Types
             var mcpCoordinates = direction.Waypoints.Select(waypoint => new Coordinate(waypoint.Location)).ToList();
             var routeCoordinates = direction.Routes.First().Geometry.Coordinates.Select(coordinate => new Coordinate(coordinate)).ToList();
 
-            while (mcpCoordinates.Count > 1)
+            while (mcpCoordinates.Count > 2)
             {
-                if (mcpCoordinates[0].Equals(routeCoordinates[0]))
+                if (mcpCoordinates[0].IsApproximatelyEqualTo(routeCoordinates[0]))
                 {
                     IsMcpFlags.Add(assignedMcpIds[0]);
                     mcpCoordinates.RemoveAt(0);
@@ -64,7 +64,7 @@ namespace Commons.Types
                 Waypoints.RemoveAt(i);
                 IsMcpFlags.RemoveAt(i);
             }
-            
+
             return newCurrentCoordinate;
         }
     }

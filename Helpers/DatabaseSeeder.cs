@@ -26,6 +26,7 @@ public class DatabaseSeeder
         _uwcDbContext.McpDatas.ExecuteDelete();
         _uwcDbContext.VehicleDatas.ExecuteDelete();
         _uwcDbContext.Messages.ExecuteDelete();
+        _uwcDbContext.TaskDatas.ExecuteDelete();
     }
 
     public void SeedDatabase()

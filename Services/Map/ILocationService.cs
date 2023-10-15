@@ -5,6 +5,6 @@ namespace Services.Map;
 
 public interface ILocationService : IHostedService, IDisposable
 {
-    public Dictionary<int, Coordinate> LocationsById { get; }
+    public Dictionary<int, Coordinate> LocationsByAccountId { get; }
     public RequestResult UpdateLocation(LocationUpdateRequest request);
 }
