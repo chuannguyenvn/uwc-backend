@@ -10,6 +10,7 @@ using Services.Authentication;
 using Services.Map;
 using Services.Mcps;
 using Services.Messaging;
+using Services.Tasks;
 using Services.Vehicles;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -83,6 +84,7 @@ builder.Services.AddHostedService<LocationService>(provider => provider.GetRequi
 builder.Services.AddScoped<IDirectionService, DirectionService>();
 
 builder.Services.AddScoped<IVehicleDataService, VehicleDataService>();
+builder.Services.AddScoped<ITaskService, TaskService>();
 
 #endregion
 
