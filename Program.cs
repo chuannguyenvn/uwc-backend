@@ -51,6 +51,22 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
+var corsPolicy = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: corsPolicy,
+        policyBuilder =>
+        {
+            policyBuilder.WithOrigins("http://localhost:47669/",
+                    "https://localhost:44394/",
+                    "https://urban-waste-collection.azurewebsites.net")
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowAnyOrigin();
+        });
+});
+
 #endregion
 
 builder.Services.AddControllers();
@@ -113,6 +129,8 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseCors(corsPolicy);
 
 app.MapControllers();
 
