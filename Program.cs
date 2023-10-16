@@ -60,10 +60,10 @@ builder.Services.AddCors(options =>
         {
             policyBuilder.WithOrigins("http://localhost:47669/",
                     "https://localhost:44394/",
-                    "https://uwc-frontend.azurewebsites.net")
+                    "https://urban-waste-collection.azurewebsites.net")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
-                .AllowCredentials();
+                .AllowAnyOrigin();
         });
 });
 
@@ -130,9 +130,9 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.MapControllers();
-
 app.UseCors(corsPolicy);
+
+app.MapControllers();
 
 // app.ResetData();
 //
