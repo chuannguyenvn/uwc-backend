@@ -61,7 +61,7 @@ public class LocationService : ILocationService
     {
         using var scope = _serviceProvider.CreateScope();
         var hubContext = scope.ServiceProvider.GetRequiredService<IHubContext<BaseHub>>();
-        hubContext.Clients.All.SendAsync(HubHandlers.WorkerLocation.BROADCAST_LOCATION, new LocationBroadcastData()
+        hubContext.Clients.All.SendAsync(HubHandlers.WorkerLocation.BROADCAST_LOCATION, new WorkerLocationBroadcastData()
         {
             LocationByIds = _locationsById,
         });

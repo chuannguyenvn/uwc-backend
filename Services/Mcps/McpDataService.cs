@@ -1,18 +1,23 @@
 ﻿using Repositories.Managers;
 using Commons.Communications.Mcps;
+using Commons.HubHandlers;
 using Commons.Models;
 using Commons.RequestStatuses;
 using Commons.Types;
+using Hubs;
+using Microsoft.AspNetCore.SignalR;
 
 namespace Services.Mcps;
 
 public class McpDataService : IMcpDataService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IHubContext<BaseHub> _hubContext;
 
-    public McpDataService(IUnitOfWork unitOfWork)
+    public McpDataService(IUnitOfWork unitOfWork, IHubContext<BaseHub> hubContext)
     {
         _unitOfWork = unitOfWork;
+        _hubContext = hubContext;
     }
 
     public RequestResult AddNewMcp(AddNewMcpRequest request)
@@ -29,6 +34,8 @@ public class McpDataService : IMcpDataService
         _unitOfWork.McpData.Add(mcpData);
         _unitOfWork.Complete();
 
+        _hubContext.Clients.All.SendAsync(HubHandlers.McpLocation.BROADCAST_LOCATION, mcpData);
+
         return new RequestResult(new Success());
     }
 
@@ -43,6 +50,8 @@ public class McpDataService : IMcpDataService
         if (request.NewCapacity != null) mcpData.Capacity = request.NewCapacity.Value;
         _unitOfWork.Complete();
 
+        _hubContext.Clients.All.SendAsync(HubHandlers.McpLocation.BROADCAST_LOCATION, mcpData);
+
         return new RequestResult(new Success());
     }
 
@@ -53,6 +62,8 @@ public class McpDataService : IMcpDataService
         var mcpData = _unitOfWork.McpData.GetById(request.McpId);
         _unitOfWork.McpData.Remove(mcpData);
         _unitOfWork.Complete();
+
+        _hubContext.Clients.All.SendAsync(HubHandlers.McpLocation.BROADCAST_LOCATION, mcpData);
 
         return new RequestResult(new Success());
     }
