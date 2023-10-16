@@ -19,7 +19,7 @@ public class MockDrivingBehaviorService : IHostedService
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        PickRandomDrivers(10);
+        PickRandomDrivers(1);
         RandomizeDrivingBehavior();
         return Task.CompletedTask;
     }
@@ -51,6 +51,7 @@ public class MockDrivingBehaviorService : IHostedService
 
         while (true)
         {
+            bool first = true;
             foreach (var (id, direction) in _ongoingRouteByDriverAccountIds.ToList())
             {
                 if (direction.IsCompleted)
@@ -80,9 +81,15 @@ public class MockDrivingBehaviorService : IHostedService
                 {
                     locationService.LocationsByAccountId[id] = _ongoingRouteByDriverAccountIds[id].TravelBy(0.001);
                 }
+                
+                if (first)
+                {
+                    Console.WriteLine($"Driver {id} is at {_ongoingRouteByDriverAccountIds[id].CurrentCoordinate}");
+                    first = false;
+                }
             }
 
-            await Task.Delay(10000);
+            await Task.Delay(1000);
         }
     }
 }

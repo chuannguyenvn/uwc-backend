@@ -15,7 +15,7 @@ public class LocationService : ILocationService
     public Dictionary<int, Coordinate> LocationsByAccountId => _locationsById;
     private readonly Dictionary<int, Coordinate> _locationsById = new();
 
-    private const int REFRESH_INTERVAL = 5;
+    private const int REFRESH_INTERVAL = 1000;
     private Timer? _locationBroadcastTimer;
 
     public LocationService(IServiceProvider serviceProvider)

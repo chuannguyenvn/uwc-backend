@@ -74,7 +74,7 @@ namespace Commons.Types
 
         public bool IsApproximatelyEqualTo(Coordinate other)
         {
-            return Math.Abs(Latitude - other.Latitude) < 0.0001 && Math.Abs(Longitude - other.Longitude) < 0.0001;
+            return Math.Abs(Latitude - other.Latitude) < 0.000001 && Math.Abs(Longitude - other.Longitude) < 0.000001;
         }
 
         public static Coordinate FindDestinationCoordinate(List<Coordinate> coordinates, double targetDistance)
@@ -114,7 +114,7 @@ namespace Commons.Types
                 throw new ArgumentException("Invalid input parameters.");
             }
 
-            List<Coordinate> traveledCoordinates = new List<Coordinate>();
+            List<Coordinate> traveledCoordinates = new List<Coordinate>() { coordinates[0] };
             double totalDistance = 0.0;
 
             for (int i = 0; i < coordinates.Count - 1; i++)

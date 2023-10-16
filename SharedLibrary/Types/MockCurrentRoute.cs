@@ -6,7 +6,6 @@ namespace Commons.Types
 {
     public class MockCurrentRoute
     {
-        private readonly Coordinate _currentCoordinate;
         private readonly Action<int> _mcpPassedCallback;
         public Coordinate CurrentCoordinate { get; private set; }
         public List<Coordinate> Waypoints { get; private set; }
@@ -23,7 +22,7 @@ namespace Commons.Types
         public MockCurrentRoute(Coordinate currentCoordinate, List<int> assignedMcpIds, RawMapboxDirectionResponse direction,
             Action<int> mcpPassedCallback) : this()
         {
-            _currentCoordinate = currentCoordinate;
+            CurrentCoordinate = currentCoordinate;
             _mcpPassedCallback = mcpPassedCallback;
 
             var mcpCoordinates = direction.Waypoints.Select(waypoint => new Coordinate(waypoint.Location)).ToList();
@@ -52,20 +51,33 @@ namespace Commons.Types
 
         public Coordinate TravelBy(double distance)
         {
-            var waypointsWithCurrentCoordinate = Waypoints.Prepend(_currentCoordinate).ToList();
+            var waypointsWithCurrentCoordinate = Waypoints.Prepend(CurrentCoordinate).ToList();
             var newCurrentCoordinate = Coordinate.FindDestinationCoordinate(waypointsWithCurrentCoordinate, distance);
             var passedCoordinates = Coordinate.GetTraveledCoordinates(waypointsWithCurrentCoordinate, distance).ToList();
 
             CurrentCoordinate = newCurrentCoordinate;
+
             for (var i = 0; i < passedCoordinates.Count; i++)
             {
-                if (IsMcpFlags[i] != -1) _mcpPassedCallback?.Invoke(IsMcpFlags[i]);
+                if (i == 0) continue;
 
-                Waypoints.RemoveAt(i);
-                IsMcpFlags.RemoveAt(i);
+                if (IsMcpFlags.Count == 0)
+                {
+                    Waypoints.Clear();
+                    break;
+                }
+
+                if (IsMcpFlags[i - 1] != -1)
+                {
+                    Console.WriteLine($"MCP {IsMcpFlags[i - 1]} passed");
+                    _mcpPassedCallback?.Invoke(IsMcpFlags[i - 1]);
+                }
+
+                Waypoints.RemoveAt(i - 1);
+                IsMcpFlags.RemoveAt(i - 1);
             }
 
-            return newCurrentCoordinate;
+            return CurrentCoordinate;
         }
     }
 }
