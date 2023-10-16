@@ -4,7 +4,7 @@ namespace Commons.HubHandlers
     {
         public static class Messaging
         {
-            public const string SEND_MESSAGE = "SendMessage";
+            public const string SEND_MESSAGE = "Messaging.SendMessage";
         }
     }
 }
