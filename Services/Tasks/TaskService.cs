@@ -21,7 +21,7 @@ public class TaskService : ITaskService
             AssignerAccountId = request.AssignerAccountId,
             AssigneeAccountId = request.AssigneeAccountId,
             McpDataId = request.McpDataId,
-            Timestamp = DateTime.Now,
+            AssignedTimestamp = DateTime.Now,
             IsCompleted = false
         };
         _unitOfWork.TaskDatas.Add(taskData);
@@ -36,6 +36,7 @@ public class TaskService : ITaskService
 
         var taskData = _unitOfWork.TaskDatas.GetById(request.TaskId);
         taskData.IsCompleted = true;
+        taskData.CompletedTimestamp = DateTime.Now;
         _unitOfWork.Complete();
 
         return new RequestResult(new Success());
