@@ -123,15 +123,7 @@ namespace Commons.Types
                 Coordinate end = coordinates[i + 1];
                 double segmentDistance = start.DistanceTo(end);
 
-                if (totalDistance + segmentDistance >= targetDistance)
-                {
-                    double remainingDistance = targetDistance - totalDistance;
-                    double ratio = remainingDistance / segmentDistance;
-                    double interpolatedLat = start.Latitude + (end.Latitude - start.Latitude) * ratio;
-                    double interpolatedLon = start.Longitude + (end.Longitude - start.Longitude) * ratio;
-                    traveledCoordinates.Add(new Coordinate(interpolatedLat, interpolatedLon));
-                    return traveledCoordinates;
-                }
+                if (totalDistance + segmentDistance >= targetDistance) return traveledCoordinates;
 
                 totalDistance += segmentDistance;
                 traveledCoordinates.Add(start);

@@ -79,7 +79,7 @@ public class MockDrivingBehaviorService : IHostedService
                 }
                 else
                 {
-                    locationService.LocationsByAccountId[id] = _ongoingRouteByDriverAccountIds[id].TravelBy(0.001);
+                    locationService.LocationsByAccountId[id] = _ongoingRouteByDriverAccountIds[id].TravelBy(0.0001);
                 }
                 
                 if (first)

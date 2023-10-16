@@ -56,7 +56,7 @@ namespace Commons.Types
             var passedCoordinates = Coordinate.GetTraveledCoordinates(waypointsWithCurrentCoordinate, distance).ToList();
 
             CurrentCoordinate = newCurrentCoordinate;
-
+            Console.WriteLine(passedCoordinates.Count);
             for (var i = 0; i < passedCoordinates.Count; i++)
             {
                 if (i == 0) continue;
