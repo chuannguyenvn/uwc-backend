@@ -51,7 +51,6 @@ public class MockDrivingBehaviorService : IHostedService
 
         while (true)
         {
-            bool first = true;
             foreach (var (id, direction) in _ongoingRouteByDriverAccountIds.ToList())
             {
                 if (direction.IsCompleted)
@@ -80,12 +79,6 @@ public class MockDrivingBehaviorService : IHostedService
                 else
                 {
                     locationService.LocationsByAccountId[id] = _ongoingRouteByDriverAccountIds[id].TravelBy(0.0001);
-                }
-                
-                if (first)
-                {
-                    Console.WriteLine($"Driver {id} is at {_ongoingRouteByDriverAccountIds[id].CurrentCoordinate}");
-                    first = false;
                 }
             }
 
