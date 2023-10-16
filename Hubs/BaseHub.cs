@@ -8,12 +8,15 @@ namespace Hubs;
 public class BaseHub : Hub
 {
     public static Dictionary<int, string> ConnectionIds = new();
+    public static event Action<int> AccountIdConnected;
+    public static event Action<int> AccountIdDisconnected;
 
     public override Task OnConnectedAsync()
     {
         var userId = int.Parse(Context.User.FindFirstValue("id"));
         ConnectionIds[userId] = Context.ConnectionId;
         Console.WriteLine("[" + Context.User.FindFirstValue("id") + "|" + Context.ConnectionId + "] connected to messaging hub");
+        AccountIdConnected?.Invoke(userId);
         return base.OnConnectedAsync();
     }
 
@@ -22,6 +25,7 @@ public class BaseHub : Hub
         var userId = int.Parse(Context.User.FindFirstValue("id"));
         if (ConnectionIds.ContainsKey(userId)) ConnectionIds.Remove(userId);
         Console.WriteLine("[" + Context.User.FindFirstValue("id") + "|" + Context.ConnectionId + "] disconnected from messaging hub");
+        AccountIdDisconnected?.Invoke(userId);
         return base.OnDisconnectedAsync(exception);
     }
 }
