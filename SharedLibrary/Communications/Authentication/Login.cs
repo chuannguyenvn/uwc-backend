@@ -1,27 +1,28 @@
-﻿namespace Commons.Communications.Authentication
+﻿using System.Text.Json.Serialization;
+
+namespace Commons.Communications.Authentication
 {
     public class LoginRequest
     {
-#if NET7_0
-        public string Username { get; set; }
-        public string Password { get; set; }
+        [JsonInclude] public string Username;
+        [JsonInclude] public string Password;
 
-        public bool IsFromDesktop { get; set; }
-#else
-        public string Username;
-        public string Password;
-
-        public bool IsFromDesktop;
-
+        [JsonInclude] public bool IsFromDesktop;
+        
+        [JsonConstructor]
         public LoginRequest()
         {
         }
-#endif
     }
 
     public class LoginResponse
     {
-        public Credentials Credentials { get; set; }
-        public InitializationData InitializationData { get; set; }
+        [JsonInclude] public Credentials Credentials;
+        [JsonInclude] public InitializationData InitializationData;
+
+        [JsonConstructor]
+        public LoginResponse()
+        {
+        }
     }
 }

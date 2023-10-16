@@ -1,8 +1,15 @@
-﻿namespace Commons.Communications.Authentication
+﻿using System.Text.Json.Serialization;
+
+namespace Commons.Communications.Authentication
 {
     public class Credentials
     {
-        public string JwtToken { get; set; }
-        public int AccountId { get; set; }
+        [JsonInclude] public string JwtToken;
+        [JsonInclude] public int AccountId;
+        
+        [JsonConstructor]
+        public Credentials()
+        {
+        }
     }
 }
