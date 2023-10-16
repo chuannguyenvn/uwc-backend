@@ -77,9 +77,7 @@ public class AuthenticationService : IAuthenticationService
         var allMcps = _unitOfWork.McpData.GetAll().ToList();
         return new InitializationData
         {
-            McpIds = allMcps.Select(mcp => mcp.Id).ToList(),
-            McpLatitudes = allMcps.Select(mcp => mcp.Coordinate.Latitude).ToList(),
-            McpLongitudes = allMcps.Select(mcp => mcp.Coordinate.Longitude).ToList(),
+            McpLocationByIds = allMcps.ToDictionary(mcp => mcp.Id, mcp => mcp.Coordinate)
         };
     }
 }

@@ -4,6 +4,6 @@ namespace Requests
     {
         // Cloud: urban-waste-collection.azurewebsites.net
         // Local: localhost:44394
-        public const string DOMAIN = "localhost:44394";
+        public const string DOMAIN = "urban-waste-collection.azurewebsites.net";
     }
 }
