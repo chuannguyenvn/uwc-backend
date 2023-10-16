@@ -51,6 +51,22 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
+var corsPolicy = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: corsPolicy,
+        policyBuilder =>
+        {
+            policyBuilder.WithOrigins("http://localhost:47669/",
+                    "https://localhost:44394/",
+                    "https://uwc-frontend.azurewebsites.net")
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+        });
+});
+
 #endregion
 
 builder.Services.AddControllers();
@@ -115,6 +131,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseCors(corsPolicy);
 
 // app.ResetData();
 //
