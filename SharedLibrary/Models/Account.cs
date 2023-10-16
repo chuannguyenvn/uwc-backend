@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Commons.Categories;
 
 namespace Commons.Models
@@ -16,5 +17,8 @@ namespace Commons.Models
         public string Address { get; set; }
 
         public UserRole UserRole { get; set; }
+        
+        public bool UseFaceRecognition { get; set; }
+        public List<float>? FaceVector { get; set; }
     }
 }

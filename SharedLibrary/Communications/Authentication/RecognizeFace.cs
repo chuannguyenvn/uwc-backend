@@ -9,6 +9,6 @@
     public class LoginWithFaceResponse
     {
         public bool IsValid { get; set; }
-        public Credentials Credentials { get; set; }
+        public Credentials? Credentials { get; set; }
     }
 }

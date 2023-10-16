@@ -7,4 +7,9 @@ namespace Commons.Communications.Authentication
         public int AccountId { get; set; }
         public List<object> FaceImages { get; set; }
     }
+    
+    public class RegisterFaceResponse
+    {
+        public bool IsSuccessful { get; set; }
+    }
 }
