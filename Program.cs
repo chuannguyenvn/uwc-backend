@@ -85,6 +85,8 @@ builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
+builder.Services.AddScoped<IFacialRecognitionService, FacialRecognitionService>();
+
 builder.Services.AddScoped<IMessagingService, MessagingService>();
 
 builder.Services.AddScoped<IMcpDataService, McpDataService>();

@@ -10,10 +10,12 @@ namespace Controllers;
 public class AuthenticationController : Controller
 {
     private readonly IAuthenticationService _authenticationService;
+    private readonly IFacialRecognitionService _facialRecognitionService;
 
-    public AuthenticationController(IAuthenticationService authenticationService)
+    public AuthenticationController(IAuthenticationService authenticationService, IFacialRecognitionService facialRecognitionService)
     {
         _authenticationService = authenticationService;
+        _facialRecognitionService = facialRecognitionService;
     }
 
     [HttpPost(Endpoints.Authentication.LOGIN)]
@@ -27,6 +29,27 @@ public class AuthenticationController : Controller
     public IActionResult Register(RegisterRequest request)
     {
         var result = _authenticationService.Register(request);
+        return ProcessRequestResult(result);
+    }
+    
+    [HttpPost(Endpoints.Authentication.LOGIN_WITH_FACE)]
+    public IActionResult LoginWithFace(LoginWithFaceRequest request)
+    {
+        var result = _facialRecognitionService.LoginWithFace(request);
+        return ProcessRequestResult(result);
+    }
+    
+    [HttpPost(Endpoints.Authentication.REGISTER_FACE)]
+    public IActionResult RegisterFace(RegisterFaceRequest request)
+    {
+        var result = _facialRecognitionService.RegisterFace(request);
+        return ProcessRequestResult(result);
+    }
+    
+    [HttpPost(Endpoints.Authentication.DELETE_FACE)]
+    public IActionResult DeleteFace(DeleteFaceRequest request)
+    {
+        var result = _facialRecognitionService.DeleteFace(request);
         return ProcessRequestResult(result);
     }
 }
