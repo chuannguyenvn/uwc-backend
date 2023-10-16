@@ -8,7 +8,7 @@
 
     public class RegisterResponse
     {
-        public string JwtToken { get; set; }
-        public int AccountId { get; set; }
+        public Credentials Credentials { get; set; }
+        public InitializationData InitializationData { get; set; }
     }
 }

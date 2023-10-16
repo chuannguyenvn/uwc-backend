@@ -1,5 +1,9 @@
 ﻿using Commons.Types;
 
+#if NET7_0
+using System.ComponentModel.DataAnnotations.Schema;
+#endif
+
 namespace Commons.Models
 {
     public class McpData : IndexedEntity
@@ -9,6 +13,9 @@ namespace Commons.Models
         public double Latitude { get; set; }
         public double Longitude { get; set; }
 
+#if NET7_0
+        [NotMapped]
+#endif
         public Coordinate Coordinate
         {
             get => new Coordinate(Latitude, Longitude);

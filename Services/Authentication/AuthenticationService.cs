@@ -31,11 +31,11 @@ public class AuthenticationService : IAuthenticationService
             return new ParamRequestResult<LoginResponse>(new InvalidRoleWhenLogin());
         if (!request.IsFromDesktop && userRole == UserRole.Supervisor)
             return new ParamRequestResult<LoginResponse>(new InvalidRoleWhenLogin());
-        
+
         var loginResponse = new LoginResponse
         {
-            JwtToken = AuthenticationHelpers.GenerateJwtToken(account, _settings.BearerKey),
-            AccountId = account.Id,
+            Credentials = CreateCredentials(account),
+            InitializationData = CreateInitializationData(),
         };
 
         return new ParamRequestResult<LoginResponse>(new Success(), loginResponse);
@@ -56,10 +56,28 @@ public class AuthenticationService : IAuthenticationService
 
         var registerResponse = new RegisterResponse
         {
-            JwtToken = AuthenticationHelpers.GenerateJwtToken(account, _settings.BearerKey),
-            AccountId = account.Id,
+            Credentials = CreateCredentials(account),
+            InitializationData = CreateInitializationData(),
         };
 
         return new ParamRequestResult<RegisterResponse>(new Success(), registerResponse);
+    }
+
+    private Credentials CreateCredentials(Account account)
+    {
+        return new Credentials()
+        {
+            JwtToken = AuthenticationHelpers.GenerateJwtToken(account, _settings.BearerKey),
+            AccountId = account.Id,
+        };
+    }
+
+    private InitializationData CreateInitializationData()
+    {
+        var allMcps = _unitOfWork.McpData.GetAll().ToList();
+        return new InitializationData
+        {
+            McpLocationByIds = allMcps.ToDictionary(mcp => mcp.Id, mcp => mcp.Coordinate)
+        };
     }
 }

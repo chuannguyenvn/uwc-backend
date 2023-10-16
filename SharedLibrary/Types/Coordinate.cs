@@ -1,18 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-#if NET7_0
-using System.ComponentModel.DataAnnotations.Schema;
-#endif
+using System.Linq;
 
 namespace Commons.Types
 {
-#if NET7_0
-    [NotMapped]
-#endif
     public class Coordinate
     {
-        public double Latitude;
-        public double Longitude;
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+
+        public Coordinate()
+        {
+            Latitude = 0.0;
+            Longitude = 0.0;
+        }
 
         public Coordinate(double latitude, double longitude)
         {
@@ -60,7 +61,12 @@ namespace Commons.Types
         {
             return "Lat: " + Latitude + ". Longitude: " + Longitude;
         }
-    
+
+        public string ToStringApi()
+        {
+            return Longitude + "," + Latitude;
+        }
+
         public double DistanceTo(Coordinate other)
         {
             return Math.Sqrt(Math.Pow(Latitude - other.Latitude, 2) + Math.Pow(Longitude - other.Longitude, 2));
@@ -68,7 +74,64 @@ namespace Commons.Types
 
         public bool IsApproximatelyEqualTo(Coordinate other)
         {
-            return Math.Abs(Latitude - other.Latitude) < 0.001 && Math.Abs(Longitude - other.Longitude) < 0.001;
+            return Math.Abs(Latitude - other.Latitude) < 0.000001 && Math.Abs(Longitude - other.Longitude) < 0.000001;
+        }
+
+        public static Coordinate FindDestinationCoordinate(List<Coordinate> coordinates, double targetDistance)
+        {
+            if (coordinates == null || coordinates.Count < 2 || targetDistance <= 0.0)
+            {
+                throw new ArgumentException("Invalid input parameters.");
+            }
+
+            double totalDistance = 0.0;
+
+            for (int i = 0; i < coordinates.Count - 1; i++)
+            {
+                Coordinate start = coordinates[i];
+                Coordinate end = coordinates[i + 1];
+                double segmentDistance = start.DistanceTo(end);
+
+                if (totalDistance + segmentDistance >= targetDistance)
+                {
+                    double remainingDistance = targetDistance - totalDistance;
+                    double ratio = remainingDistance / segmentDistance;
+                    double interpolatedLat = start.Latitude + (end.Latitude - start.Latitude) * ratio;
+                    double interpolatedLon = start.Longitude + (end.Longitude - start.Longitude) * ratio;
+                    return new Coordinate(interpolatedLat, interpolatedLon);
+                }
+
+                totalDistance += segmentDistance;
+            }
+
+            return coordinates.Last();
+        }
+
+        public static List<Coordinate> GetTraveledCoordinates(List<Coordinate> coordinates, double targetDistance)
+        {
+            if (coordinates == null || coordinates.Count < 2 || targetDistance <= 0.0)
+            {
+                throw new ArgumentException("Invalid input parameters.");
+            }
+
+            List<Coordinate> traveledCoordinates = new List<Coordinate>() { coordinates[0] };
+            double totalDistance = 0.0;
+
+            for (int i = 0; i < coordinates.Count - 1; i++)
+            {
+                Coordinate start = coordinates[i];
+                Coordinate end = coordinates[i + 1];
+                double segmentDistance = start.DistanceTo(end);
+
+                if (totalDistance + segmentDistance >= targetDistance) return traveledCoordinates;
+
+                totalDistance += segmentDistance;
+                traveledCoordinates.Add(start);
+            }
+
+            traveledCoordinates.AddRange(coordinates.Skip(traveledCoordinates.Count));
+
+            return traveledCoordinates;
         }
     }
 }

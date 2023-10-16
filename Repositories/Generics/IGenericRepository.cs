@@ -9,6 +9,8 @@ public interface IGenericRepository<T> where T : IndexedEntity
     IEnumerable<T> Find(Func<T, bool> condition);
     T GetUnique(Func<T, bool> condition);
     IEnumerable<T> GetAll();
+    IEnumerable<T> GetRandom(int count = 1);
+    IEnumerable<T> GetRandomWithCondition(Func<T, bool> condition, int count = 1);
     T GetById(int id);
     void Remove(T entity);
     void RemoveRange(IEnumerable<T> entities);
