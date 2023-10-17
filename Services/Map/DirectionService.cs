@@ -19,7 +19,6 @@ public class DirectionService : IDirectionService
     private RawMapboxDirectionResponse RequestMapboxDirection(Coordinate fromLocation, List<Coordinate> toLocations)
     {
         var client = new HttpClient();
-        Console.WriteLine(ConstructMapboxDirectionRequest(fromLocation, toLocations));
         var httpResponse = client.GetStringAsync(ConstructMapboxDirectionRequest(fromLocation, toLocations)).Result;
         var mapboxDirectionResponse = JsonConvert.DeserializeObject<RawMapboxDirectionResponse>(httpResponse);
         return mapboxDirectionResponse;

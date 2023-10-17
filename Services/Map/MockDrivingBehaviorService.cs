@@ -9,6 +9,7 @@ namespace Services.Map;
 public class MockDrivingBehaviorService : IHostedService
 {
     private readonly Dictionary<int, MockCurrentRoute> _ongoingRouteByDriverAccountIds = new();
+    private readonly Dictionary<int, MockCurrentRoute> _ongoingRouteByCleanerAccountIds = new();
 
     private readonly IServiceProvider _serviceProvider;
 
@@ -19,7 +20,8 @@ public class MockDrivingBehaviorService : IHostedService
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        PickRandomDrivers(1);
+        PickRandomDrivers(20);
+        PickRandomCleaners(20);
         RandomizeDrivingBehavior();
         return Task.CompletedTask;
     }
@@ -41,6 +43,18 @@ public class MockDrivingBehaviorService : IHostedService
         }
     }
 
+    private void PickRandomCleaners(int countToPick)
+    {
+        using var scope = _serviceProvider.CreateScope();
+        var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+        var randomCleaners = unitOfWork.Accounts.GetRandomWithCondition(account => account.UserRole == UserRole.Cleaner, countToPick);
+
+        foreach (var randomCleaner in randomCleaners)
+        {
+            _ongoingRouteByCleanerAccountIds[randomCleaner.Id] = new MockCurrentRoute();
+        }
+    }
+
     private async void RandomizeDrivingBehavior()
     {
         using var scope = _serviceProvider.CreateScope();
@@ -51,7 +65,6 @@ public class MockDrivingBehaviorService : IHostedService
 
         while (true)
         {
-            bool first = true;
             foreach (var (id, direction) in _ongoingRouteByDriverAccountIds.ToList())
             {
                 if (direction.IsCompleted)
@@ -61,7 +74,7 @@ public class MockDrivingBehaviorService : IHostedService
                     var newDirection = directionService.GetDirection(new GetDirectionRequest()
                     {
                         AccountId = id,
-                        CurrentLocation = locationService.LocationsByAccountId[id],
+                        CurrentLocation = locationService.DriverLocationsByAccountId[id],
                         Destinations = waypoints,
                     }).Data?.Direction;
 
@@ -72,20 +85,45 @@ public class MockDrivingBehaviorService : IHostedService
                     }
 
                     _ongoingRouteByDriverAccountIds[id] = new MockCurrentRoute(
-                        locationService.LocationsByAccountId[id],
+                        locationService.DriverLocationsByAccountId[id],
                         randomMcps.Select(mcp => mcp.Id).ToList(),
                         newDirection,
                         mcpId => mcpFillLevelService.EmptyMcp(mcpId));
                 }
                 else
                 {
-                    locationService.LocationsByAccountId[id] = _ongoingRouteByDriverAccountIds[id].TravelBy(0.0001);
+                    locationService.DriverLocationsByAccountId[id] = _ongoingRouteByDriverAccountIds[id].TravelBy(0.0001);
                 }
-                
-                if (first)
+            }
+
+            foreach (var (id, direction) in _ongoingRouteByCleanerAccountIds.ToList())
+            {
+                if (direction.IsCompleted)
                 {
-                    Console.WriteLine($"Driver {id} is at {_ongoingRouteByDriverAccountIds[id].CurrentCoordinate}");
-                    first = false;
+                    var randomMcps = unitOfWork.McpData.GetRandom(5).ToList();
+                    var waypoints = randomMcps.Select(mcp => mcp.Coordinate).ToList();
+                    var newDirection = directionService.GetDirection(new GetDirectionRequest()
+                    {
+                        AccountId = id,
+                        CurrentLocation = locationService.CleanerLocationsByAccountId[id],
+                        Destinations = waypoints,
+                    }).Data?.Direction;
+
+                    if (newDirection == null)
+                    {
+                        Console.WriteLine("Failed to get direction");
+                        continue;
+                    }
+
+                    _ongoingRouteByCleanerAccountIds[id] = new MockCurrentRoute(
+                        locationService.CleanerLocationsByAccountId[id],
+                        randomMcps.Select(mcp => mcp.Id).ToList(),
+                        newDirection,
+                        mcpId => mcpFillLevelService.EmptyMcp(mcpId));
+                }
+                else
+                {
+                    locationService.CleanerLocationsByAccountId[id] = _ongoingRouteByCleanerAccountIds[id].TravelBy(0.00002);
                 }
             }
 
