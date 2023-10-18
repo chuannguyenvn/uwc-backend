@@ -4,6 +4,7 @@ using Commons.Communications.Authentication;
 using Commons.Models;
 using Commons.RequestStatuses;
 using Commons.RequestStatuses.Authentication;
+using Commons.Types;
 
 namespace Services.Authentication;
 

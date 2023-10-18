@@ -1,5 +1,6 @@
 using System.Text;
 using Commons.Models;
+using Commons.Types;
 using Helpers;
 using Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

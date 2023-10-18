@@ -1,4 +1,4 @@
-﻿namespace Commons.Models
+﻿namespace Commons.Types
 {
     public class Settings
     {
