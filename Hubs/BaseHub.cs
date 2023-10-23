@@ -8,8 +8,11 @@ namespace Hubs;
 public class BaseHub : Hub
 {
     public static Dictionary<int, string> ConnectionIds = new();
+    
     public static event Action<int> AccountIdConnected;
     public static event Action<int> AccountIdDisconnected;
+    
+    public static bool IsAccountOnline(int accountId) => ConnectionIds.ContainsKey(accountId);
 
     public override Task OnConnectedAsync()
     {

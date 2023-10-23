@@ -9,6 +9,7 @@ using Services.Authentication;
 using Services.Map;
 using Services.Mcps;
 using Services.Messaging;
+using Services.OnlineStatus;
 using Services.Tasks;
 using Services.Vehicles;
 
@@ -87,6 +88,10 @@ builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IMessagingService, MessagingService>();
 
 builder.Services.AddScoped<IMcpDataService, McpDataService>();
+
+builder.Services.AddSingleton<OnlineStatusService>();
+builder.Services.AddSingleton<IOnlineStatusService>(provider => provider.GetRequiredService<OnlineStatusService>());
+builder.Services.AddHostedService<OnlineStatusService>(provider => provider.GetRequiredService<OnlineStatusService>());
 
 builder.Services.AddSingleton<McpFillLevelService>();
 builder.Services.AddSingleton<IMcpFillLevelService>(provider => provider.GetRequiredService<McpFillLevelService>());
