@@ -31,4 +31,11 @@ public class TaskController : Controller
         var result = _taskService.CompleteTask(request);
         return ProcessRequestResult(result);
     }
+
+    [HttpPost(Endpoints.TaskData.REJECT_TASK)]
+    public IActionResult RejectTask(RejectTaskRequest request)
+    {
+        var result = _taskService.RejectTask(request);
+        return ProcessRequestResult(result);
+    }
 }
