@@ -1,5 +1,4 @@
-﻿using Commons.Categories;
-using Repositories.Generics;
+﻿using Repositories.Generics;
 using Repositories.Managers;
 using Commons.Models;
 
@@ -19,10 +18,5 @@ public class AccountRepository : GenericRepository<Account>, IAccountRepository
     public Account GetByUsername(string username)
     {
         return Context.Accounts.FirstOrDefault(a => a.Username == username);
-    }
-
-    public IEnumerable<Account> GetByUserRole(UserRole userRole)
-    {
-        return Context.Accounts.Where(a => a.UserRole == userRole);
     }
 }

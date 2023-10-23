@@ -63,7 +63,8 @@ public class MessagingService : IMessagingService
             var account = _unitOfWork.Accounts.GetById(message.SenderAccountId == request.UserAccountId
                 ? message.ReceiverAccountId
                 : message.SenderAccountId);
-            var fullName = account.FirstName + " " + account.LastName;
+            var userProfile = _unitOfWork.UserProfiles.GetById(account.UserProfileId);
+            var fullName = userProfile.FirstName + " " + userProfile.LastName;
 
             fullNames.Add(fullName);
         }

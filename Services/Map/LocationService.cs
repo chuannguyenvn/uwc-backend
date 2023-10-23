@@ -1,4 +1,5 @@
-﻿using Commons.Communications.Map;
+﻿using Commons.Categories;
+using Commons.Communications.Map;
 using Commons.HubHandlers;
 using Commons.RequestStatuses;
 using Commons.Types;
@@ -12,8 +13,11 @@ public class LocationService : ILocationService
 {
     private readonly IServiceProvider _serviceProvider;
 
-    public Dictionary<int, Coordinate> LocationsByAccountId => _locationsById;
-    private readonly Dictionary<int, Coordinate> _locationsById = new();
+    private readonly Dictionary<int, Coordinate> _driverLocationsById = new();
+    public Dictionary<int, Coordinate> DriverLocationsByAccountId => _driverLocationsById;
+
+    private readonly Dictionary<int, Coordinate> _cleanerLocationsById = new();
+    public Dictionary<int, Coordinate> CleanerLocationsByAccountId => _cleanerLocationsById;
 
     private const int REFRESH_INTERVAL = 1000;
     private Timer? _locationBroadcastTimer;
@@ -25,7 +29,16 @@ public class LocationService : ILocationService
 
     public RequestResult UpdateLocation(LocationUpdateRequest request)
     {
-        _locationsById[request.AccountId] = request.NewLocation;
+        using var scope = _serviceProvider.CreateScope();
+        var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+        
+        var account = unitOfWork.Accounts.GetById(request.AccountId);
+        var userProfile = unitOfWork.UserProfiles.GetById(account.UserProfileId);
+        if (userProfile.UserRole == UserRole.Driver)
+            _driverLocationsById[request.AccountId] = request.NewLocation;
+        else if (userProfile.UserRole == UserRole.Cleaner)
+            _cleanerLocationsById[request.AccountId] = request.NewLocation;
+
         return new RequestResult(new Success());
     }
 
@@ -50,10 +63,13 @@ public class LocationService : ILocationService
     {
         using var scope = _serviceProvider.CreateScope();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-        var accounts = unitOfWork.Accounts.GetAll();
-        foreach (var account in accounts)
+        var userProfiles = unitOfWork.UserProfiles.GetAll();
+        foreach (var userProfile in userProfiles)
         {
-            _locationsById[account.Id] = new Coordinate(10.7670552457392, 106.656326672901);
+            if (userProfile.UserRole == UserRole.Driver)
+                _driverLocationsById[userProfile.Id] = new Coordinate(10.7670552457392, 106.656326672901);
+            else if (userProfile.UserRole == UserRole.Cleaner)
+                _cleanerLocationsById[userProfile.Id] = new Coordinate(10.7670552457392, 106.656326672901);
         }
     }
 
@@ -61,9 +77,13 @@ public class LocationService : ILocationService
     {
         using var scope = _serviceProvider.CreateScope();
         var hubContext = scope.ServiceProvider.GetRequiredService<IHubContext<BaseHub>>();
-        hubContext.Clients.All.SendAsync(HubHandlers.WorkerLocation.BROADCAST_LOCATION, new WorkerLocationBroadcastData()
+        
+        var broadcastData = new WorkerLocationBroadcastData()
         {
-            LocationByIds = _locationsById,
-        });
+            DriverLocationByIds = _driverLocationsById,
+            CleanerLocationByIds = _cleanerLocationsById,
+        };
+        
+        hubContext.Clients.All.SendAsync(HubHandlers.WorkerLocation.BROADCAST_LOCATION, broadcastData);
     }
 }
