@@ -4,6 +4,7 @@ using Commons.Communications.Authentication;
 using Commons.Models;
 using Commons.RequestStatuses;
 using Commons.RequestStatuses.Authentication;
+using Commons.Types;
 
 namespace Services.Authentication;
 
@@ -26,7 +27,9 @@ public class AuthenticationService : IAuthenticationService
         if (account.PasswordHash != AuthenticationHelpers.ComputeHash(request.Password, account.PasswordSalt))
             return new ParamRequestResult<LoginResponse>(new IncorrectPassword());
 
-        var userRole = account.UserRole;
+        var userProfile = _unitOfWork.UserProfiles.GetById(account.UserProfileId);
+        
+        var userRole = userProfile.UserRole;
         if (request.IsFromDesktop && userRole != UserRole.Supervisor)
             return new ParamRequestResult<LoginResponse>(new InvalidRoleWhenLogin());
         if (!request.IsFromDesktop && userRole == UserRole.Supervisor)

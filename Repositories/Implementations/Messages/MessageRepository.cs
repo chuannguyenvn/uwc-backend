@@ -1,7 +1,6 @@
 ﻿using Repositories.Generics;
 using Repositories.Managers;
 using Commons.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Repositories.Implementations.Messages;
 

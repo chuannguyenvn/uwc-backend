@@ -5,7 +5,6 @@ using Commons.RequestStatuses;
 using Commons.Types;
 using Hubs;
 using Microsoft.AspNetCore.SignalR;
-using Newtonsoft.Json;
 using Repositories.Managers;
 
 namespace Services.Map;
@@ -34,9 +33,10 @@ public class LocationService : ILocationService
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
         
         var account = unitOfWork.Accounts.GetById(request.AccountId);
-        if (account.UserRole == UserRole.Driver)
+        var userProfile = unitOfWork.UserProfiles.GetById(account.UserProfileId);
+        if (userProfile.UserRole == UserRole.Driver)
             _driverLocationsById[request.AccountId] = request.NewLocation;
-        else if (account.UserRole == UserRole.Cleaner)
+        else if (userProfile.UserRole == UserRole.Cleaner)
             _cleanerLocationsById[request.AccountId] = request.NewLocation;
 
         return new RequestResult(new Success());
@@ -63,13 +63,13 @@ public class LocationService : ILocationService
     {
         using var scope = _serviceProvider.CreateScope();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-        var accounts = unitOfWork.Accounts.GetAll();
-        foreach (var account in accounts)
+        var userProfiles = unitOfWork.UserProfiles.GetAll();
+        foreach (var userProfile in userProfiles)
         {
-            if (account.UserRole == UserRole.Driver)
-                _driverLocationsById[account.Id] = new Coordinate(10.7670552457392, 106.656326672901);
-            else if (account.UserRole == UserRole.Cleaner)
-                _cleanerLocationsById[account.Id] = new Coordinate(10.7670552457392, 106.656326672901);
+            if (userProfile.UserRole == UserRole.Driver)
+                _driverLocationsById[userProfile.Id] = new Coordinate(10.7670552457392, 106.656326672901);
+            else if (userProfile.UserRole == UserRole.Cleaner)
+                _cleanerLocationsById[userProfile.Id] = new Coordinate(10.7670552457392, 106.656326672901);
         }
     }
 

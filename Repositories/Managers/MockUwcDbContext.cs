@@ -5,6 +5,7 @@ namespace Repositories.Managers;
 public class MockUwcDbContext
 {
     public List<Account> Accounts { get; set; }
+    public List<UserProfile> UserProfiles { get; set; }
     public List<McpData> McpData { get; set; }
     public List<VehicleData> VehicleData { get; set; }
     public List<Message> Messages { get; set; }
@@ -12,6 +13,7 @@ public class MockUwcDbContext
     public MockUwcDbContext()
     {
         Accounts = new List<Account>();
+        UserProfiles = new List<UserProfile>();
         McpData = new List<McpData>();
         VehicleData = new List<VehicleData>();
         Messages = new List<Message>();

@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using Commons.Communications.Map;
+﻿using Commons.Communications.Map;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services;

@@ -2,6 +2,7 @@
 using Repositories.Implementations.Mcps;
 using Repositories.Implementations.Messages;
 using Repositories.Implementations.Tasks;
+using Repositories.Implementations.UserProfiles;
 using Repositories.Implementations.Vehicles;
 
 namespace Repositories.Managers;
@@ -14,6 +15,7 @@ public class MockUnitOfWork : IUnitOfWork
     {
         _uwcDbContext = new MockUwcDbContext();
         Accounts = new MockAccountRepository(_uwcDbContext);
+        UserProfiles = new MockUserProfileRepository(_uwcDbContext);
         McpData = new MockMcpDataRepository(_uwcDbContext);
         Messages = new MockMessageRepository(_uwcDbContext);
         TaskDatas = new MockTaskRepository(_uwcDbContext);
@@ -21,6 +23,7 @@ public class MockUnitOfWork : IUnitOfWork
     }
 
     public IAccountRepository Accounts { get; }
+    public IUserProfileRepository UserProfiles { get; }
     public IMcpDataRepository McpData { get; }
     public ITaskRepository TaskDatas { get; }
     public IMessageRepository Messages { get; }
