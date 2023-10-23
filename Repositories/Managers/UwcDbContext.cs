@@ -11,6 +11,7 @@ public class UwcDbContext : DbContext
     }
 
     public DbSet<Account> Accounts { get; set; }
+    public DbSet<UserProfile> UserProfiles { get; set; }
     public DbSet<McpData> McpDatas { get; set; }
     public DbSet<VehicleData> VehicleDatas { get; set; }
     public DbSet<TaskData> TaskDatas { get; set; }
@@ -46,5 +47,11 @@ public class UwcDbContext : DbContext
 
         modelBuilder.Entity<Coordinate>()
             .HasNoKey();
+
+        modelBuilder.Entity<Account>()
+            .HasOne<UserProfile>(account => account.UserProfile)
+            .WithOne(profile => profile.Account)
+            .HasForeignKey<UserProfile>(profile => profile.AccountId) 
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -2,6 +2,7 @@
 using Repositories.Implementations.Mcps;
 using Repositories.Implementations.Messages;
 using Repositories.Implementations.Tasks;
+using Repositories.Implementations.UserProfiles;
 using Repositories.Implementations.Vehicles;
 
 namespace Repositories.Managers;
@@ -15,6 +16,7 @@ public class UnitOfWork : IUnitOfWork, IDisposable
         _uwcDbContext = uwcDbContext;
 
         Accounts = new AccountRepository(_uwcDbContext);
+        UserProfiles = new UserProfileRepository(_uwcDbContext);
         McpData = new McpDataRepository(_uwcDbContext);
         Messages = new MessageRepository(_uwcDbContext);
         TaskDatas = new TaskRepository(_uwcDbContext);
@@ -22,6 +24,7 @@ public class UnitOfWork : IUnitOfWork, IDisposable
     }
 
     public IAccountRepository Accounts { get; }
+    public IUserProfileRepository UserProfiles { get; }
     public IMcpDataRepository McpData { get; }
     public ITaskRepository TaskDatas { get; }
     public IMessageRepository Messages { get; }

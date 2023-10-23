@@ -53,16 +53,19 @@ public class DatabaseSeeder
             var gender = i < 5 ? Gender.Male : Gender.Female;
             var dateOfBirth = DatabaseSeederHelper.GenerateRandomDate(1960, 2000);
 
-            var account = new Account()
+            var account = new Account
             {
                 Username = firstName.ToLower() + "_" + lastName.ToLower(),
                 PasswordHash = "password",
-                FirstName = firstName,
-                LastName = lastName,
-                Gender = gender,
-                DateOfBirth = dateOfBirth,
-                UserRole = UserRole.Supervisor,
-                Address = "",
+                UserProfile = new UserProfile()
+                {
+                    FirstName = firstName,
+                    LastName = lastName,
+                    Gender = gender,
+                    DateOfBirth = dateOfBirth,
+                    UserRole = UserRole.Supervisor,
+                    Address = "",
+                }
             };
             account.GenerateSaltAndHash();
 
@@ -90,12 +93,16 @@ public class DatabaseSeeder
             {
                 Username = firstName.ToLower() + "_" + lastName.ToLower(),
                 PasswordHash = "password",
-                FirstName = firstName,
-                LastName = lastName,
-                Gender = gender,
-                DateOfBirth = dateOfBirth,
-                UserRole = UserRole.Driver,
-                Address = "",
+                UserProfileId = _allAccounts.Count + 1,
+                UserProfile = new UserProfile()
+                {
+                    FirstName = firstName,
+                    LastName = lastName,
+                    Gender = gender,
+                    DateOfBirth = dateOfBirth,
+                    UserRole = UserRole.Driver,
+                    Address = "",
+                }
             };
             account.GenerateSaltAndHash();
 
@@ -123,12 +130,16 @@ public class DatabaseSeeder
             {
                 Username = firstName.ToLower() + "_" + lastName.ToLower(),
                 PasswordHash = "password",
-                FirstName = firstName,
-                LastName = lastName,
-                Gender = gender,
-                DateOfBirth = dateOfBirth,
-                UserRole = UserRole.Cleaner,
-                Address = "",
+                UserProfileId = _allAccounts.Count + 1,
+                UserProfile = new UserProfile()
+                {
+                    FirstName = firstName,
+                    LastName = lastName,
+                    Gender = gender,
+                    DateOfBirth = dateOfBirth,
+                    UserRole = UserRole.Cleaner,
+                    Address = "",
+                }
             };
             account.GenerateSaltAndHash();
 

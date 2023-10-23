@@ -20,9 +20,4 @@ public class MockAccountRepository : MockGenericRepository<Account>, IAccountRep
     {
         return Context.Accounts.FirstOrDefault(a => a.Username == username);
     }
-
-    public IEnumerable<Account> GetByUserRole(UserRole userRole)
-    {
-        return Context.Accounts.Where(a => a.UserRole == userRole);
-    }
 }

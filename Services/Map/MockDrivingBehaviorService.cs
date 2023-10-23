@@ -20,8 +20,8 @@ public class MockDrivingBehaviorService : IHostedService
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        PickRandomDrivers(20);
-        PickRandomCleaners(20);
+        PickRandomDrivers(10);
+        PickRandomCleaners(10);
         RandomizeDrivingBehavior();
         return Task.CompletedTask;
     }
@@ -35,11 +35,11 @@ public class MockDrivingBehaviorService : IHostedService
     {
         using var scope = _serviceProvider.CreateScope();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-        var randomDrivers = unitOfWork.Accounts.GetRandomWithCondition(account => account.UserRole == UserRole.Driver, countToPick);
+        var randomDrivers = unitOfWork.UserProfiles.GetRandomWithCondition(userProfile => userProfile.UserRole == UserRole.Driver, countToPick);
 
         foreach (var randomDriver in randomDrivers)
         {
-            _ongoingRouteByDriverAccountIds[randomDriver.Id] = new MockCurrentRoute();
+            _ongoingRouteByDriverAccountIds[randomDriver.AccountId] = new MockCurrentRoute();
         }
     }
 
@@ -47,11 +47,11 @@ public class MockDrivingBehaviorService : IHostedService
     {
         using var scope = _serviceProvider.CreateScope();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-        var randomCleaners = unitOfWork.Accounts.GetRandomWithCondition(account => account.UserRole == UserRole.Cleaner, countToPick);
+        var randomCleaners = unitOfWork.UserProfiles.GetRandomWithCondition(userProfile => userProfile.UserRole == UserRole.Cleaner, countToPick);
 
         foreach (var randomCleaner in randomCleaners)
         {
-            _ongoingRouteByCleanerAccountIds[randomCleaner.Id] = new MockCurrentRoute();
+            _ongoingRouteByCleanerAccountIds[randomCleaner.AccountId] = new MockCurrentRoute();
         }
     }
 

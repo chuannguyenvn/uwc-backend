@@ -8,5 +8,4 @@ public interface IAccountRepository : IGenericRepository<Account>
 {
     bool DoesUsernameExist(string username);
     Account GetByUsername(string username);
-    IEnumerable<Account> GetByUserRole(UserRole userRole);
 }
