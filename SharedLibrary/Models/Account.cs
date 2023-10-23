@@ -1,7 +1,4 @@
-﻿using System;
-using Commons.Categories;
-
-namespace Commons.Models
+﻿namespace Commons.Models
 {
     public class Account : IndexedEntity
     {

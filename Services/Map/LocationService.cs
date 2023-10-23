@@ -5,7 +5,6 @@ using Commons.RequestStatuses;
 using Commons.Types;
 using Hubs;
 using Microsoft.AspNetCore.SignalR;
-using Newtonsoft.Json;
 using Repositories.Managers;
 
 namespace Services.Map;
@@ -64,7 +63,6 @@ public class LocationService : ILocationService
     {
         using var scope = _serviceProvider.CreateScope();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-        var accounts = unitOfWork.Accounts.GetAll();
         var userProfiles = unitOfWork.UserProfiles.GetAll();
         foreach (var userProfile in userProfiles)
         {

@@ -1,5 +1,4 @@
-﻿using Commons.Categories;
-using Repositories.Generics;
+﻿using Repositories.Generics;
 using Commons.Models;
 
 namespace Repositories.Implementations.Accounts;

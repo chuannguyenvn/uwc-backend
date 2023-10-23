@@ -1,7 +1,6 @@
 using Repositories.Managers;
 using Services.Authentication;
 using Commons.Communications.Authentication;
-using Commons.Models;
 using Commons.RequestStatuses;
 using Commons.RequestStatuses.Authentication;
 
