@@ -57,6 +57,7 @@ public class DatabaseSeeder
             {
                 Username = firstName.ToLower() + "_" + lastName.ToLower(),
                 PasswordHash = "password",
+                UserProfileId = _allAccounts.Count + 1,
                 UserProfile = new UserProfile()
                 {
                     FirstName = firstName,
