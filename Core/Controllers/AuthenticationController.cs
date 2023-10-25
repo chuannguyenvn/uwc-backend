@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Services.Authentication;
 using Commons.Communications.Authentication;
-using Requests;
+using Commons.Endpoints;
 
 namespace Controllers;
 

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Commons.Communications.Mcps;
+using Commons.Endpoints;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Mcps;
 
@@ -16,10 +18,24 @@ public class McpFillLevelController : Controller
         _mcpFillLevelService = mcpFillLevelService;
     }
     
-    [HttpPost("get-all")]
+    [HttpPost(Endpoints.McpFillLevel.GET_ALL)]
     public IActionResult GetAllFillLevel()
     {
         var result = _mcpFillLevelService.GetAllFillLevel();
+        return ProcessRequestResult(result);
+    }
+    
+    [HttpPost(Endpoints.McpFillLevel.GET)]
+    public IActionResult GetFillLevel(GetFillLevelRequest request)
+    {
+        var result = _mcpFillLevelService.GetFillLevel(request);
+        return ProcessRequestResult(result);
+    }
+    
+    [HttpPost(Endpoints.McpFillLevel.EMPTY)]
+    public IActionResult EmptyMcp(EmptyMcpRequest request)
+    {
+        var result = _mcpFillLevelService.EmptyMcp(request);
         return ProcessRequestResult(result);
     }
 }

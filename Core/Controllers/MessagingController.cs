@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Services.Messaging;
 using Commons.Communications.Messages;
+using Commons.Endpoints;
 using Microsoft.AspNetCore.Authorization;
-using Requests;
 
 namespace Controllers;
 

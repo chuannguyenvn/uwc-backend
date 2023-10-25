@@ -1,4 +1,4 @@
-﻿namespace Requests
+﻿namespace Commons.Endpoints
 {
     public static partial class Endpoints
     {

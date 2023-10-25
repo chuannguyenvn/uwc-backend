@@ -2,7 +2,7 @@
 
 namespace MockApplication.TaskAssigning;
 
-public class TaskAssigningMock : BaseHostedService
+public class TaskAssigningMock : BaseMock
 {
     protected override async Task Main()
     {

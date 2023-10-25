@@ -2,7 +2,7 @@
 
 namespace MockApplication.McpFilling;
 
-public class McpFillingMock : BaseHostedService
+public class McpFillingMock : BaseMock
 {
     protected override async Task Main()
     {
