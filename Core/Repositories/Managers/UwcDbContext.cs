@@ -13,6 +13,8 @@ public class UwcDbContext : DbContext
     public DbSet<Account> Accounts { get; set; }
     public DbSet<UserProfile> UserProfiles { get; set; }
     public DbSet<McpData> McpDatas { get; set; }
+    public DbSet<McpEmptyRecord> McpEmptyRecords { get; set; }
+    public DbSet<McpFillLevelLog> McpFillLevelLogs { get; set; }
     public DbSet<VehicleData> VehicleDatas { get; set; }
     public DbSet<TaskData> TaskDatas { get; set; }
     public DbSet<Message> Messages { get; set; }
