@@ -1,5 +1,6 @@
 ﻿using Commons.Categories;
 using Commons.Communications.Map;
+using Commons.Communications.Mcps;
 using Commons.Types;
 using Repositories.Managers;
 using Services.Mcps;
@@ -88,7 +89,7 @@ public class MockDrivingBehaviorService : IHostedService
                         locationService.DriverLocationsByAccountId[id],
                         randomMcps.Select(mcp => mcp.Id).ToList(),
                         newDirection,
-                        mcpId => mcpFillLevelService.EmptyMcp(mcpId));
+                        mcpId => mcpFillLevelService.EmptyMcp(new EmptyMcpRequest() { McpId = mcpId }));
                 }
                 else
                 {
@@ -119,7 +120,7 @@ public class MockDrivingBehaviorService : IHostedService
                         locationService.CleanerLocationsByAccountId[id],
                         randomMcps.Select(mcp => mcp.Id).ToList(),
                         newDirection,
-                        mcpId => mcpFillLevelService.EmptyMcp(mcpId));
+                        mcpId => mcpFillLevelService.EmptyMcp(new EmptyMcpRequest() { McpId = mcpId }));
                 }
                 else
                 {
