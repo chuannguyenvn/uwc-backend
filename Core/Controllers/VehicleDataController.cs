@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Services.Vehicles;
 using Commons.Communications.Vehicles;
+using Commons.Endpoints;
 using Microsoft.AspNetCore.Authorization;
-using Requests;
 
 namespace Controllers;
 

@@ -1,7 +1,7 @@
 ﻿using Commons.Communications.Tasks;
+using Commons.Endpoints;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Requests;
 using Services.Tasks;
 
 namespace Controllers;

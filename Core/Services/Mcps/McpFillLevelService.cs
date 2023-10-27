@@ -13,10 +13,20 @@ public class McpFillLevelService : IMcpFillLevelService
 
     private Timer? _databasePersistTimer;
     private Timer? _fillTimer;
-    
+
     public McpFillLevelService(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
+    }
+
+    public ParamRequestResult<GetFillLevelResponse> GetFillLevel(GetFillLevelRequest request)
+    {
+        var fillLevelsById = request.McpIds.ToDictionary(mcpId => mcpId, mcpId => _fillLevelsById[mcpId]);
+
+        return new ParamRequestResult<GetFillLevelResponse>(new Success(), new GetFillLevelResponse
+        {
+            FillLevelsById = fillLevelsById,
+        });
     }
 
     public ParamRequestResult<GetFillLevelResponse> GetAllFillLevel()
@@ -27,9 +37,9 @@ public class McpFillLevelService : IMcpFillLevelService
         });
     }
 
-    public RequestResult EmptyMcp(int mcpId)
+    public RequestResult EmptyMcp(EmptyMcpRequest request)
     {
-        _fillLevelsById[mcpId] = 0f;
+        _fillLevelsById[request.McpId] = 0f;
         return new RequestResult(new Success());
     }
 
