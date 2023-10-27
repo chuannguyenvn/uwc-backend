@@ -51,7 +51,20 @@ public class UwcDbContext : DbContext
         modelBuilder.Entity<Account>()
             .HasOne<UserProfile>(account => account.UserProfile)
             .WithOne(profile => profile.Account)
-            .HasForeignKey<UserProfile>(profile => profile.AccountId) 
+            .HasForeignKey<UserProfile>(profile => profile.AccountId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<McpData>()
+            .HasMany(mcpData => mcpData.McpFillLevelLogs)
+            .WithOne(log => log.McpData)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<McpData>()
+            .HasMany(mcpData => mcpData.McpEmptyRecords)
+            .WithOne(log => log.McpData)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<McpData>()
+            .Ignore(data => data.Coordinate);
     }
 }

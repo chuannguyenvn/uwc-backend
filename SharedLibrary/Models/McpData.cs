@@ -1,4 +1,5 @@
-﻿using Commons.Types;
+﻿using System.Collections.Generic;
+using Commons.Types;
 
 #if NET7_0
 using System.ComponentModel.DataAnnotations.Schema;
@@ -29,5 +30,8 @@ namespace Commons.Models
         public Zone? Zone { get; set; } = null;
 
         public float Capacity { get; set; }
+
+        public ICollection<McpFillLevelLog> McpFillLevelLogs { get; set; }
+        public ICollection<McpEmptyRecord> McpEmptyRecords { get; set; }
     }
 }
