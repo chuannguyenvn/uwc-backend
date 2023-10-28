@@ -32,6 +32,13 @@ public class McpFillLevelController : Controller
         return ProcessRequestResult(result);
     }
     
+    [HttpPost(Endpoints.McpFillLevel.SET)]
+    public IActionResult SetFillLevel(SetFillLevelRequest request)
+    {
+        var result = _mcpFillLevelService.SetFillLevel(request);
+        return ProcessRequestResult(result);
+    }
+    
     [HttpPost(Endpoints.McpFillLevel.EMPTY)]
     public IActionResult EmptyMcp(EmptyMcpRequest request)
     {
