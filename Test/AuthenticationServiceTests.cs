@@ -3,6 +3,7 @@ using Services.Authentication;
 using Commons.Communications.Authentication;
 using Commons.RequestStatuses;
 using Commons.RequestStatuses.Authentication;
+using Commons.Types;
 
 namespace Test;
 
