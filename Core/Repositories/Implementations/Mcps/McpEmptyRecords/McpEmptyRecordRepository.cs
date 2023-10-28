@@ -9,4 +9,9 @@ public class McpEmptyRecordRepository : GenericRepository<McpEmptyRecord>, IMcpE
     public McpEmptyRecordRepository(UwcDbContext context) : base(context)
     {
     }
+
+    public List<McpEmptyRecord> GetRecordsByDate(DateTime date)
+    {
+        return Context.McpEmptyRecords.Where(record => record.Timestamp.Date == date.Date).ToList();
+    }
 }

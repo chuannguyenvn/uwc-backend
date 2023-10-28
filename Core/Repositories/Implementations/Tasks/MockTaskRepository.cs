@@ -9,4 +9,9 @@ public class MockTaskRepository : MockGenericRepository<TaskData>, ITaskReposito
     public MockTaskRepository(MockUwcDbContext mockUwcDbContext) : base(mockUwcDbContext)
     {
     }
+
+    public List<TaskData> GetTasksByDate(DateTime date)
+    {
+        return Context.TaskDatas.Where(task => task.AssignedTimestamp.Date == date.Date).ToList();
+    }
 }

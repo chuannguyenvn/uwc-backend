@@ -10,6 +10,7 @@ using Services.Map;
 using Services.Mcps;
 using Services.Messaging;
 using Services.OnlineStatus;
+using Services.Reports;
 using Services.Tasks;
 using Services.Vehicles;
 
@@ -106,7 +107,10 @@ builder.Services.AddScoped<IDirectionService, DirectionService>();
 builder.Services.AddHostedService<MockDrivingBehaviorService>();
 
 builder.Services.AddScoped<IVehicleDataService, VehicleDataService>();
+
 builder.Services.AddScoped<ITaskService, TaskService>();
+
+builder.Services.AddScoped<IReportService, ReportService>();
 
 #endregion
 

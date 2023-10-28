@@ -5,4 +5,5 @@ namespace Repositories.Implementations.Mcps.McpEmptyRecords;
 
 public interface IMcpEmptyRecordRepository : IGenericRepository<McpEmptyRecord>
 {
+    public List<McpEmptyRecord> GetRecordsByDate(DateTime date);
 }

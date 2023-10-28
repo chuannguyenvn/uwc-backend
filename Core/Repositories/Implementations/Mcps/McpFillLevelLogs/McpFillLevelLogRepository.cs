@@ -9,4 +9,9 @@ public class McpFillLevelLogRepository : GenericRepository<McpFillLevelLog>, IMc
     public McpFillLevelLogRepository(UwcDbContext context) : base(context)
     {
     }
+
+    public List<McpFillLevelLog> GetLogsByDate(DateTime date)
+    {
+        return Context.McpFillLevelLogs.Where(log => log.Timestamp.Date == date.Date).ToList();
+    }
 }

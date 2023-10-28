@@ -9,4 +9,9 @@ public class MockMcpEmptyRecordRepository : MockGenericRepository<McpEmptyRecord
     public MockMcpEmptyRecordRepository(MockUwcDbContext context) : base(context)
     {
     }
+
+    public List<McpEmptyRecord> GetRecordsByDate(DateTime date)
+    {
+        return Context.McpEmptyRecords.Where(record => record.Timestamp.Date == date.Date).ToList();
+    }
 }

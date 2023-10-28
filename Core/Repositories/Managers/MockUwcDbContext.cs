@@ -9,6 +9,7 @@ public class MockUwcDbContext
     public List<McpData> McpData { get; set; }
     public List<McpEmptyRecord> McpEmptyRecords { get; set; }
     public List<McpFillLevelLog> McpFillLevelLogs { get; set; }
+    public List<TaskData> TaskDatas { get; set; }
     public List<VehicleData> VehicleData { get; set; }
     public List<Message> Messages { get; set; }
 
@@ -19,6 +20,7 @@ public class MockUwcDbContext
         McpData = new List<McpData>();
         McpEmptyRecords = new List<McpEmptyRecord>();
         McpFillLevelLogs = new List<McpFillLevelLog>();
+        TaskDatas = new List<TaskData>();
         VehicleData = new List<VehicleData>();
         Messages = new List<Message>();
 

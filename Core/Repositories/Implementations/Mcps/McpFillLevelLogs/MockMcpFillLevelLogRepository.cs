@@ -9,4 +9,9 @@ public class MockMcpFillLevelLogRepository : MockGenericRepository<McpFillLevelL
     public MockMcpFillLevelLogRepository(MockUwcDbContext context) : base(context)
     {
     }
+
+    public List<McpFillLevelLog> GetLogsByDate(DateTime date)
+    {
+        return Context.McpFillLevelLogs.Where(log => log.Timestamp.Date == date.Date).ToList();
+    }
 }
