@@ -1,5 +1,8 @@
 ﻿using Repositories.Implementations.Accounts;
 using Repositories.Implementations.Mcps;
+using Repositories.Implementations.Mcps.McpData;
+using Repositories.Implementations.Mcps.McpEmptyRecords;
+using Repositories.Implementations.Mcps.McpFillLevelLogs;
 using Repositories.Implementations.Messages;
 using Repositories.Implementations.Tasks;
 using Repositories.Implementations.UserProfiles;
@@ -17,6 +20,8 @@ public class MockUnitOfWork : IUnitOfWork
         Accounts = new MockAccountRepository(_uwcDbContext);
         UserProfiles = new MockUserProfileRepository(_uwcDbContext);
         McpData = new MockMcpDataRepository(_uwcDbContext);
+        McpEmptyRecords = new MockMcpEmptyRecordRepository(_uwcDbContext);
+        McpFillLevelLogs = new MockMcpFillLevelLogRepository(_uwcDbContext);
         Messages = new MockMessageRepository(_uwcDbContext);
         TaskDatas = new MockTaskRepository(_uwcDbContext);
         VehicleData = new MockVehicleDataRepository(_uwcDbContext);
@@ -25,6 +30,8 @@ public class MockUnitOfWork : IUnitOfWork
     public IAccountRepository Accounts { get; }
     public IUserProfileRepository UserProfiles { get; }
     public IMcpDataRepository McpData { get; }
+    public IMcpEmptyRecordRepository McpEmptyRecords { get; }
+    public IMcpFillLevelLogRepository McpFillLevelLogs { get; }
     public ITaskRepository TaskDatas { get; }
     public IMessageRepository Messages { get; }
     public IVehicleDataRepository VehicleData { get; }

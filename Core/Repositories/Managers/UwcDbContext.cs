@@ -13,6 +13,8 @@ public class UwcDbContext : DbContext
     public DbSet<Account> Accounts { get; set; }
     public DbSet<UserProfile> UserProfiles { get; set; }
     public DbSet<McpData> McpDatas { get; set; }
+    public DbSet<McpEmptyRecord> McpEmptyRecords { get; set; }
+    public DbSet<McpFillLevelLog> McpFillLevelLogs { get; set; }
     public DbSet<VehicleData> VehicleDatas { get; set; }
     public DbSet<TaskData> TaskDatas { get; set; }
     public DbSet<Message> Messages { get; set; }
@@ -51,7 +53,20 @@ public class UwcDbContext : DbContext
         modelBuilder.Entity<Account>()
             .HasOne<UserProfile>(account => account.UserProfile)
             .WithOne(profile => profile.Account)
-            .HasForeignKey<UserProfile>(profile => profile.AccountId) 
+            .HasForeignKey<UserProfile>(profile => profile.AccountId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<McpData>()
+            .HasMany(mcpData => mcpData.McpFillLevelLogs)
+            .WithOne(log => log.McpData)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<McpData>()
+            .HasMany(mcpData => mcpData.McpEmptyRecords)
+            .WithOne(log => log.McpData)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<McpData>()
+            .Ignore(data => data.Coordinate);
     }
 }

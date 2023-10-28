@@ -1,4 +1,5 @@
 ﻿using Commons.Communications.Mcps;
+using Commons.Models;
 using Commons.RequestStatuses;
 using Repositories.Managers;
 
@@ -11,7 +12,6 @@ public class McpFillLevelService : IMcpFillLevelService
     public Dictionary<int, float> FillLevelsById => _fillLevelsById;
     private readonly Dictionary<int, float> _fillLevelsById = new();
 
-    private Timer? _databasePersistTimer;
     private Timer? _fillTimer;
 
     public McpFillLevelService(IServiceProvider serviceProvider)
@@ -37,19 +37,55 @@ public class McpFillLevelService : IMcpFillLevelService
         });
     }
 
+    public RequestResult SetFillLevel(SetFillLevelRequest request)
+    {
+        FillLevelsById[request.McpId] = request.FillLevel;
+        
+        using var scope = _serviceProvider.CreateScope();
+        var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+        var mcpFillLevelLog = new McpFillLevelLog
+        {
+            McpDataId = request.McpId,
+            McpFillLevel = _fillLevelsById[request.McpId],
+            Timestamp = DateTime.Now,
+        };
+        unitOfWork.McpFillLevelLogs.Add(mcpFillLevelLog);
+        unitOfWork.Complete();
+        
+        return new RequestResult(new Success());
+    }
+
     public RequestResult EmptyMcp(EmptyMcpRequest request)
     {
         _fillLevelsById[request.McpId] = 0f;
+        
+        using var scope = _serviceProvider.CreateScope();
+        var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+        
+        var mcpFillLevelLog = new McpFillLevelLog
+        {
+            McpDataId = request.McpId,
+            McpFillLevel = _fillLevelsById[request.McpId],
+            Timestamp = DateTime.Now,
+        };
+        unitOfWork.McpFillLevelLogs.Add(mcpFillLevelLog);
+        
+        var mcpEmptyRecord = new McpEmptyRecord
+        {
+            McpDataId = request.McpId,
+            Timestamp = DateTime.Now,
+        };
+        unitOfWork.McpEmptyRecords.Add(mcpEmptyRecord);
+        
+        unitOfWork.Complete();
+        
         return new RequestResult(new Success());
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
         InitializeFillLevelDictionary();
-
         _fillTimer = new Timer(FillMcps, null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
-        // _databasePersistTimer = new Timer(PersistMcpStates, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
-
         return Task.CompletedTask;
     }
 
@@ -79,6 +115,5 @@ public class McpFillLevelService : IMcpFillLevelService
     public void Dispose()
     {
         _fillTimer?.Dispose();
-        _databasePersistTimer?.Dispose();
     }
 }
