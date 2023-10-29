@@ -12,6 +12,6 @@ public class MockTaskRepository : MockGenericRepository<TaskData>, ITaskReposito
 
     public List<TaskData> GetTasksByDate(DateTime date)
     {
-        return Context.TaskDatas.Where(task => task.AssignedTimestamp.Date == date.Date).ToList();
+        return Context.TaskDataTable.Where(task => task.AssignedTimestamp.Date == date.Date).ToList();
     }
 }

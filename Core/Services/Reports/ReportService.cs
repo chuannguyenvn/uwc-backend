@@ -9,9 +9,9 @@ namespace Services.Reports;
 
 public class ReportService : IReportService
 {
-    private readonly UnitOfWork _unitOfWork;
+    private readonly IUnitOfWork _unitOfWork;
 
-    public ReportService(UnitOfWork unitOfWork)
+    public ReportService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
     }

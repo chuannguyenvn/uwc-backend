@@ -12,12 +12,12 @@ public class MockMessageRepository: MockGenericRepository<Message>, IMessageRepo
     
     public IEnumerable<Message> GetMessagesBetweenTwoUsers(int userAccountId, int otherUserAccountId)
     {
-        return Context.Messages.Where(m => (m.SenderAccountId == userAccountId && m.ReceiverAccountId == otherUserAccountId) ||
+        return Context.MessageTable.Where(m => (m.SenderAccountId == userAccountId && m.ReceiverAccountId == otherUserAccountId) ||
                                            (m.ReceiverAccountId == userAccountId && m.SenderAccountId == otherUserAccountId));
     }
 
     public IEnumerable<Message> GetPreviewMessages(int userAccountId)
     {
-        return Context.Messages;
+        return Context.MessageTable;
     }
 }

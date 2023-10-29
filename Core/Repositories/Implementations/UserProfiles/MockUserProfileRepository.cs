@@ -13,6 +13,6 @@ public class MockUserProfileRepository : MockGenericRepository<UserProfile>, IUs
 
     public IEnumerable<UserProfile> GetByUserRole(UserRole userRole)
     {
-        return Context.UserProfiles.Where(up => up.UserRole == userRole);
+        return Context.UserProfileTable.Where(up => up.UserRole == userRole);
     }
 }

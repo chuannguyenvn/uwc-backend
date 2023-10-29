@@ -1,5 +1,6 @@
 using System.Text;
 using Commons.Types;
+using Helpers;
 using Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -142,8 +143,6 @@ app.UseCors(corsPolicy);
 
 app.MapControllers();
 
-// app.ResetData();
-//
-// app.SeedData();
+app.SeedData();
 
 app.Run();

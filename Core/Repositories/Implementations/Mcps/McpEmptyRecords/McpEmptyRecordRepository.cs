@@ -12,6 +12,6 @@ public class McpEmptyRecordRepository : GenericRepository<McpEmptyRecord>, IMcpE
 
     public List<McpEmptyRecord> GetRecordsByDate(DateTime date)
     {
-        return Context.McpEmptyRecords.Where(record => record.Timestamp.Date == date.Date).ToList();
+        return Context.McpEmptyRecordTable.Where(record => record.Timestamp.Date == date.Date).ToList();
     }
 }

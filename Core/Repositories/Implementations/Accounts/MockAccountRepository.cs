@@ -12,11 +12,11 @@ public class MockAccountRepository : MockGenericRepository<Account>, IAccountRep
 
     public bool DoesUsernameExist(string username)
     {
-        return Context.Accounts.Any(a => a.Username == username);
+        return Context.AccountTable.Any(a => a.Username == username);
     }
 
     public Account GetByUsername(string username)
     {
-        return Context.Accounts.FirstOrDefault(a => a.Username == username);
+        return Context.AccountTable.FirstOrDefault(a => a.Username == username);
     }
 }

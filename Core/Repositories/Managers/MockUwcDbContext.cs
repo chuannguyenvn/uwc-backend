@@ -2,27 +2,27 @@
 
 namespace Repositories.Managers;
 
-public class MockUwcDbContext
+public class MockUwcDbContext : ISeedable
 {
-    public List<Account> Accounts { get; set; }
-    public List<UserProfile> UserProfiles { get; set; }
-    public List<McpData> McpData { get; set; }
-    public List<McpEmptyRecord> McpEmptyRecords { get; set; }
-    public List<McpFillLevelLog> McpFillLevelLogs { get; set; }
-    public List<TaskData> TaskDatas { get; set; }
-    public List<VehicleData> VehicleData { get; set; }
-    public List<Message> Messages { get; set; }
+    public List<Account> AccountTable { get; set; }
+    public List<UserProfile> UserProfileTable { get; set; }
+    public List<McpData> McpDataTable { get; set; }
+    public List<McpEmptyRecord> McpEmptyRecordTable { get; set; }
+    public List<McpFillLevelLog> McpFillLevelLogTable { get; set; }
+    public List<TaskData> TaskDataTable { get; set; }
+    public List<VehicleData> VehicleDataTable { get; set; }
+    public List<Message> MessageTable { get; set; }
 
     public MockUwcDbContext()
     {
-        Accounts = new List<Account>();
-        UserProfiles = new List<UserProfile>();
-        McpData = new List<McpData>();
-        McpEmptyRecords = new List<McpEmptyRecord>();
-        McpFillLevelLogs = new List<McpFillLevelLog>();
-        TaskDatas = new List<TaskData>();
-        VehicleData = new List<VehicleData>();
-        Messages = new List<Message>();
+        AccountTable = new List<Account>();
+        UserProfileTable = new List<UserProfile>();
+        McpDataTable = new List<McpData>();
+        McpEmptyRecordTable = new List<McpEmptyRecord>();
+        McpFillLevelLogTable = new List<McpFillLevelLog>();
+        TaskDataTable = new List<TaskData>();
+        VehicleDataTable = new List<VehicleData>();
+        MessageTable = new List<Message>();
 
         // TODO: Add some mock data here
     }
@@ -32,16 +32,16 @@ public class MockUwcDbContext
         switch (typeof(T))
         {
             case { } account when account == typeof(Account):
-                Accounts = newList as List<Account>;
+                AccountTable = newList as List<Account>;
                 break;
             case { } mcpData when mcpData == typeof(McpData):
-                McpData = newList as List<McpData>;
+                McpDataTable = newList as List<McpData>;
                 break;
             case { } vehicleData when vehicleData == typeof(VehicleData):
-                VehicleData = newList as List<VehicleData>;
+                VehicleDataTable = newList as List<VehicleData>;
                 break;
             case { } message when message == typeof(Message):
-                Messages = newList as List<Message>;
+                MessageTable = newList as List<Message>;
                 break;
         }
     }
@@ -50,11 +50,56 @@ public class MockUwcDbContext
     {
         return typeof(T) switch
         {
-            { } account when account == typeof(Account) => Accounts as List<T>,
-            { } mcpData when mcpData == typeof(McpData) => McpData as List<T>,
-            { } vehicleData when vehicleData == typeof(VehicleData) => VehicleData as List<T>,
-            { } message when message == typeof(Message) => Messages as List<T>,
+            { } account when account == typeof(Account) => AccountTable as List<T>,
+            { } mcpData when mcpData == typeof(McpData) => McpDataTable as List<T>,
+            { } vehicleData when vehicleData == typeof(VehicleData) => VehicleDataTable as List<T>,
+            { } message when message == typeof(Message) => MessageTable as List<T>,
             _ => new List<T>()
         } ?? throw new InvalidOperationException();
+    }
+
+    public void AddAccount(Account entry)
+    {
+        AccountTable.Add(entry);
+    }
+
+    public void AddUserProfile(UserProfile entry)
+    {
+        UserProfileTable.Add(entry);
+    }
+
+    public void AddMcpData(McpData entry)
+    {
+        McpDataTable.Add(entry);
+    }
+
+    public void AddMcpEmptyRecord(McpEmptyRecord entry)
+    {
+        McpEmptyRecordTable.Add(entry);
+    }
+
+    public void AddMcpFillLevelLog(McpFillLevelLog entry)
+    {
+        McpFillLevelLogTable.Add(entry);
+    }
+
+    public void AddVehicleData(VehicleData entry)
+    {
+        VehicleDataTable.Add(entry);
+    }
+
+    public void AddTaskData(TaskData entry)
+    {
+        TaskDataTable.Add(entry);
+    }
+
+    public void AddMessage(Message entry)
+    {
+        MessageTable.Add(entry);
+    }
+
+    public void Complete()
+    {
+        
     }
 }
