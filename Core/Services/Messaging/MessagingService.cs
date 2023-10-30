@@ -32,11 +32,12 @@ public class MessagingService : IMessagingService
         _unitOfWork.MessageRepository.Add(message);
         _unitOfWork.Complete();
 
-        _hubContext.Clients.Client(BaseHub.ConnectionIds[request.ReceiverAccountId])
-            .SendAsync(HubHandlers.Messaging.SEND_MESSAGE, new SendMessageBroadcastData()
-            {
-                NewMessage = message,
-            });
+        if (BaseHub.ConnectionIds.TryGetValue(request.ReceiverAccountId, out var id))
+            _hubContext.Clients.Client(id)
+                .SendAsync(HubHandlers.Messaging.SEND_MESSAGE, new SendMessageBroadcastData()
+                {
+                    NewMessage = message,
+                });
 
         return new RequestResult(new Success());
     }
