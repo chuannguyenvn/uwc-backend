@@ -21,14 +21,14 @@ public class AuthenticationService : IAuthenticationService
 
     public ParamRequestResult<LoginResponse> Login(LoginRequest request)
     {
-        if (!_unitOfWork.Accounts.DoesUsernameExist(request.Username)) return new ParamRequestResult<LoginResponse>(new UsernameNotExist());
+        if (!_unitOfWork.AccountRepository.DoesUsernameExist(request.Username)) return new ParamRequestResult<LoginResponse>(new UsernameNotExist());
 
-        var account = _unitOfWork.Accounts.GetByUsername(request.Username);
+        var account = _unitOfWork.AccountRepository.GetByUsername(request.Username);
         if (account.PasswordHash != AuthenticationHelpers.ComputeHash(request.Password, account.PasswordSalt))
             return new ParamRequestResult<LoginResponse>(new IncorrectPassword());
 
-        var userProfile = _unitOfWork.UserProfiles.GetById(account.UserProfileId);
-        
+        var userProfile = _unitOfWork.UserProfileRepository.GetById(account.UserProfileId);
+
         var userRole = userProfile.UserRole;
         if (request.IsFromDesktop && userRole != UserRole.Supervisor)
             return new ParamRequestResult<LoginResponse>(new InvalidRoleWhenLogin());
@@ -46,15 +46,24 @@ public class AuthenticationService : IAuthenticationService
 
     public ParamRequestResult<RegisterResponse> Register(RegisterRequest request)
     {
-        if (_unitOfWork.Accounts.DoesUsernameExist(request.Username)) return new ParamRequestResult<RegisterResponse>(new UsernameAlreadyExist());
+        if (_unitOfWork.AccountRepository.DoesUsernameExist(request.Username)) return new ParamRequestResult<RegisterResponse>(new UsernameAlreadyExist());
 
         var account = new Account
         {
             Username = request.Username,
             PasswordHash = request.Password,
+            UserProfile = new UserProfile
+            {
+                UserRole = request.UserRole,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                Gender = request.Gender,
+                DateOfBirth = request.DateOfBirth,
+                Address = request.Address,
+            }
         };
         account.GenerateSaltAndHash();
-        _unitOfWork.Accounts.Add(account);
+        _unitOfWork.AccountRepository.Add(account);
         _unitOfWork.Complete();
 
         var registerResponse = new RegisterResponse
@@ -77,7 +86,7 @@ public class AuthenticationService : IAuthenticationService
 
     private InitializationData CreateInitializationData()
     {
-        var allMcps = _unitOfWork.McpData.GetAll().ToList();
+        var allMcps = _unitOfWork.McpDataRepository.GetAll().ToList();
         return new InitializationData
         {
             McpLocationByIds = allMcps.ToDictionary(mcp => mcp.Id, mcp => mcp.Coordinate)

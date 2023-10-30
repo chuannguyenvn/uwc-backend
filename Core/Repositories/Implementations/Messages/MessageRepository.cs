@@ -12,13 +12,14 @@ public class MessageRepository : GenericRepository<Message>, IMessageRepository
 
     public IEnumerable<Message> GetMessagesBetweenTwoUsers(int userAccountId, int otherUserAccountId)
     {
-        return Context.Messages.Where(m => (m.SenderAccountId == userAccountId && m.ReceiverAccountId == otherUserAccountId) ||
-                                           (m.ReceiverAccountId == userAccountId && m.SenderAccountId == otherUserAccountId));
+        return Context.MessageTable.Where(m => (m.SenderAccountId == userAccountId && m.ReceiverAccountId == otherUserAccountId) ||
+                                               (m.ReceiverAccountId == userAccountId && m.SenderAccountId == otherUserAccountId)).ToList()
+            .OrderByDescending(message => message.Timestamp);
     }
 
     public IEnumerable<Message> GetPreviewMessages(int userAccountId)
     {
-        return Context.Messages.Where(message => message.SenderAccountId == userAccountId || message.ReceiverAccountId == userAccountId)
+        return Context.MessageTable.Where(message => message.SenderAccountId == userAccountId || message.ReceiverAccountId == userAccountId)
             .GroupBy(message => message.SenderAccountId == userAccountId ? message.ReceiverAccountId : message.SenderAccountId)
             .Select(group => group.OrderByDescending(message => message.Timestamp).First()).ToList();
     }

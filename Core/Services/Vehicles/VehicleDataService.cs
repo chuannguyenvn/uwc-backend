@@ -22,7 +22,7 @@ public class VehicleDataService : IVehicleDataService
             Model = request.Model,
             VehicleType = request.VehicleType
         };
-        _unitOfWork.VehicleData.Add(vehicleData);
+        _unitOfWork.VehicleDataRepository.Add(vehicleData);
         _unitOfWork.Complete();
         
         return new RequestResult(new Success());
@@ -30,9 +30,9 @@ public class VehicleDataService : IVehicleDataService
 
     public RequestResult UpdateVehicle(UpdateVehicleRequest request)
     {
-        if (!_unitOfWork.VehicleData.DoesIdExist(request.VehicleId)) return new RequestResult(new DataEntryNotFound());
+        if (!_unitOfWork.VehicleDataRepository.DoesIdExist(request.VehicleId)) return new RequestResult(new DataEntryNotFound());
         
-        var vehicleData = _unitOfWork.VehicleData.GetById(request.VehicleId);
+        var vehicleData = _unitOfWork.VehicleDataRepository.GetById(request.VehicleId);
         if (request.NewLicensePlate != null) vehicleData.LicensePlate = request.NewLicensePlate;
         if (request.NewModel != null) vehicleData.Model = request.NewModel;
         if (request.NewVehicleType != null) vehicleData.VehicleType = request.NewVehicleType.Value;
@@ -43,10 +43,10 @@ public class VehicleDataService : IVehicleDataService
 
     public RequestResult RemoveVehicle(RemoveVehicleRequest request)
     {
-        if (!_unitOfWork.VehicleData.DoesIdExist(request.VehicleId)) return new RequestResult(new DataEntryNotFound());
+        if (!_unitOfWork.VehicleDataRepository.DoesIdExist(request.VehicleId)) return new RequestResult(new DataEntryNotFound());
         
-        var vehicleData = _unitOfWork.VehicleData.GetById(request.VehicleId);
-        _unitOfWork.VehicleData.Remove(vehicleData);
+        var vehicleData = _unitOfWork.VehicleDataRepository.GetById(request.VehicleId);
+        _unitOfWork.VehicleDataRepository.Remove(vehicleData);
         _unitOfWork.Complete();
         
         return new RequestResult(new Success());

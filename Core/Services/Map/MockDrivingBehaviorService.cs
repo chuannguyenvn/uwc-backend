@@ -36,7 +36,7 @@ public class MockDrivingBehaviorService : IHostedService
     {
         using var scope = _serviceProvider.CreateScope();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-        var randomDrivers = unitOfWork.UserProfiles.GetRandomWithCondition(userProfile => userProfile.UserRole == UserRole.Driver, countToPick);
+        var randomDrivers = unitOfWork.UserProfileRepository.GetRandomWithCondition(userProfile => userProfile.UserRole == UserRole.Driver, countToPick);
 
         foreach (var randomDriver in randomDrivers)
         {
@@ -48,7 +48,7 @@ public class MockDrivingBehaviorService : IHostedService
     {
         using var scope = _serviceProvider.CreateScope();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-        var randomCleaners = unitOfWork.UserProfiles.GetRandomWithCondition(userProfile => userProfile.UserRole == UserRole.Cleaner, countToPick);
+        var randomCleaners = unitOfWork.UserProfileRepository.GetRandomWithCondition(userProfile => userProfile.UserRole == UserRole.Cleaner, countToPick);
 
         foreach (var randomCleaner in randomCleaners)
         {
@@ -70,7 +70,7 @@ public class MockDrivingBehaviorService : IHostedService
             {
                 if (direction.IsCompleted)
                 {
-                    var randomMcps = unitOfWork.McpData.GetRandom(5).ToList();
+                    var randomMcps = unitOfWork.McpDataRepository.GetRandom(5).ToList();
                     var waypoints = randomMcps.Select(mcp => mcp.Coordinate).ToList();
                     var newDirection = directionService.GetDirection(new GetDirectionRequest()
                     {
@@ -101,7 +101,7 @@ public class MockDrivingBehaviorService : IHostedService
             {
                 if (direction.IsCompleted)
                 {
-                    var randomMcps = unitOfWork.McpData.GetRandom(5).ToList();
+                    var randomMcps = unitOfWork.McpDataRepository.GetRandom(5).ToList();
                     var waypoints = randomMcps.Select(mcp => mcp.Coordinate).ToList();
                     var newDirection = directionService.GetDirection(new GetDirectionRequest()
                     {

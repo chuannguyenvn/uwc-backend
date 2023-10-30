@@ -1,8 +1,10 @@
+using Commons.Categories;
 using Repositories.Managers;
 using Services.Authentication;
 using Commons.Communications.Authentication;
 using Commons.RequestStatuses;
 using Commons.RequestStatuses.Authentication;
+using Commons.Types;
 
 namespace Test;
 
@@ -15,7 +17,7 @@ public class AuthenticationServiceTests
     {
         _mockSettings = new Settings()
         {
-            BearerKey = "mock_key",
+            BearerKey = "mock_key_mock_key_mock_key_mock_key",
         };
     }
 
@@ -27,8 +29,9 @@ public class AuthenticationServiceTests
 
         var result = authenticationService.Login(new LoginRequest()
         {
-            Username = "admin",
+            Username = "supervisor_supervisor",
             Password = "password",
+            IsFromDesktop = true,
         });
 
         Assert.IsInstanceOf<Success>(result.RequestStatus);
@@ -44,6 +47,7 @@ public class AuthenticationServiceTests
         {
             Username = "weird_username",
             Password = "password",
+            IsFromDesktop = true,
         });
 
         Assert.IsInstanceOf<UsernameNotExist>(result.RequestStatus);
@@ -57,8 +61,9 @@ public class AuthenticationServiceTests
 
         var result = authenticationService.Login(new LoginRequest()
         {
-            Username = "admin",
+            Username = "supervisor_supervisor",
             Password = "wrong_password",
+            IsFromDesktop = true,
         });
 
         Assert.IsInstanceOf<IncorrectPassword>(result.RequestStatus);
@@ -70,18 +75,27 @@ public class AuthenticationServiceTests
         var mockUnitOfWork = new MockUnitOfWork();
         var authenticationService = new AuthenticationService(mockUnitOfWork, _mockSettings);
 
-        var registerResult = authenticationService.Register(new RegisterRequest()
+        var registerResult = authenticationService.Register(new RegisterRequest
         {
             Username = "new_user",
             Password = "new_password",
+            UserRole = UserRole.Supervisor,
+            FirstName = "test",
+            LastName = "test",
+            Gender = Gender.Male,
+            DateOfBirth = default,
+            Address = "test",
+
         });
 
         Assert.IsInstanceOf<Success>(registerResult.RequestStatus);
 
-        var loginResult = authenticationService.Login(new LoginRequest()
+        var loginResult = authenticationService.Login(new LoginRequest
         {
             Username = "new_user",
             Password = "new_password",
+            IsFromDesktop = true,
+
         });
 
         Assert.IsInstanceOf<Success>(loginResult.RequestStatus);

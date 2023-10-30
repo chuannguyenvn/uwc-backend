@@ -12,6 +12,6 @@ public class TaskRepository : GenericRepository<TaskData>, ITaskRepository
 
     public List<TaskData> GetTasksByDate(DateTime date)
     {
-        return Context.TaskDatas.Where(task => task.AssignedTimestamp == date.Date).ToList();
+        return Context.TaskDataTable.Where(task => task.AssignedTimestamp == date.Date).ToList();
     }
 }
