@@ -3,5 +3,6 @@
     public class EmptyMcpRequest
     {
         public int McpId { get; set; }
+        public int WorkerId { get; set; }
     }
 }

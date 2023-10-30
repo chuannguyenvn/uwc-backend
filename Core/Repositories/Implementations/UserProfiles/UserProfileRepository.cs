@@ -13,6 +13,6 @@ public class UserProfileRepository : GenericRepository<UserProfile>, IUserProfil
 
     public IEnumerable<UserProfile> GetByUserRole(UserRole userRole)
     {
-        throw new NotImplementedException();
+        return Context.UserProfileTable.Where(userProfile => userProfile.UserRole == userRole);
     }
 }

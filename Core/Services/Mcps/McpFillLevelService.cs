@@ -74,6 +74,7 @@ public class McpFillLevelService : IMcpFillLevelService
         {
             McpDataId = request.McpId,
             Timestamp = DateTime.Now,
+            EmptyingWorkerId = request.WorkerId,
         };
         unitOfWork.McpEmptyRecordRecordRepository.Add(mcpEmptyRecord);
         

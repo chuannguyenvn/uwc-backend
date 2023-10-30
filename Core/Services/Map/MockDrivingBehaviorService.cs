@@ -36,7 +36,8 @@ public class MockDrivingBehaviorService : IHostedService
     {
         using var scope = _serviceProvider.CreateScope();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-        var randomDrivers = unitOfWork.UserProfileRepository.GetRandomWithCondition(userProfile => userProfile.UserRole == UserRole.Driver, countToPick);
+        var randomDrivers =
+            unitOfWork.UserProfileRepository.GetRandomWithCondition(userProfile => userProfile.UserRole == UserRole.Driver, countToPick);
 
         foreach (var randomDriver in randomDrivers)
         {
@@ -48,7 +49,8 @@ public class MockDrivingBehaviorService : IHostedService
     {
         using var scope = _serviceProvider.CreateScope();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-        var randomCleaners = unitOfWork.UserProfileRepository.GetRandomWithCondition(userProfile => userProfile.UserRole == UserRole.Cleaner, countToPick);
+        var randomCleaners =
+            unitOfWork.UserProfileRepository.GetRandomWithCondition(userProfile => userProfile.UserRole == UserRole.Cleaner, countToPick);
 
         foreach (var randomCleaner in randomCleaners)
         {
@@ -89,7 +91,11 @@ public class MockDrivingBehaviorService : IHostedService
                         locationService.DriverLocationsByAccountId[id],
                         randomMcps.Select(mcp => mcp.Id).ToList(),
                         newDirection,
-                        mcpId => mcpFillLevelService.EmptyMcp(new EmptyMcpRequest() { McpId = mcpId }));
+                        mcpId => mcpFillLevelService.EmptyMcp(new EmptyMcpRequest()
+                        {
+                            McpId = mcpId,
+                            WorkerId = id,
+                        }));
                 }
                 else
                 {
@@ -120,7 +126,11 @@ public class MockDrivingBehaviorService : IHostedService
                         locationService.CleanerLocationsByAccountId[id],
                         randomMcps.Select(mcp => mcp.Id).ToList(),
                         newDirection,
-                        mcpId => mcpFillLevelService.EmptyMcp(new EmptyMcpRequest() { McpId = mcpId }));
+                        mcpId => mcpFillLevelService.EmptyMcp(new EmptyMcpRequest()
+                        {
+                            McpId = mcpId,
+                            WorkerId = id,
+                        }));
                 }
                 else
                 {
