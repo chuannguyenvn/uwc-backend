@@ -14,7 +14,7 @@ public class MockGenericRepository<T> : IGenericRepository<T> where T : IndexedE
         Context = mockUwcDbContext;
     }
 
-    public void Add(T entity)
+    public virtual void Add(T entity)
     {
         entity.Id = _nextId++;
         Context.Set<T>().Add(entity);

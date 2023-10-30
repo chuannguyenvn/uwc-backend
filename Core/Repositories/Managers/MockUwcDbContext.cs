@@ -1,8 +1,9 @@
 ﻿using Commons.Models;
+using Helpers;
 
 namespace Repositories.Managers;
 
-public class MockUwcDbContext : ISeedable
+public class MockUwcDbContext
 {
     public List<Account> AccountTable { get; set; }
     public List<UserProfile> UserProfileTable { get; set; }
@@ -23,8 +24,6 @@ public class MockUwcDbContext : ISeedable
         TaskDataTable = new List<TaskData>();
         VehicleDataTable = new List<VehicleData>();
         MessageTable = new List<Message>();
-
-        // TODO: Add some mock data here
     }
 
     public void Set<T>(IEnumerable<T> newList) where T : IndexedEntity
@@ -32,16 +31,28 @@ public class MockUwcDbContext : ISeedable
         switch (typeof(T))
         {
             case { } account when account == typeof(Account):
-                AccountTable = newList as List<Account>;
+                AccountTable = (newList as List<Account>)!;
+                break;
+            case { } userProfile when userProfile == typeof(UserProfile):
+                UserProfileTable = (newList as List<UserProfile>)!;
                 break;
             case { } mcpData when mcpData == typeof(McpData):
-                McpDataTable = newList as List<McpData>;
+                McpDataTable = (newList as List<McpData>)!;
+                break;
+            case { } mcpEmptyRecord when mcpEmptyRecord == typeof(McpEmptyRecord):
+                McpEmptyRecordTable = (newList as List<McpEmptyRecord>)!;
+                break;
+            case { } mcpFillLevelLog when mcpFillLevelLog == typeof(McpFillLevelLog):
+                McpFillLevelLogTable = (newList as List<McpFillLevelLog>)!;
+                break;
+            case { } taskData when taskData == typeof(TaskData):
+                TaskDataTable = (newList as List<TaskData>)!;
                 break;
             case { } vehicleData when vehicleData == typeof(VehicleData):
-                VehicleDataTable = newList as List<VehicleData>;
+                VehicleDataTable = (newList as List<VehicleData>)!;
                 break;
             case { } message when message == typeof(Message):
-                MessageTable = newList as List<Message>;
+                MessageTable = (newList as List<Message>)!;
                 break;
         }
     }
@@ -51,55 +62,14 @@ public class MockUwcDbContext : ISeedable
         return typeof(T) switch
         {
             { } account when account == typeof(Account) => AccountTable as List<T>,
+            { } userProfile when userProfile == typeof(UserProfile) => UserProfileTable as List<T>,
             { } mcpData when mcpData == typeof(McpData) => McpDataTable as List<T>,
+            { } mcpEmptyRecord when mcpEmptyRecord == typeof(McpEmptyRecord) => McpEmptyRecordTable as List<T>,
+            { } mcpFillLevelLog when mcpFillLevelLog == typeof(McpFillLevelLog) => McpFillLevelLogTable as List<T>,
+            { } taskData when taskData == typeof(TaskData) => TaskDataTable as List<T>,
             { } vehicleData when vehicleData == typeof(VehicleData) => VehicleDataTable as List<T>,
             { } message when message == typeof(Message) => MessageTable as List<T>,
             _ => new List<T>()
-        } ?? throw new InvalidOperationException();
-    }
-
-    public void AddAccount(Account entry)
-    {
-        AccountTable.Add(entry);
-    }
-
-    public void AddUserProfile(UserProfile entry)
-    {
-        UserProfileTable.Add(entry);
-    }
-
-    public void AddMcpData(McpData entry)
-    {
-        McpDataTable.Add(entry);
-    }
-
-    public void AddMcpEmptyRecord(McpEmptyRecord entry)
-    {
-        McpEmptyRecordTable.Add(entry);
-    }
-
-    public void AddMcpFillLevelLog(McpFillLevelLog entry)
-    {
-        McpFillLevelLogTable.Add(entry);
-    }
-
-    public void AddVehicleData(VehicleData entry)
-    {
-        VehicleDataTable.Add(entry);
-    }
-
-    public void AddTaskData(TaskData entry)
-    {
-        TaskDataTable.Add(entry);
-    }
-
-    public void AddMessage(Message entry)
-    {
-        MessageTable.Add(entry);
-    }
-
-    public void Complete()
-    {
-        
+        } ?? throw new InvalidOperationException($"Retrieving data for type {typeof(T).Name} is not supported in this mock context.");
     }
 }

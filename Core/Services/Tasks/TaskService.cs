@@ -29,7 +29,7 @@ public class TaskService : ITaskService
             AssignedTimestamp = DateTime.Now,
             IsCompleted = false
         };
-        _unitOfWork.TaskDatas.Add(taskData);
+        _unitOfWork.TaskDataRepository.Add(taskData);
         _unitOfWork.Complete();
 
         return new RequestResult(new Success());
@@ -37,9 +37,9 @@ public class TaskService : ITaskService
 
     public RequestResult CompleteTask(CompleteTaskRequest request)
     {
-        if (!_unitOfWork.TaskDatas.DoesIdExist(request.TaskId)) return new RequestResult(new DataEntryNotFound());
+        if (!_unitOfWork.TaskDataRepository.DoesIdExist(request.TaskId)) return new RequestResult(new DataEntryNotFound());
 
-        var taskData = _unitOfWork.TaskDatas.GetById(request.TaskId);
+        var taskData = _unitOfWork.TaskDataRepository.GetById(request.TaskId);
         taskData.IsCompleted = true;
         taskData.CompletedTimestamp = DateTime.Now;
         _unitOfWork.Complete();
@@ -49,9 +49,9 @@ public class TaskService : ITaskService
 
     public RequestResult RejectTask(RejectTaskRequest request)
     {
-        if (!_unitOfWork.TaskDatas.DoesIdExist(request.TaskId)) return new RequestResult(new DataEntryNotFound());
+        if (!_unitOfWork.TaskDataRepository.DoesIdExist(request.TaskId)) return new RequestResult(new DataEntryNotFound());
 
-        var taskData = _unitOfWork.TaskDatas.GetById(request.TaskId);
+        var taskData = _unitOfWork.TaskDataRepository.GetById(request.TaskId);
         taskData.IsCompleted = false;
         taskData.CompletedTimestamp = null;
         _unitOfWork.Complete();

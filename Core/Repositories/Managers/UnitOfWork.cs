@@ -18,24 +18,24 @@ public class UnitOfWork : IUnitOfWork, IDisposable
     {
         _uwcDbContext = uwcDbContext;
 
-        Accounts = new AccountRepository(_uwcDbContext);
-        UserProfiles = new UserProfileRepository(_uwcDbContext);
-        McpData = new McpDataRepository(_uwcDbContext);
-        McpEmptyRecords = new McpEmptyRecordRepository(_uwcDbContext);
-        McpFillLevelLogs = new McpFillLevelLogRepository(_uwcDbContext);
-        Messages = new MessageRepository(_uwcDbContext);
-        TaskDatas = new TaskRepository(_uwcDbContext);
-        VehicleData = new VehicleDataRepository(_uwcDbContext);
+        AccountRepository = new AccountRepository(_uwcDbContext);
+        UserProfileRepository = new UserProfileRepository(_uwcDbContext);
+        McpDataRepository = new McpDataRepository(_uwcDbContext);
+        McpEmptyRecordRecordRepository = new McpEmptyRecordRepository(_uwcDbContext);
+        McpFillLevelLogRepository = new McpFillLevelLogRepository(_uwcDbContext);
+        MessageRepository = new MessageRepository(_uwcDbContext);
+        TaskDataRepository = new TaskRepository(_uwcDbContext);
+        VehicleDataRepository = new VehicleDataRepository(_uwcDbContext);
     }
 
-    public IAccountRepository Accounts { get; }
-    public IUserProfileRepository UserProfiles { get; }
-    public IMcpDataRepository McpData { get; }
-    public IMcpEmptyRecordRepository McpEmptyRecords { get; }
-    public IMcpFillLevelLogRepository McpFillLevelLogs { get; }
-    public ITaskRepository TaskDatas { get; }
-    public IMessageRepository Messages { get; }
-    public IVehicleDataRepository VehicleData { get; }
+    public IAccountRepository AccountRepository { get; }
+    public IUserProfileRepository UserProfileRepository { get; }
+    public IMcpDataRepository McpDataRepository { get; }
+    public IMcpEmptyRecordRepository McpEmptyRecordRecordRepository { get; }
+    public IMcpFillLevelLogRepository McpFillLevelLogRepository { get; }
+    public ITaskRepository TaskDataRepository { get; }
+    public IMessageRepository MessageRepository { get; }
+    public IVehicleDataRepository VehicleDataRepository { get; }
 
     public void Dispose()
     {

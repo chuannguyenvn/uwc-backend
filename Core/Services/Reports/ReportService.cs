@@ -30,7 +30,7 @@ public class ReportService : IReportService
 
     private void CalculateTaskMetrics(GetDashboardReportResponse response)
     {
-        var tasks = _unitOfWork.TaskDatas.GetTasksByDate(DateTime.Now);
+        var tasks = _unitOfWork.TaskDataRepository.GetTasksByDate(DateTime.Now);
         response.TotalTasksCreated = tasks.Count;
         response.TotalTasksCompleted = tasks.Count(t => t.IsCompleted);
         response.AverageTaskCompletionTimeInMinutes = (float)(tasks.Count == 0
@@ -45,8 +45,8 @@ public class ReportService : IReportService
 
     private void CalculateWorkerOnlineMetrics(GetDashboardReportResponse response)
     {
-        var allCleaners = _unitOfWork.UserProfiles.GetByUserRole(UserRole.Cleaner);
-        var allDrivers = _unitOfWork.UserProfiles.GetByUserRole(UserRole.Driver);
+        var allCleaners = _unitOfWork.UserProfileRepository.GetByUserRole(UserRole.Cleaner);
+        var allDrivers = _unitOfWork.UserProfileRepository.GetByUserRole(UserRole.Driver);
         var allWorkers = allCleaners.Concat(allDrivers).ToList();
         var allConnectedAccountIds = BaseHub.ConnectionIds.Keys;
         var onlineWorkers = allWorkers.Where(w => allConnectedAccountIds.Contains(w.AccountId)).ToList();
@@ -56,11 +56,11 @@ public class ReportService : IReportService
 
     private void CalculateMcpFillLevelMetrics(GetDashboardReportResponse response)
     {
-        var fillLevelLogs = _unitOfWork.McpFillLevelLogs.GetLogsByDate(DateTime.Now);
+        var fillLevelLogs = _unitOfWork.McpFillLevelLogRepository.GetLogsByDate(DateTime.Now);
         response.TotalMcpFillLevelTimestamps = fillLevelLogs.Select(m => m.Timestamp).ToList();
         response.TotalMcpFillLevelValues = fillLevelLogs.Select(m => m.McpFillLevel).ToList();
 
-        var mcpEmptied = _unitOfWork.McpEmptyRecords.GetRecordsByDate(DateTime.Now);
+        var mcpEmptied = _unitOfWork.McpEmptyRecordRecordRepository.GetRecordsByDate(DateTime.Now);
         response.McpEmptiedTimestamps = mcpEmptied.Select(m => m.Timestamp).ToList();
     }
 

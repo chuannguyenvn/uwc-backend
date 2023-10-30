@@ -31,7 +31,7 @@ public class McpDataService : IMcpDataService
             Zone = request.Zone,
             Capacity = request.Capacity // TODO: Range check this
         };
-        _unitOfWork.McpData.Add(mcpData);
+        _unitOfWork.McpDataRepository.Add(mcpData);
         _unitOfWork.Complete();
 
         _hubContext.Clients.All.SendAsync(HubHandlers.McpLocation.BROADCAST_LOCATION, mcpData);
@@ -41,9 +41,9 @@ public class McpDataService : IMcpDataService
 
     public RequestResult UpdateMcp(UpdateMcpRequest request)
     {
-        if (!_unitOfWork.McpData.DoesIdExist(request.McpId)) return new RequestResult(new DataEntryNotFound());
+        if (!_unitOfWork.McpDataRepository.DoesIdExist(request.McpId)) return new RequestResult(new DataEntryNotFound());
 
-        var mcpData = _unitOfWork.McpData.GetById(request.McpId);
+        var mcpData = _unitOfWork.McpDataRepository.GetById(request.McpId);
         if (request.NewAddress != null) mcpData.Address = request.NewAddress;
         if (request.NewCoordinate != null) mcpData.Coordinate = request.NewCoordinate;
         if (request.NewZone != null) mcpData.Zone = request.NewZone;
@@ -57,10 +57,10 @@ public class McpDataService : IMcpDataService
 
     public RequestResult RemoveMcp(RemoveMcpRequest request)
     {
-        if (!_unitOfWork.McpData.DoesIdExist(request.McpId)) return new RequestResult(new DataEntryNotFound());
+        if (!_unitOfWork.McpDataRepository.DoesIdExist(request.McpId)) return new RequestResult(new DataEntryNotFound());
 
-        var mcpData = _unitOfWork.McpData.GetById(request.McpId);
-        _unitOfWork.McpData.Remove(mcpData);
+        var mcpData = _unitOfWork.McpDataRepository.GetById(request.McpId);
+        _unitOfWork.McpDataRepository.Remove(mcpData);
         _unitOfWork.Complete();
 
         _hubContext.Clients.All.SendAsync(HubHandlers.McpLocation.BROADCAST_LOCATION, mcpData);
@@ -70,7 +70,7 @@ public class McpDataService : IMcpDataService
 
     public ParamRequestResult<GetMcpDataResponse> GetMcpData(McpDataQueryParameters parameters)
     {
-        var result = _unitOfWork.McpData.GetData(parameters);
+        var result = _unitOfWork.McpDataRepository.GetData(parameters);
         return new ParamRequestResult<GetMcpDataResponse>(new Success(), new GetMcpDataResponse() { Results = result.ToList() });
     }
 }

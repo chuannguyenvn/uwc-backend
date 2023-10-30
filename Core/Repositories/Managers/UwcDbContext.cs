@@ -4,7 +4,7 @@ using Commons.Types;
 
 namespace Repositories.Managers;
 
-public class UwcDbContext : DbContext, ISeedable
+public class UwcDbContext : DbContext
 {
     public UwcDbContext(DbContextOptions<UwcDbContext> options) : base(options)
     {
@@ -68,50 +68,5 @@ public class UwcDbContext : DbContext, ISeedable
 
         modelBuilder.Entity<McpData>()
             .Ignore(data => data.Coordinate);
-    }
-
-    public void AddAccount(Account entry)
-    {
-        AccountTable.Add(entry);
-    }
-
-    public void AddUserProfile(UserProfile entry)
-    {
-        UserProfileTable.Add(entry);
-    }
-
-    public void AddMcpData(McpData entry)
-    {
-        McpDataTable.Add(entry);
-    }
-
-    public void AddMcpEmptyRecord(McpEmptyRecord entry)
-    {
-        McpEmptyRecordTable.Add(entry);
-    }
-
-    public void AddMcpFillLevelLog(McpFillLevelLog entry)
-    {
-        McpFillLevelLogTable.Add(entry);
-    }
-
-    public void AddVehicleData(VehicleData entry)
-    {
-        VehicleDataTable.Add(entry);
-    }
-
-    public void AddTaskData(TaskData entry)
-    {
-        TaskDataTable.Add(entry);
-    }
-
-    public void AddMessage(Message entry)
-    {
-        MessageTable.Add(entry);
-    }
-
-    public void Complete()
-    {
-        SaveChanges();
     }
 }

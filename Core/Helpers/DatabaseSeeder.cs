@@ -8,14 +8,14 @@ namespace Helpers;
 
 public class DatabaseSeeder
 {
-    private readonly ISeedable _uwcDbContext;
+    private readonly IUnitOfWork _unitOfWork;
 
     private readonly List<Account> _allAccounts = new();
     private readonly List<VehicleData> _allVehicles = new();
 
-    public DatabaseSeeder(ISeedable uwcDbContext)
+    public DatabaseSeeder(IUnitOfWork unitOfWork)
     {
-        _uwcDbContext = uwcDbContext;
+        _unitOfWork = unitOfWork;
     }
 
     public void SeedDatabase()
@@ -58,11 +58,11 @@ public class DatabaseSeeder
             };
             account.GenerateSaltAndHash();
 
-            _uwcDbContext.AddAccount(account);
+            _unitOfWork.AccountRepository.Add(account);
             _allAccounts.Add(account);
         }
 
-        _uwcDbContext.Complete();
+        _unitOfWork.Complete();
     }
 
     public void SeedDriverProfiles()
@@ -95,11 +95,11 @@ public class DatabaseSeeder
             };
             account.GenerateSaltAndHash();
 
-            _uwcDbContext.AddAccount(account);
+            _unitOfWork.AccountRepository.Add(account);
             _allAccounts.Add(account);
         }
 
-        _uwcDbContext.Complete();
+        _unitOfWork.Complete();
     }
 
     public void SeedCleanerProfiles()
@@ -132,11 +132,11 @@ public class DatabaseSeeder
             };
             account.GenerateSaltAndHash();
 
-            _uwcDbContext.AddAccount(account);
+            _unitOfWork.AccountRepository.Add(account);
             _allAccounts.Add(account);
         }
 
-        _uwcDbContext.Complete();
+        _unitOfWork.Complete();
     }
 
     private void SeedMcpData()
@@ -162,10 +162,10 @@ public class DatabaseSeeder
 
         foreach (var mcpData in mcpDataList)
         {
-            _uwcDbContext.AddMcpData(mcpData);
+            _unitOfWork.McpDataRepository.Add(mcpData);
         }
 
-        _uwcDbContext.Complete();
+        _unitOfWork.Complete();
     }
 
     public void SeedVehicles()
@@ -193,17 +193,17 @@ public class DatabaseSeeder
             };
 
             _allVehicles.Add(vehicle);
-            _uwcDbContext.AddVehicleData(vehicle);
+            _unitOfWork.VehicleDataRepository.Add(vehicle);
         }
 
-        _uwcDbContext.Complete();
+        _unitOfWork.Complete();
     }
 
     public void SeedMessages()
     {
         // Between ID 1 and ID 11
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[10],
             ReceiverAccount = _allAccounts[0],
@@ -211,7 +211,7 @@ public class DatabaseSeeder
             Content = "Hey, just finished the morning pickups. The smell today is something else..."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[10],
             ReceiverAccount = _allAccounts[0],
@@ -219,7 +219,7 @@ public class DatabaseSeeder
             Content = "Ran into some traffic too. It's like the whole city decided to hit the roads at once."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[10],
             ReceiverAccount = _allAccounts[10],
@@ -228,7 +228,7 @@ public class DatabaseSeeder
                 "Oh, and remember that alley near Green Street? Still blocked, had to do some crazy maneuvering to turn around."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[0],
             ReceiverAccount = _allAccounts[10],
@@ -236,7 +236,7 @@ public class DatabaseSeeder
             Content = "Thanks for the update. Sorry about the traffic and the alley. You're a pro at handling those tight spots!"
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[0],
             ReceiverAccount = _allAccounts[10],
@@ -244,7 +244,7 @@ public class DatabaseSeeder
             Content = "By the way, we got a call from Mrs. Henderson on Maple Avenue. She's concerned her bin was missed."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[10],
             ReceiverAccount = _allAccounts[0],
@@ -252,7 +252,7 @@ public class DatabaseSeeder
             Content = "I remember that one, her bin was half buried in snow. I'll swing by after lunch to sort it out."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[0],
             ReceiverAccount = _allAccounts[10],
@@ -261,7 +261,7 @@ public class DatabaseSeeder
                 "Thanks, appreciate you taking care of it. And don't forget to log any unexpected delays or issues in the system."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[10],
             ReceiverAccount = _allAccounts[0],
@@ -269,7 +269,7 @@ public class DatabaseSeeder
             Content = "Sure thing, I'll log everything once I'm back in the truck. Lunch break now, I'm starving!"
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[0],
             ReceiverAccount = _allAccounts[10],
@@ -278,7 +278,7 @@ public class DatabaseSeeder
                 "Enjoy your lunch! Also, we've been getting compliments on your friendly waves to the neighbors. Keep spreading that positivity."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[10],
             ReceiverAccount = _allAccounts[0],
@@ -286,7 +286,7 @@ public class DatabaseSeeder
             Content = "Thanks, boss! I figure a smile and a wave make trash days better for everyone. :)"
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[0],
             ReceiverAccount = _allAccounts[10],
@@ -295,7 +295,7 @@ public class DatabaseSeeder
                 "You're absolutely right. Oh, and I'm looking into getting some AC repairs for the trucks. Hang in there with the heat!"
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[10],
             ReceiverAccount = _allAccounts[0],
@@ -303,7 +303,7 @@ public class DatabaseSeeder
             Content = "That would be amazing, it feels like a sauna in here sometimes. Fingers crossed for cooler days soon."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[0],
             ReceiverAccount = _allAccounts[10],
@@ -311,7 +311,7 @@ public class DatabaseSeeder
             Content = "I hear you! And speaking of repairs, the rearview camera should be fixed by Friday. Safety first!"
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[10],
             ReceiverAccount = _allAccounts[0],
@@ -319,7 +319,7 @@ public class DatabaseSeeder
             Content = "That's a relief. Those alley pickups won't be as nerve-wracking with a working camera. Can't wait!"
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[0],
             ReceiverAccount = _allAccounts[10],
@@ -327,7 +327,7 @@ public class DatabaseSeeder
             Content = "You got this. Keep up the great work, and remember, you're our waste warrior out there."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[10],
             ReceiverAccount = _allAccounts[0],
@@ -335,7 +335,7 @@ public class DatabaseSeeder
             Content = "Thanks, boss. I wear the title with pride. Off to tackle the afternoon route now!"
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[0],
             ReceiverAccount = _allAccounts[10],
@@ -343,7 +343,7 @@ public class DatabaseSeeder
             Content = "Go show that trash who's boss! If you ever find a way to make it smell like roses, let me know."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[10],
             ReceiverAccount = _allAccounts[0],
@@ -351,7 +351,7 @@ public class DatabaseSeeder
             Content = "Haha, will do! Catch you later, boss. Gotta conquer this rubbish realm!"
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[0],
             ReceiverAccount = _allAccounts[10],
@@ -359,7 +359,7 @@ public class DatabaseSeeder
             Content = "Well done, you have a productive day!"
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[10],
             ReceiverAccount = _allAccounts[0],
@@ -370,7 +370,7 @@ public class DatabaseSeeder
 
         // Between ID 1 and 20 others
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[0],
             ReceiverAccount = _allAccounts[11],
@@ -378,7 +378,7 @@ public class DatabaseSeeder
             Content = "I have a new task, please accept if you can."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[0],
             ReceiverAccount = _allAccounts[12],
@@ -386,7 +386,7 @@ public class DatabaseSeeder
             Content = "Your current task is no longer needed, do the next one please."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[13],
             ReceiverAccount = _allAccounts[0],
@@ -395,7 +395,7 @@ public class DatabaseSeeder
                 "I have done transporting the waste from the assigned MCP, I think my vehicle's current load is not enough for the next task."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[0],
             ReceiverAccount = _allAccounts[14],
@@ -403,7 +403,7 @@ public class DatabaseSeeder
             Content = "Hello, are you there. I need your help for this task, you are near the MCP I want to clear."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[15],
             ReceiverAccount = _allAccounts[0],
@@ -411,7 +411,7 @@ public class DatabaseSeeder
             Content = "Sorry, I have a headache. May I leave now."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[0],
             ReceiverAccount = _allAccounts[31],
@@ -419,7 +419,7 @@ public class DatabaseSeeder
             Content = "Sorry to keep you waiting, I was busy this morning and cannot reply your message."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[0],
             ReceiverAccount = _allAccounts[33],
@@ -427,7 +427,7 @@ public class DatabaseSeeder
             Content = "Hmm, that's a good idea. You could help the other cleaners."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[35],
             ReceiverAccount = _allAccounts[0],
@@ -435,7 +435,7 @@ public class DatabaseSeeder
             Content = "Help me, I get lost on my way!"
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[37],
             ReceiverAccount = _allAccounts[0],
@@ -443,7 +443,7 @@ public class DatabaseSeeder
             Content = "I'm done. Goodbye sir."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[39],
             ReceiverAccount = _allAccounts[0],
@@ -451,7 +451,7 @@ public class DatabaseSeeder
             Content = "See you tomorrow, sir."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[0],
             ReceiverAccount = _allAccounts[16],
@@ -460,7 +460,7 @@ public class DatabaseSeeder
                 "Are you there, please focus on the task of emptying the MCP at BK university. The students need fresh air to study. Be quick, please. Thank you."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[0],
             ReceiverAccount = _allAccounts[17],
@@ -468,7 +468,7 @@ public class DatabaseSeeder
             Content = "Have you cleaned the MCP on Ly Thuong Kiet street, I see that you are traveling on the wrong route."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[0],
             ReceiverAccount = _allAccounts[18],
@@ -476,7 +476,7 @@ public class DatabaseSeeder
             Content = "Why are you late today. We have a strict schedule today, be quick and go to work."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[0],
             ReceiverAccount = _allAccounts[19],
@@ -484,7 +484,7 @@ public class DatabaseSeeder
             Content = "Haha, have a good lunch, maybe I will compose task for you during the your lunch break time."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[0],
             ReceiverAccount = _allAccounts[20],
@@ -492,7 +492,7 @@ public class DatabaseSeeder
             Content = "Good job, Steve. You are done for today."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[32],
             ReceiverAccount = _allAccounts[0],
@@ -500,7 +500,7 @@ public class DatabaseSeeder
             Content = "The MCP is now cleaned. Be not worried."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[34],
             ReceiverAccount = _allAccounts[0],
@@ -508,7 +508,7 @@ public class DatabaseSeeder
             Content = "Sir, I have sent a request for a day off. Can you sign it for me?"
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[0],
             ReceiverAccount = _allAccounts[36],
@@ -516,7 +516,7 @@ public class DatabaseSeeder
             Content = "Good morning, sir."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[38],
             ReceiverAccount = _allAccounts[0],
@@ -525,7 +525,7 @@ public class DatabaseSeeder
                 "Wait, maybe there has been a misunderstanding here. You want me to clean the MCP on the To Hien Thanh street first, not the one on the Su Van Hanh?"
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[40],
             ReceiverAccount = _allAccounts[0],
@@ -536,7 +536,7 @@ public class DatabaseSeeder
 
         // Between ID 11 and 20 others
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[10],
             ReceiverAccount = _allAccounts[7],
@@ -544,7 +544,7 @@ public class DatabaseSeeder
             Content = "Thank you, I will drive back to our company now."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[10],
             ReceiverAccount = _allAccounts[11],
@@ -552,7 +552,7 @@ public class DatabaseSeeder
             Content = "Hello."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[4],
             ReceiverAccount = _allAccounts[10],
@@ -560,7 +560,7 @@ public class DatabaseSeeder
             Content = "Just finished the early morning route. The streets are looking much cleaner now!"
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[10],
             ReceiverAccount = _allAccounts[18],
@@ -568,7 +568,7 @@ public class DatabaseSeeder
             Content = "Received a report of a malfunctioning trash compactor. I'll check it out and get it fixed."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[22],
             ReceiverAccount = _allAccounts[10],
@@ -576,7 +576,7 @@ public class DatabaseSeeder
             Content = "Just completed a successful trash pickup on Main Street. The team's efficiency is improving!"
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[44],
             ReceiverAccount = _allAccounts[10],
@@ -584,7 +584,7 @@ public class DatabaseSeeder
             Content = "Received a request for extra bins in the downtown area. How should we proceed?"
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[10],
             ReceiverAccount = _allAccounts[46],
@@ -592,7 +592,7 @@ public class DatabaseSeeder
             Content = "Completed the trash collection for today. Ready to head back and wrap up for the day!"
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[35],
             ReceiverAccount = _allAccounts[10],
@@ -600,7 +600,7 @@ public class DatabaseSeeder
             Content = "Inspecting the truck before starting the afternoon routes. Safety first!"
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[10],
             ReceiverAccount = _allAccounts[22],
@@ -608,7 +608,7 @@ public class DatabaseSeeder
             Content = "Just cleared a blocked alleyway for better access during our trash pickups. Smooth sailing ahead!"
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[19],
             ReceiverAccount = _allAccounts[10],
@@ -616,7 +616,7 @@ public class DatabaseSeeder
             Content = "Sorting and separating recyclables to ensure proper disposal. Every bit counts!"
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[10],
             ReceiverAccount = _allAccounts[17],
@@ -624,7 +624,7 @@ public class DatabaseSeeder
             Content = "Planning the route for tomorrow's pickups. Time to optimize our efficiency!"
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[26],
             ReceiverAccount = _allAccounts[10],
@@ -632,7 +632,7 @@ public class DatabaseSeeder
             Content = "Received a call about a lost trash bin. I'll investigate and see if we can locate it."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[10],
             ReceiverAccount = _allAccounts[16],
@@ -640,7 +640,7 @@ public class DatabaseSeeder
             Content = "Preparing for a special waste collection event this weekend. Let's make it a success!"
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[10],
             ReceiverAccount = _allAccounts[5],
@@ -648,7 +648,7 @@ public class DatabaseSeeder
             Content = "Sorting and segregating hazardous waste for proper disposal. Safety is our priority!"
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[10],
             ReceiverAccount = _allAccounts[29],
@@ -656,7 +656,7 @@ public class DatabaseSeeder
             Content = "Inspecting the collection bins for damages and maintenance needs. Keeping our equipment in top shape!"
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[48],
             ReceiverAccount = _allAccounts[10],
@@ -664,7 +664,7 @@ public class DatabaseSeeder
             Content = "Received a request for a special recycling pickup. Coordinating with the team to ensure a smooth operation."
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[10],
             ReceiverAccount = _allAccounts[33],
@@ -672,7 +672,7 @@ public class DatabaseSeeder
             Content = "Educating residents about proper recycling practices. Let's reduce contamination in our bins!"
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[39],
             ReceiverAccount = _allAccounts[10],
@@ -680,7 +680,7 @@ public class DatabaseSeeder
             Content = "Completed a community cleanup event. The neighborhood is looking much cleaner and more vibrant!"
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[10],
             ReceiverAccount = _allAccounts[2],
@@ -688,7 +688,7 @@ public class DatabaseSeeder
             Content = "Coordinating with local schools for recycling education programs. Cultivating eco-conscious citizens!"
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[47],
             ReceiverAccount = _allAccounts[10],
@@ -697,7 +697,7 @@ public class DatabaseSeeder
                 "Received positive feedback from a resident about our improved trash collection efficiency. Our hard work is paying off!"
         });
 
-        _uwcDbContext.AddMessage(new Message
+        _unitOfWork.MessageRepository.Add(new Message
         {
             SenderAccount = _allAccounts[10],
             ReceiverAccount = _allAccounts[37],
@@ -705,6 +705,6 @@ public class DatabaseSeeder
             Content = "Heading out for a nighttime pickup. Let's keep the city clean even during the quiet hours!"
         });
 
-        _uwcDbContext.Complete();
+        _unitOfWork.Complete();
     }
 }

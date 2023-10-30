@@ -19,4 +19,13 @@ public class MockAccountRepository : MockGenericRepository<Account>, IAccountRep
     {
         return Context.AccountTable.FirstOrDefault(a => a.Username == username);
     }
+
+    public override void Add(Account entity)
+    {
+        base.Add(entity);
+        entity.UserProfile.AccountId = entity.Id;
+        entity.UserProfile.Account = entity;
+        entity.UserProfileId = entity.UserProfile.Id;
+        Context.UserProfileTable.Add(entity.UserProfile);
+    }
 }

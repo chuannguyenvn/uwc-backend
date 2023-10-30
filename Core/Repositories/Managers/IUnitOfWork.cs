@@ -12,14 +12,14 @@ namespace Repositories.Managers;
 
 public interface IUnitOfWork
 {
-    IAccountRepository Accounts { get; }
-    IUserProfileRepository UserProfiles { get; }
-    IMcpDataRepository McpData { get; }
-    IMcpEmptyRecordRepository McpEmptyRecords { get; }
-    IMcpFillLevelLogRepository McpFillLevelLogs { get; }
-    IMessageRepository Messages { get; }
-    ITaskRepository TaskDatas { get; }
-    IVehicleDataRepository VehicleData { get; }
+    IAccountRepository AccountRepository { get; }
+    IUserProfileRepository UserProfileRepository { get; }
+    IMcpDataRepository McpDataRepository { get; }
+    IMcpEmptyRecordRepository McpEmptyRecordRecordRepository { get; }
+    IMcpFillLevelLogRepository McpFillLevelLogRepository { get; }
+    IMessageRepository MessageRepository { get; }
+    ITaskRepository TaskDataRepository { get; }
+    IVehicleDataRepository VehicleDataRepository { get; }
     int Complete();
     Task<int> CompleteAsync();
 }

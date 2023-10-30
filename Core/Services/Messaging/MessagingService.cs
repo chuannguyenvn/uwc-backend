@@ -29,7 +29,7 @@ public class MessagingService : IMessagingService
             Content = request.Content,
             Timestamp = DateTime.Now,
         };
-        _unitOfWork.Messages.Add(message);
+        _unitOfWork.MessageRepository.Add(message);
         _unitOfWork.Complete();
 
         _hubContext.Clients.Client(BaseHub.ConnectionIds[request.ReceiverAccountId])
@@ -43,7 +43,7 @@ public class MessagingService : IMessagingService
 
     public ParamRequestResult<GetMessagesBetweenTwoUsersResponse> GetMessagesBetweenTwoUsers(GetMessagesBetweenTwoUsersRequest request)
     {
-        var messages = _unitOfWork.Messages.GetMessagesBetweenTwoUsers(request.UserAccountId, request.OtherUserAccountId);
+        var messages = _unitOfWork.MessageRepository.GetMessagesBetweenTwoUsers(request.UserAccountId, request.OtherUserAccountId);
         var response = new GetMessagesBetweenTwoUsersResponse()
         {
             Messages = messages.ToList(),
@@ -53,17 +53,17 @@ public class MessagingService : IMessagingService
 
     public ParamRequestResult<GetPreviewMessagesResponse> GetPreviewMessages(GetPreviewMessagesRequest request)
     {
-        if (!_unitOfWork.Accounts.DoesIdExist(request.UserAccountId))
+        if (!_unitOfWork.AccountRepository.DoesIdExist(request.UserAccountId))
             return new ParamRequestResult<GetPreviewMessagesResponse>(new UsernameNotExist());
 
         var fullNames = new List<string>();
-        var messages = _unitOfWork.Messages.GetPreviewMessages(request.UserAccountId).ToList();
+        var messages = _unitOfWork.MessageRepository.GetPreviewMessages(request.UserAccountId).ToList();
         foreach (var message in messages)
         {
-            var account = _unitOfWork.Accounts.GetById(message.SenderAccountId == request.UserAccountId
+            var account = _unitOfWork.AccountRepository.GetById(message.SenderAccountId == request.UserAccountId
                 ? message.ReceiverAccountId
                 : message.SenderAccountId);
-            var userProfile = _unitOfWork.UserProfiles.GetById(account.UserProfileId);
+            var userProfile = _unitOfWork.UserProfileRepository.GetById(account.UserProfileId);
             var fullName = userProfile.FirstName + " " + userProfile.LastName;
 
             fullNames.Add(fullName);

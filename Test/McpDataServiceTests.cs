@@ -85,7 +85,7 @@ public class McpDataServiceTests
 
         var result = mcpDataService.RemoveMcp(new RemoveMcpRequest
         {
-            McpId = 1
+            McpId = 10000000
         });
 
         Assert.IsInstanceOf<DataEntryNotFound>(result.RequestStatus);
@@ -117,6 +117,6 @@ public class McpDataServiceTests
         });
 
         Assert.IsInstanceOf<Success>(updateResult.RequestStatus);
-        Assert.AreEqual(newAddress, mockUnitOfWork.McpData.GetById(1).Address);
+        Assert.AreEqual(newAddress, mockUnitOfWork.McpDataRepository.GetById(1).Address);
     }
 }

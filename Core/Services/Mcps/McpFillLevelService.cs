@@ -49,7 +49,7 @@ public class McpFillLevelService : IMcpFillLevelService
             McpFillLevel = _fillLevelsById[request.McpId],
             Timestamp = DateTime.Now,
         };
-        unitOfWork.McpFillLevelLogs.Add(mcpFillLevelLog);
+        unitOfWork.McpFillLevelLogRepository.Add(mcpFillLevelLog);
         unitOfWork.Complete();
         
         return new RequestResult(new Success());
@@ -68,14 +68,14 @@ public class McpFillLevelService : IMcpFillLevelService
             McpFillLevel = _fillLevelsById[request.McpId],
             Timestamp = DateTime.Now,
         };
-        unitOfWork.McpFillLevelLogs.Add(mcpFillLevelLog);
+        unitOfWork.McpFillLevelLogRepository.Add(mcpFillLevelLog);
         
         var mcpEmptyRecord = new McpEmptyRecord
         {
             McpDataId = request.McpId,
             Timestamp = DateTime.Now,
         };
-        unitOfWork.McpEmptyRecords.Add(mcpEmptyRecord);
+        unitOfWork.McpEmptyRecordRecordRepository.Add(mcpEmptyRecord);
         
         unitOfWork.Complete();
         
@@ -93,7 +93,7 @@ public class McpFillLevelService : IMcpFillLevelService
     {
         using var scope = _serviceProvider.CreateScope();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-        foreach (var mcpData in unitOfWork.McpData.GetAll())
+        foreach (var mcpData in unitOfWork.McpDataRepository.GetAll())
         {
             _fillLevelsById.Add(mcpData.Id, 0f);
         }

@@ -32,8 +32,8 @@ public class LocationService : ILocationService
         using var scope = _serviceProvider.CreateScope();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
         
-        var account = unitOfWork.Accounts.GetById(request.AccountId);
-        var userProfile = unitOfWork.UserProfiles.GetById(account.UserProfileId);
+        var account = unitOfWork.AccountRepository.GetById(request.AccountId);
+        var userProfile = unitOfWork.UserProfileRepository.GetById(account.UserProfileId);
         if (userProfile.UserRole == UserRole.Driver)
             _driverLocationsById[request.AccountId] = request.NewLocation;
         else if (userProfile.UserRole == UserRole.Cleaner)
@@ -63,7 +63,7 @@ public class LocationService : ILocationService
     {
         using var scope = _serviceProvider.CreateScope();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-        var userProfiles = unitOfWork.UserProfiles.GetAll();
+        var userProfiles = unitOfWork.UserProfileRepository.GetAll();
         foreach (var userProfile in userProfiles)
         {
             if (userProfile.UserRole == UserRole.Driver)

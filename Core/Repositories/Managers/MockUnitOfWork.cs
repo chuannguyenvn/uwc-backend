@@ -1,4 +1,5 @@
-﻿using Repositories.Implementations.Accounts;
+﻿using Helpers;
+using Repositories.Implementations.Accounts;
 using Repositories.Implementations.Mcps;
 using Repositories.Implementations.Mcps.McpData;
 using Repositories.Implementations.Mcps.McpEmptyRecords;
@@ -17,24 +18,27 @@ public class MockUnitOfWork : IUnitOfWork
     public MockUnitOfWork()
     {
         _uwcDbContext = new MockUwcDbContext();
-        Accounts = new MockAccountRepository(_uwcDbContext);
-        UserProfiles = new MockUserProfileRepository(_uwcDbContext);
-        McpData = new MockMcpDataRepository(_uwcDbContext);
-        McpEmptyRecords = new MockMcpEmptyRecordRepository(_uwcDbContext);
-        McpFillLevelLogs = new MockMcpFillLevelLogRepository(_uwcDbContext);
-        Messages = new MockMessageRepository(_uwcDbContext);
-        TaskDatas = new MockTaskRepository(_uwcDbContext);
-        VehicleData = new MockVehicleDataRepository(_uwcDbContext);
+        AccountRepository = new MockAccountRepository(_uwcDbContext);
+        UserProfileRepository = new MockUserProfileRepository(_uwcDbContext);
+        McpDataRepository = new MockMcpDataRepository(_uwcDbContext);
+        McpEmptyRecordRecordRepository = new MockMcpEmptyRecordRepository(_uwcDbContext);
+        McpFillLevelLogRepository = new MockMcpFillLevelLogRepository(_uwcDbContext);
+        MessageRepository = new MockMessageRepository(_uwcDbContext);
+        TaskDataRepository = new MockTaskRepository(_uwcDbContext);
+        VehicleDataRepository = new MockVehicleDataRepository(_uwcDbContext);
+
+        var dataSeeder = new DatabaseSeeder(this);
+        dataSeeder.SeedDatabase();
     }
 
-    public IAccountRepository Accounts { get; }
-    public IUserProfileRepository UserProfiles { get; }
-    public IMcpDataRepository McpData { get; }
-    public IMcpEmptyRecordRepository McpEmptyRecords { get; }
-    public IMcpFillLevelLogRepository McpFillLevelLogs { get; }
-    public ITaskRepository TaskDatas { get; }
-    public IMessageRepository Messages { get; }
-    public IVehicleDataRepository VehicleData { get; }
+    public IAccountRepository AccountRepository { get; }
+    public IUserProfileRepository UserProfileRepository { get; }
+    public IMcpDataRepository McpDataRepository { get; }
+    public IMcpEmptyRecordRepository McpEmptyRecordRecordRepository { get; }
+    public IMcpFillLevelLogRepository McpFillLevelLogRepository { get; }
+    public ITaskRepository TaskDataRepository { get; }
+    public IMessageRepository MessageRepository { get; }
+    public IVehicleDataRepository VehicleDataRepository { get; }
 
     public int Complete()
     {

@@ -29,8 +29,8 @@ public class MessageServiceTests
 
         var result = messageService.SendMessage(new SendMessageRequest()
         {
-            SenderAccountId = _mockUnitOfWork.Accounts.GetById(1).UserProfileId,
-            ReceiverAccountId = _mockUnitOfWork.Accounts.GetById(2).UserProfileId,
+            SenderAccountId = _mockUnitOfWork.AccountRepository.GetById(1).UserProfileId,
+            ReceiverAccountId = _mockUnitOfWork.AccountRepository.GetById(2).UserProfileId,
             Content = messageContent,
         });
 
@@ -46,15 +46,15 @@ public class MessageServiceTests
 
         messageService.SendMessage(new SendMessageRequest()
         {
-            SenderAccountId = _mockUnitOfWork.Accounts.GetById(1).UserProfileId,
-            ReceiverAccountId = _mockUnitOfWork.Accounts.GetById(2).UserProfileId,
+            SenderAccountId = _mockUnitOfWork.AccountRepository.GetById(1).UserProfileId,
+            ReceiverAccountId = _mockUnitOfWork.AccountRepository.GetById(2).UserProfileId,
             Content = messageContent,
         });
 
         var result = messageService.GetMessagesBetweenTwoUsers(new GetMessagesBetweenTwoUsersRequest()
         {
-            UserAccountId = _mockUnitOfWork.Accounts.GetById(1).UserProfileId,
-            OtherUserAccountId = _mockUnitOfWork.Accounts.GetById(2).UserProfileId,
+            UserAccountId = _mockUnitOfWork.AccountRepository.GetById(1).UserProfileId,
+            OtherUserAccountId = _mockUnitOfWork.AccountRepository.GetById(2).UserProfileId,
         });
 
         Assert.AreEqual(result.Data.Messages[0].Content, messageContent);
