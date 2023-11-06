@@ -51,6 +51,8 @@ public class McpFillLevelService : IMcpFillLevelService
         };
         unitOfWork.McpFillLevelLogRepository.Add(mcpFillLevelLog);
         unitOfWork.Complete();
+
+        Console.WriteLine($"Set fill level of mcp {request.McpId} to {request.FillLevel}");
         
         return new RequestResult(new Success());
     }
@@ -79,6 +81,8 @@ public class McpFillLevelService : IMcpFillLevelService
         unitOfWork.McpEmptyRecordRecordRepository.Add(mcpEmptyRecord);
         
         unitOfWork.Complete();
+        
+        Console.WriteLine($"Emptied mcp {request.McpId}");
         
         return new RequestResult(new Success());
     }

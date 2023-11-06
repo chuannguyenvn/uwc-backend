@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Controllers;
 
-[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class McpDataController : Controller

@@ -6,7 +6,6 @@ using Services.Mcps;
 
 namespace Controllers;
 
-[Authorize]
 [ApiController]
 [Route("[controller]")]
 public class McpFillLevelController : Controller

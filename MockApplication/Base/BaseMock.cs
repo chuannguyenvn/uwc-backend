@@ -1,4 +1,5 @@
-﻿using Commons.Communications.Mcps;
+﻿using Commons.Communications.Authentication;
+using Commons.Communications.Mcps;
 using Commons.Endpoints;
 using Commons.Helpers;
 using Commons.Types;
@@ -18,7 +19,16 @@ public abstract class BaseMock : IHostedService
     {
         return Task.CompletedTask;
     }
-
+    
+    protected async Task<List<int>> GetMcpIds()
+    {
+        var result = await RequestHelper.Post<GetMcpDataResponse>(Endpoints.McpData.Get, new McpDataQueryParameters
+        {
+        });
+        
+        return result.Results.Select(mcpData => mcpData.Id).ToList();
+    }
+    
     protected async Task<float> GetMcpFillLevel(int mcpId)
     {
         var result = await RequestHelper.Post<GetFillLevelResponse>(Endpoints.McpFillLevel.Get, new GetFillLevelRequest()
@@ -42,7 +52,8 @@ public abstract class BaseMock : IHostedService
     {
         await RequestHelper.Post(Endpoints.McpFillLevel.Empty, new EmptyMcpRequest()
         {
-            McpId = mcpId
+            McpId = mcpId,
+            WorkerId = 10,
         });
     }
 
