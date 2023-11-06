@@ -29,6 +29,15 @@ public abstract class BaseMock : IHostedService
         return result.FillLevelsById[mcpId];
     }
 
+    protected async void SetMcpFillLevel(int mcpId, float fillLevel)
+    {
+        await RequestHelper.Post(Endpoints.McpFillLevel.Set, new SetFillLevelRequest()
+        {
+            McpId = mcpId,
+            FillLevel = fillLevel
+        });
+    }
+
     protected async void EmptyMcp(int mcpId)
     {
         await RequestHelper.Post(Endpoints.McpFillLevel.Empty, new EmptyMcpRequest()
