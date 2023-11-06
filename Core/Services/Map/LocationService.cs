@@ -27,11 +27,28 @@ public class LocationService : ILocationService
         _serviceProvider = serviceProvider;
     }
 
+    public ParamRequestResult<GetLocationResponse> GetLocation(GetLocationRequest request)
+    {
+        if (_driverLocationsById.TryGetValue(request.AccountId, out var driverLocation))
+            return new ParamRequestResult<GetLocationResponse>(new Success(), new GetLocationResponse()
+            {
+                Coordinate = driverLocation
+            });
+
+        if (_cleanerLocationsById.TryGetValue(request.AccountId, out var cleanerLocation))
+            return new ParamRequestResult<GetLocationResponse>(new Success(), new GetLocationResponse()
+            {
+                Coordinate = cleanerLocation
+            });
+
+        return new ParamRequestResult<GetLocationResponse>(new DataEntryNotFound());
+    }
+
     public RequestResult UpdateLocation(LocationUpdateRequest request)
     {
         using var scope = _serviceProvider.CreateScope();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
-        
+
         var account = unitOfWork.AccountRepository.GetById(request.AccountId);
         var userProfile = unitOfWork.UserProfileRepository.GetById(account.UserProfileId);
         if (userProfile.UserRole == UserRole.Driver)
@@ -77,13 +94,13 @@ public class LocationService : ILocationService
     {
         using var scope = _serviceProvider.CreateScope();
         var hubContext = scope.ServiceProvider.GetRequiredService<IHubContext<BaseHub>>();
-        
+
         var broadcastData = new WorkerLocationBroadcastData()
         {
             DriverLocationByIds = _driverLocationsById,
             CleanerLocationByIds = _cleanerLocationsById,
         };
-        
+
         hubContext.Clients.All.SendAsync(HubHandlers.WorkerLocation.BROADCAST_LOCATION, broadcastData);
     }
 }

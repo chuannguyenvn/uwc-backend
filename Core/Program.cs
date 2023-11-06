@@ -13,6 +13,7 @@ using Services.Messaging;
 using Services.OnlineStatus;
 using Services.Reports;
 using Services.Tasks;
+using Services.UserProfiles;
 using Services.Vehicles;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -87,6 +88,8 @@ builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
+builder.Services.AddScoped<IUserProfileService, UserProfileService>();
+
 builder.Services.AddScoped<IMessagingService, MessagingService>();
 
 builder.Services.AddScoped<IMcpDataService, McpDataService>();
@@ -104,8 +107,6 @@ builder.Services.AddSingleton<ILocationService>(provider => provider.GetRequired
 builder.Services.AddHostedService<LocationService>(provider => provider.GetRequiredService<LocationService>());
 
 builder.Services.AddScoped<IDirectionService, DirectionService>();
-
-builder.Services.AddHostedService<MockDrivingBehaviorService>();
 
 builder.Services.AddScoped<IVehicleDataService, VehicleDataService>();
 

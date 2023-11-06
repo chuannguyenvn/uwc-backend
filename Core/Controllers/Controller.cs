@@ -18,10 +18,4 @@ public class Controller : ControllerBase
                 throw new ArgumentOutOfRangeException();
         }
     }
-
-    [HttpGet("focus")]
-    public virtual IActionResult Focus()
-    {
-        return Ok();
-    }
 }
