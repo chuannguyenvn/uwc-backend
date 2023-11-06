@@ -13,6 +13,7 @@ using Services.Messaging;
 using Services.OnlineStatus;
 using Services.Reports;
 using Services.Tasks;
+using Services.UserProfiles;
 using Services.Vehicles;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -86,6 +87,8 @@ builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 #region Services
 
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+
+builder.Services.AddScoped<IUserProfileService, UserProfileService>();
 
 builder.Services.AddScoped<IMessagingService, MessagingService>();
 
