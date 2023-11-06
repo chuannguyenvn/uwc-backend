@@ -19,10 +19,6 @@ public class McpFillingMock : BaseMock
             {
                 SetMcpFillLevel(randomMcpId, fillLevel + 0.1f);
             }
-            else
-            {
-                EmptyMcp(randomMcpId);
-            }
             
             await Task.Delay(5000);
         }

@@ -18,10 +18,10 @@ public class MapController : Controller
         _directionService = directionService;
     }
 
-    [HttpGet(Endpoints.Map.GET_LOCATION)]
-    public IActionResult GetLocation(int accountId)
+    [HttpPost(Endpoints.Map.GET_LOCATION)]
+    public IActionResult GetLocation(GetLocationRequest request)
     {
-        var result = _locationService.GetLocation(accountId);
+        var result = _locationService.GetLocation(request);
         return ProcessRequestResult(result);
     }
 
@@ -32,7 +32,7 @@ public class MapController : Controller
         return ProcessRequestResult(result);
     }
     
-    [HttpGet(Endpoints.Map.GET_DIRECTION)]
+    [HttpPost(Endpoints.Map.GET_DIRECTION)]
     public IActionResult GetDirection(GetDirectionRequest request)
     {
         var result = _directionService.GetDirection(request);
