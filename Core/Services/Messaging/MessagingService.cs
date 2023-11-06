@@ -68,6 +68,9 @@ public class MessagingService : IMessagingService
             var fullName = userProfile.FirstName + " " + userProfile.LastName;
 
             fullNames.Add(fullName);
+            
+            message.SenderAccount = null;
+            message.ReceiverAccount = null;
         }
 
         var response = new GetPreviewMessagesResponse()
