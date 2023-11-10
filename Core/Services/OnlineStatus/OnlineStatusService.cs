@@ -1,4 +1,4 @@
-﻿using Commons.HubHandlers;
+using Commons.HubHandlers;
 using Hubs;
 using Microsoft.AspNetCore.SignalR;
 using SharedLibrary.Communications.OnlineStatus;

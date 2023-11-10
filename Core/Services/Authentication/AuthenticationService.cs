@@ -5,6 +5,7 @@ using Commons.Models;
 using Commons.RequestStatuses;
 using Commons.RequestStatuses.Authentication;
 using Commons.Types;
+using Hubs;
 
 namespace Services.Authentication;
 
@@ -89,7 +90,8 @@ public class AuthenticationService : IAuthenticationService
         var allMcps = _unitOfWork.McpDataRepository.GetAll().ToList();
         return new InitializationData
         {
-            McpLocationByIds = allMcps.ToDictionary(mcp => mcp.Id, mcp => mcp.Coordinate)
+            McpLocationByIds = allMcps.ToDictionary(mcp => mcp.Id, mcp => mcp.Coordinate),
+            OnlineAccountIds = BaseHub.ConnectionIds.Keys.ToList(),
         };
     }
 }
