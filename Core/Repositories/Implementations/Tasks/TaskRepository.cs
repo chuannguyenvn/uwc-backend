@@ -14,4 +14,9 @@ public class TaskRepository : GenericRepository<TaskData>, ITaskRepository
     {
         return Context.TaskDataTable.Where(task => task.AssignedTimestamp == date.Date).ToList();
     }
+
+    public List<TaskData> GetTasksByWorkerId(int workerId)
+    {
+        return Context.TaskDataTable.Where(task => task.AssigneeAccountId == workerId).ToList();
+    }
 }

@@ -19,6 +19,23 @@ public class TaskService : ITaskService
         _hubContext = hubContext;
     }
 
+    public ParamRequestResult<GetTasksOfWorkerResponse> GetTasksOfWorker(GetTasksOfWorkerRequest request)
+    {
+        if (!_unitOfWork.AccountRepository.DoesIdExist(request.WorkerId))
+            return new ParamRequestResult<GetTasksOfWorkerResponse>(new DataEntryNotFound());
+
+        var tasks = _unitOfWork.TaskDataRepository.GetTasksByWorkerId(request.WorkerId);
+        return new ParamRequestResult<GetTasksOfWorkerResponse>(new Success(), new GetTasksOfWorkerResponse
+        {
+            Tasks = tasks
+        });
+    }
+
+    public ParamRequestResult<GetAllTasksResponse> GetAllTasks()
+    {
+        throw new NotImplementedException();
+    }
+
     public RequestResult AddTask(AddTaskRequest request)
     {
         var taskData = new TaskData
@@ -26,7 +43,7 @@ public class TaskService : ITaskService
             AssignerAccountId = request.AssignerAccountId,
             AssigneeAccountId = request.AssigneeAccountId,
             McpDataId = request.McpDataId,
-            AssignedTimestamp = DateTime.Now,
+            AssignedTimestamp = request.CompleteByTimestamp,
             IsCompleted = false
         };
         _unitOfWork.TaskDataRepository.Add(taskData);
