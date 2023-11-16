@@ -39,19 +39,29 @@ public class TaskService : ITaskService
         });
     }
 
-    public RequestResult AddTask(AddTaskRequest request)
+    public RequestResult AddTask(AddTasksRequest request)
     {
-        var taskData = new TaskData
+        foreach (var mcpDataId in request.McpDataIds)
         {
-            AssignerAccountId = request.AssignerAccountId,
-            AssigneeAccountId = request.AssigneeAccountId,
-            McpDataId = request.McpDataId,
-            CreatedTimestamp = DateTime.Now,
-            CompleteByTimestamp = request.CompleteByTimestamp,
-            IsCompleted = false
-        };
-        _unitOfWork.TaskDataRepository.Add(taskData);
+            var taskData = new TaskData
+            {
+                AssignerAccountId = request.AssignerAccountId,
+                AssigneeAccountId = request.AssigneeAccountId,
+                McpDataId = mcpDataId,
+                CreatedTimestamp = DateTime.Now,
+                CompleteByTimestamp = request.CompleteByTimestamp,
+                IsCompleted = false
+            };
+            _unitOfWork.TaskDataRepository.Add(taskData);
+        }
+
         _unitOfWork.Complete();
+
+        _hubContext.Clients.Client(BaseHub.ConnectionIds[request.AssigneeAccountId])
+            .SendAsync(HubHandlers.Tasks.ADD_TASK, new AddTasksBroadcastData
+            {
+                NewTasks = _unitOfWork.TaskDataRepository.GetTasksByWorkerId(request.AssigneeAccountId).ToList()
+            });
 
         return new RequestResult(new Success());
     }
@@ -64,6 +74,12 @@ public class TaskService : ITaskService
         taskData.IsCompleted = true;
         taskData.CompletedTimestamp = DateTime.Now;
         _unitOfWork.Complete();
+
+        _hubContext.Clients.Client(BaseHub.ConnectionIds[taskData.AssignerAccountId])
+            .SendAsync(HubHandlers.Tasks.COMPLETE_TASK, new CompleteTaskBroadcastData
+            {
+                TaskId = taskData.Id,
+            });
 
         return new RequestResult(new Success());
     }

@@ -9,11 +9,11 @@ namespace Controllers;
 [Authorize]
 [ApiController]
 [Route("[controller]")]
-public class TaskController : Controller
+public class TaskDataController : Controller
 {
     private readonly ITaskService _taskService;
 
-    public TaskController(ITaskService taskService)
+    public TaskDataController(ITaskService taskService)
     {
         _taskService = taskService;
     }
@@ -33,7 +33,7 @@ public class TaskController : Controller
     }
 
     [HttpPost(Endpoints.TaskData.ADD_TASK)]
-    public IActionResult AddTask(AddTaskRequest request)
+    public IActionResult AddTask(AddTasksRequest request)
     {
         var result = _taskService.AddTask(request);
         return ProcessRequestResult(result);
