@@ -11,6 +11,7 @@ public class DatabaseSeeder
     private readonly IUnitOfWork _unitOfWork;
 
     private readonly List<Account> _allAccounts = new();
+    private readonly List<McpData> _allMcps = new();
     private readonly List<VehicleData> _allVehicles = new();
 
     public DatabaseSeeder(IUnitOfWork unitOfWork)
@@ -26,9 +27,10 @@ public class DatabaseSeeder
         SeedMcpData();
         SeedVehicles();
         SeedMessages();
+        SeedTasks();
     }
 
-    public void SeedSupervisorProfiles()
+    private void SeedSupervisorProfiles()
     {
         var maleSupervisorFirstNames = DatabaseSeederHelper.MaleSupervisorFirstNames;
         var femaleSupervisorFirstNames = DatabaseSeederHelper.FemaleSupervisorFirstNames;
@@ -65,7 +67,7 @@ public class DatabaseSeeder
         _unitOfWork.Complete();
     }
 
-    public void SeedDriverProfiles()
+    private void SeedDriverProfiles()
     {
         var maleDriverFirstNames = DatabaseSeederHelper.MaleDriverFirstNames;
         var femaleDriverFirstNames = DatabaseSeederHelper.FemaleDriverFirstNames;
@@ -102,7 +104,7 @@ public class DatabaseSeeder
         _unitOfWork.Complete();
     }
 
-    public void SeedCleanerProfiles()
+    private void SeedCleanerProfiles()
     {
         var maleCleanerFirstNames = DatabaseSeederHelper.MaleCleanerFirstNames;
         var femaleCleanerFirstNames = DatabaseSeederHelper.FemaleCleanerFirstNames;
@@ -163,12 +165,13 @@ public class DatabaseSeeder
         foreach (var mcpData in mcpDataList)
         {
             _unitOfWork.McpDataRepository.Add(mcpData);
+            _allMcps.Add(mcpData);
         }
 
         _unitOfWork.Complete();
     }
 
-    public void SeedVehicles()
+    private void SeedVehicles()
     {
         var licensePlates = DatabaseSeederHelper.GenerateLicensePlates(30);
         string[] models = { "Model 1", "Model 2", "Model 3", "Model 4", "Model 5" };
@@ -199,7 +202,7 @@ public class DatabaseSeeder
         _unitOfWork.Complete();
     }
 
-    public void SeedMessages()
+    private void SeedMessages()
     {
         // Between ID 1 and ID 11
 
@@ -704,6 +707,35 @@ public class DatabaseSeeder
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(17).AddMinutes(5).AddSeconds(45),
             Content = "Heading out for a nighttime pickup. Let's keep the city clean even during the quiet hours!"
         });
+
+        _unitOfWork.Complete();
+    }
+
+    private void SeedTasks()
+    {
+        var random = new Random();
+        for (int i = 0; i < 50; i++)
+        {
+            var supervisorId = random.Next(10);
+            var driverId = random.Next(10, 30);
+            var mcpId = random.Next(15);
+            var randomHourOffset = random.Next(-12, 12);
+            var randomMinuteOffset = random.Next(0, 3) * 15;
+            var newTask = new TaskData
+            {
+                AssignerAccountId = supervisorId,
+                AssignerAccount = _allAccounts[supervisorId],
+                AssigneeAccountId = driverId,
+                AssigneeAccount = _allAccounts[driverId],
+                McpDataId = mcpId,
+                McpData = _allMcps[mcpId],
+                AssignedTimestamp = DateTime.Today.AddHours(randomHourOffset).AddMinutes(randomMinuteOffset),
+                CompletedTimestamp = null,
+                IsCompleted = false
+            };
+
+            _unitOfWork.TaskDataRepository.Add(newTask);
+        }
 
         _unitOfWork.Complete();
     }
