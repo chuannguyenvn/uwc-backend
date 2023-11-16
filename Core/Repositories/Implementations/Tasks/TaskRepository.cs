@@ -12,11 +12,16 @@ public class TaskRepository : GenericRepository<TaskData>, ITaskRepository
 
     public List<TaskData> GetTasksByDate(DateTime date)
     {
-        return Context.TaskDataTable.Where(task => task.AssignedTimestamp == date.Date).ToList();
+        return Context.TaskDataTable.Where(task => task.CompleteByTimestamp == date.Date).ToList();
     }
 
     public List<TaskData> GetTasksByWorkerId(int workerId)
     {
         return Context.TaskDataTable.Where(task => task.AssigneeAccountId == workerId).ToList();
+    }
+
+    public List<TaskData> GetTasksFromTodayOrFuture()
+    {
+        return Context.TaskDataTable.Where(task => task.CompleteByTimestamp >= DateTime.Now.Date).ToList();
     }
 }

@@ -33,7 +33,10 @@ public class TaskService : ITaskService
 
     public ParamRequestResult<GetAllTasksResponse> GetAllTasks()
     {
-        throw new NotImplementedException();
+        return new ParamRequestResult<GetAllTasksResponse>(new Success(), new GetAllTasksResponse()
+        {
+            Tasks = _unitOfWork.TaskDataRepository.GetTasksFromTodayOrFuture(),
+        });
     }
 
     public RequestResult AddTask(AddTaskRequest request)
@@ -43,7 +46,8 @@ public class TaskService : ITaskService
             AssignerAccountId = request.AssignerAccountId,
             AssigneeAccountId = request.AssigneeAccountId,
             McpDataId = request.McpDataId,
-            AssignedTimestamp = request.CompleteByTimestamp,
+            CreatedTimestamp = DateTime.Now,
+            CompleteByTimestamp = request.CompleteByTimestamp,
             IsCompleted = false
         };
         _unitOfWork.TaskDataRepository.Add(taskData);

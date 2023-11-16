@@ -12,8 +12,10 @@ namespace Commons.Models
 
         public int McpDataId { get; set; }
         public McpData McpData { get; set; }
+        
 
-        public DateTime AssignedTimestamp { get; set; }
+        public DateTime CreatedTimestamp { get; set; }
+        public DateTime CompleteByTimestamp { get; set; }
         public DateTime? CompletedTimestamp { get; set; }
         public bool IsCompleted { get; set; }
     }

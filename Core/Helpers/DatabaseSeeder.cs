@@ -729,9 +729,8 @@ public class DatabaseSeeder
                 AssigneeAccount = _allAccounts[driverId],
                 McpDataId = mcpId,
                 McpData = _allMcps[mcpId],
-                AssignedTimestamp = DateTime.Today.AddHours(randomHourOffset).AddMinutes(randomMinuteOffset),
-                CompletedTimestamp = null,
-                IsCompleted = false
+                CreatedTimestamp = DateTime.Now,
+                CompleteByTimestamp = DateTime.Today.AddHours(randomHourOffset).AddMinutes(randomMinuteOffset),
             };
 
             _unitOfWork.TaskDataRepository.Add(newTask);
