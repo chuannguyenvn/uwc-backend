@@ -17,7 +17,7 @@ public class MockTaskRepository : MockGenericRepository<TaskData>, ITaskReposito
 
     public List<TaskData> GetTasksByWorkerId(int workerId)
     {
-        return Context.TaskDataTable.Where(task => task.AssigneeAccountId == workerId).ToList();
+        return Context.TaskDataTable.Where(task => task.AssigneeId == workerId).ToList();
     }
 
     public List<TaskData> GetTasksFromTodayOrFuture()

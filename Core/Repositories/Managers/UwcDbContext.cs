@@ -36,15 +36,15 @@ public class UwcDbContext : DbContext
             .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<TaskData>()
-            .HasOne(taskData => taskData.AssignerAccount)
+            .HasOne(taskData => taskData.AssignerProfile)
             .WithMany()
-            .HasForeignKey(taskData => taskData.AssignerAccountId)
+            .HasForeignKey(taskData => taskData.AssignerId)
             .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<TaskData>()
-            .HasOne(taskData => taskData.AssigneeAccount)
+            .HasOne(taskData => taskData.AssigneeProfile)
             .WithMany()
-            .HasForeignKey(taskData => taskData.AssigneeAccountId)
+            .HasForeignKey(taskData => taskData.AssigneeId)
             .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<Coordinate>()

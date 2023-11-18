@@ -2,7 +2,7 @@
 
 namespace Commons.Communications.Vehicles
 {
-    public class AddNewVehicleRequest
+    public class AddNewVehicle
     {
         public string LicensePlate { get; set; }
         public string Model { get; set; }

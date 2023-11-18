@@ -4,7 +4,8 @@ namespace Services.Vehicles;
 
 public interface IVehicleDataService
 {
-    public RequestResult AddNewVehicle(AddNewVehicleRequest request);
-    public RequestResult UpdateVehicle(UpdateVehicleRequest request);
-    public RequestResult RemoveVehicle(RemoveVehicleRequest request);
+    public RequestResult AddNewVehicle(AddNewVehicle request);
+    public RequestResult UpdateVehicle(UpdateVehicle request);
+    public RequestResult RemoveVehicle(RemoveVehicle request);
+    public ParamRequestResult<GetAllVehicleResponse> GetAllVehicles();
 }

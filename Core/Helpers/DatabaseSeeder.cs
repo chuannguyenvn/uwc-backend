@@ -727,10 +727,10 @@ public class DatabaseSeeder
             var randomMinuteOffset = random.Next(0, 3) * 15;
             var newTask = new TaskData
             {
-                AssignerAccountId = supervisorId,
-                AssignerAccount = _allAccounts[supervisorId],
-                AssigneeAccountId = driverId,
-                AssigneeAccount = _allAccounts[driverId],
+                AssignerId = supervisorId,
+                AssignerProfile = _allAccounts[supervisorId].UserProfile,
+                AssigneeId = driverId,
+                AssigneeProfile = _allAccounts[driverId].UserProfile,
                 McpDataId = mcpId,
                 McpData = _allMcps[mcpId],
                 CreatedTimestamp = DateTime.Now,

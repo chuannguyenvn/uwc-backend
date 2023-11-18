@@ -4,6 +4,7 @@ using Commons.Models;
 using Commons.RequestStatuses;
 using Hubs;
 using Microsoft.AspNetCore.SignalR;
+using Newtonsoft.Json;
 using Repositories.Managers;
 using TaskStatus = Commons.Types.TaskStatus;
 
@@ -22,6 +23,9 @@ public class TaskService : ITaskService
 
     public ParamRequestResult<GetTasksOfWorkerResponse> GetTasksOfWorker(GetTasksOfWorkerRequest request)
     {
+        Console.WriteLine("fuck");
+        Console.WriteLine(JsonConvert.SerializeObject(_unitOfWork.TaskDataRepository.GetTasksFromTodayOrFuture()));
+        
         if (!_unitOfWork.AccountRepository.DoesIdExist(request.WorkerId))
             return new ParamRequestResult<GetTasksOfWorkerResponse>(new DataEntryNotFound());
 
@@ -34,6 +38,9 @@ public class TaskService : ITaskService
 
     public ParamRequestResult<GetAllTasksResponse> GetAllTasks()
     {
+        Console.WriteLine("fuck");
+        Console.WriteLine(JsonConvert.SerializeObject(_unitOfWork.TaskDataRepository.GetTasksFromTodayOrFuture()));
+
         return new ParamRequestResult<GetAllTasksResponse>(new Success(), new GetAllTasksResponse()
         {
             Tasks = _unitOfWork.TaskDataRepository.GetTasksFromTodayOrFuture(),
@@ -46,8 +53,8 @@ public class TaskService : ITaskService
         {
             var taskData = new TaskData
             {
-                AssignerAccountId = request.AssignerAccountId,
-                AssigneeAccountId = request.AssigneeAccountId,
+                AssignerId = request.AssignerAccountId,
+                AssigneeId = request.AssigneeAccountId,
                 McpDataId = mcpDataId,
                 CreatedTimestamp = DateTime.Now,
                 CompleteByTimestamp = request.CompleteByTimestamp,
@@ -97,7 +104,7 @@ public class TaskService : ITaskService
         taskData.LastStatusChangeTimestamp = DateTime.Now;
         _unitOfWork.Complete();
 
-        _hubContext.Clients.Client(BaseHub.ConnectionIds[taskData.AssignerAccountId])
+        _hubContext.Clients.Client(BaseHub.ConnectionIds[taskData.AssignerId])
             .SendAsync(HubHandlers.Tasks.COMPLETE_TASK, new CompleteTaskBroadcastData
             {
                 TaskId = taskData.Id,
@@ -115,7 +122,7 @@ public class TaskService : ITaskService
         taskData.LastStatusChangeTimestamp = DateTime.Now;
         _unitOfWork.Complete();
 
-        _hubContext.Clients.Client(BaseHub.ConnectionIds[taskData.AssignerAccountId])
+        _hubContext.Clients.Client(BaseHub.ConnectionIds[taskData.AssignerId])
             .SendAsync(HubHandlers.Tasks.REJECT_TASK, new RejectTaskBroadcastData
             {
                 TaskId = taskData.Id,

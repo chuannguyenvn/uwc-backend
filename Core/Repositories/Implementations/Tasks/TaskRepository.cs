@@ -18,11 +18,17 @@ public class TaskRepository : GenericRepository<TaskData>, ITaskRepository
 
     public List<TaskData> GetTasksByWorkerId(int workerId)
     {
-        return Context.TaskDataTable.Where(task => task.AssigneeAccountId == workerId).Include(task => task.McpData).ToList();
+        return Context.TaskDataTable.Where(task => task.AssigneeId == workerId)
+            .Include(task => task.McpData)
+            .Include(task => task.AssigneeProfile)
+            .Include(task => task.AssignerProfile).ToList();
     }
 
     public List<TaskData> GetTasksFromTodayOrFuture()
     {
-        return Context.TaskDataTable.Where(task => task.CompleteByTimestamp >= DateTime.Now.Date).Include(task => task.McpData).ToList();
+        return Context.TaskDataTable.Where(task => task.CompleteByTimestamp >= DateTime.Now.Date)
+            .Include(task => task.McpData)
+            .Include(task => task.AssigneeProfile)
+            .Include(task => task.AssignerProfile).ToList();
     }
 }
