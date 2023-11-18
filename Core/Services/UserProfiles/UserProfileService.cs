@@ -30,6 +30,15 @@ public class UserProfileService : IUserProfileService
             new GetAllUserProfilesResponse() { UserProfiles = userProfiles.ToList() });
     }
 
+    public ParamRequestResult<GetAllWorkerProfilesResponse> GetAllWorkerProfiles()
+    {
+        var driverProfiles = _unitOfWork.UserProfileRepository.GetByUserRole(UserRole.Driver);
+        var cleanerProfiles = _unitOfWork.UserProfileRepository.GetByUserRole(UserRole.Cleaner);
+        var workerProfiles = driverProfiles.Concat(cleanerProfiles);
+        return new ParamRequestResult<GetAllWorkerProfilesResponse>(new Success(),
+            new GetAllWorkerProfilesResponse() { WorkerProfiles = workerProfiles.ToList() });
+    }
+
     public ParamRequestResult<GetAllDriverProfilesResponse> GetAllDriverProfiles()
     {
         var driverProfiles = _unitOfWork.UserProfileRepository.GetByUserRole(UserRole.Driver);

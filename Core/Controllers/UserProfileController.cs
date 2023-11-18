@@ -38,6 +38,14 @@ public class UserProfileController : Controller
     }
     
     [HttpGet]
+    [Route(Endpoints.UserProfile.GET_ALL_WORKER_PROFILES)]
+    public IActionResult GetAllWorkers()
+    {
+        var requestResult = _userProfileService.GetAllWorkerProfiles();
+        return ProcessRequestResult(requestResult);
+    }
+    
+    [HttpGet]
     [Route(Endpoints.UserProfile.GET_ALL_DRIVER_PROFILES)]
     public IActionResult GetAllDrivers()
     {
