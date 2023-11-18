@@ -12,7 +12,7 @@ namespace Commons.Types
 
     public static class TaskStatusHelper
     {
-        public static string GetStatusText(TaskStatus status)
+        public static string GetFriendlyString(this TaskStatus status)
         {
             switch (status)
             {
