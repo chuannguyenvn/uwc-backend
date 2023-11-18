@@ -11,8 +11,9 @@ public class MockUwcDbContext
     public List<McpEmptyRecord> McpEmptyRecordTable { get; set; }
     public List<McpFillLevelLog> McpFillLevelLogTable { get; set; }
     public List<TaskData> TaskDataTable { get; set; }
-    public List<VehicleData> VehicleDataTable { get; set; }
     public List<Message> MessageTable { get; set; }
+    public List<Setting> SettingTable { get; set; }
+    public List<VehicleData> VehicleDataTable { get; set; }
 
     public MockUwcDbContext()
     {
@@ -24,6 +25,7 @@ public class MockUwcDbContext
         TaskDataTable = new List<TaskData>();
         VehicleDataTable = new List<VehicleData>();
         MessageTable = new List<Message>();
+        SettingTable = new List<Setting>();
     }
 
     public void Set<T>(IEnumerable<T> newList) where T : IndexedEntity
@@ -54,6 +56,9 @@ public class MockUwcDbContext
             case { } message when message == typeof(Message):
                 MessageTable = (newList as List<Message>)!;
                 break;
+            case { } setting when setting == typeof(Setting):
+                SettingTable = (newList as List<Setting>)!;
+                break;
         }
     }
 
@@ -69,6 +74,7 @@ public class MockUwcDbContext
             { } taskData when taskData == typeof(TaskData) => TaskDataTable as List<T>,
             { } vehicleData when vehicleData == typeof(VehicleData) => VehicleDataTable as List<T>,
             { } message when message == typeof(Message) => MessageTable as List<T>,
+            { } setting when setting == typeof(Setting) => SettingTable as List<T>,
             _ => new List<T>()
         } ?? throw new InvalidOperationException($"Retrieving data for type {typeof(T).Name} is not supported in this mock context.");
     }

@@ -18,6 +18,7 @@ public class UwcDbContext : DbContext
     public DbSet<VehicleData> VehicleDataTable { get; set; }
     public DbSet<TaskData> TaskDataTable { get; set; }
     public DbSet<Message> MessageTable { get; set; }
+    public DbSet<Setting> SettingTable { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

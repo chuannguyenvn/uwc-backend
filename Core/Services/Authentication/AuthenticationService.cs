@@ -16,9 +16,9 @@ namespace Services.Authentication;
 public class AuthenticationService : IAuthenticationService
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly Settings _settings;
+    private readonly Commons.Types.Settings _settings;
 
-    public AuthenticationService(IUnitOfWork unitOfWork, Settings settings)
+    public AuthenticationService(IUnitOfWork unitOfWork, Commons.Types.Settings settings)
     {
         _unitOfWork = unitOfWork;
         _settings = settings;

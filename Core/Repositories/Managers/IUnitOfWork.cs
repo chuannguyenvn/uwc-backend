@@ -4,6 +4,7 @@ using Repositories.Implementations.Mcps.McpData;
 using Repositories.Implementations.Mcps.McpEmptyRecords;
 using Repositories.Implementations.Mcps.McpFillLevelLogs;
 using Repositories.Implementations.Messages;
+using Repositories.Implementations.Settings;
 using Repositories.Implementations.Tasks;
 using Repositories.Implementations.UserProfiles;
 using Repositories.Implementations.Vehicles;
@@ -20,6 +21,7 @@ public interface IUnitOfWork
     IMessageRepository MessageRepository { get; }
     ITaskRepository TaskDataRepository { get; }
     IVehicleDataRepository VehicleDataRepository { get; }
+    ISettingRepository SettingRepository { get; }
     int Complete();
     Task<int> CompleteAsync();
 }
