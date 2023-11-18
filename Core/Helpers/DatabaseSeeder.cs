@@ -55,7 +55,8 @@ public class DatabaseSeeder
                     Gender = gender,
                     DateOfBirth = dateOfBirth,
                     UserRole = UserRole.Supervisor,
-                    Address = "",
+                    Address = "123 Test road, Test city",
+                    CreatedTimestamp = DateTime.Now,
                 }
             };
             account.GenerateSaltAndHash();
@@ -92,7 +93,8 @@ public class DatabaseSeeder
                     Gender = gender,
                     DateOfBirth = dateOfBirth,
                     UserRole = UserRole.Driver,
-                    Address = "",
+                    Address = "123 Test road, Test city",
+                    CreatedTimestamp = DateTime.Now,
                 }
             };
             account.GenerateSaltAndHash();
@@ -129,7 +131,8 @@ public class DatabaseSeeder
                     Gender = gender,
                     DateOfBirth = dateOfBirth,
                     UserRole = UserRole.Cleaner,
-                    Address = "",
+                    Address = "123 Test road, Test city",
+                    CreatedTimestamp = DateTime.Now,
                 }
             };
             account.GenerateSaltAndHash();
