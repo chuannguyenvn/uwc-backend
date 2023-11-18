@@ -4,7 +4,9 @@ namespace Services.Tasks;
 
 public interface ITaskService
 {
-    public RequestResult AddTask(AddTaskRequest request);
+    public ParamRequestResult<GetTasksOfWorkerResponse> GetTasksOfWorker(GetTasksOfWorkerRequest request);
+    public ParamRequestResult<GetAllTasksResponse> GetAllTasks();
+    public RequestResult AddTask(AddTasksRequest request);
     public RequestResult CompleteTask(CompleteTaskRequest request);
     public RequestResult RejectTask(RejectTaskRequest request);
 }

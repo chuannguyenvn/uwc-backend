@@ -38,7 +38,7 @@ public class ReportService : IReportService
             : tasks.Average(taskData =>
             {
                 var completedTimestamp = taskData.CompletedTimestamp ?? DateTime.Now;
-                var assignedTimestamp = taskData.AssignedTimestamp;
+                var assignedTimestamp = taskData.CompleteByTimestamp;
                 return (completedTimestamp - assignedTimestamp).Minutes;
             }));
     }

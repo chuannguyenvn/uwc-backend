@@ -19,18 +19,49 @@ public class TaskService : ITaskService
         _hubContext = hubContext;
     }
 
-    public RequestResult AddTask(AddTaskRequest request)
+    public ParamRequestResult<GetTasksOfWorkerResponse> GetTasksOfWorker(GetTasksOfWorkerRequest request)
     {
-        var taskData = new TaskData
+        if (!_unitOfWork.AccountRepository.DoesIdExist(request.WorkerId))
+            return new ParamRequestResult<GetTasksOfWorkerResponse>(new DataEntryNotFound());
+
+        var tasks = _unitOfWork.TaskDataRepository.GetTasksByWorkerId(request.WorkerId);
+        return new ParamRequestResult<GetTasksOfWorkerResponse>(new Success(), new GetTasksOfWorkerResponse
         {
-            AssignerAccountId = request.AssignerAccountId,
-            AssigneeAccountId = request.AssigneeAccountId,
-            McpDataId = request.McpDataId,
-            AssignedTimestamp = DateTime.Now,
-            IsCompleted = false
-        };
-        _unitOfWork.TaskDataRepository.Add(taskData);
+            Tasks = tasks
+        });
+    }
+
+    public ParamRequestResult<GetAllTasksResponse> GetAllTasks()
+    {
+        return new ParamRequestResult<GetAllTasksResponse>(new Success(), new GetAllTasksResponse()
+        {
+            Tasks = _unitOfWork.TaskDataRepository.GetTasksFromTodayOrFuture(),
+        });
+    }
+
+    public RequestResult AddTask(AddTasksRequest request)
+    {
+        foreach (var mcpDataId in request.McpDataIds)
+        {
+            var taskData = new TaskData
+            {
+                AssignerAccountId = request.AssignerAccountId,
+                AssigneeAccountId = request.AssigneeAccountId,
+                McpDataId = mcpDataId,
+                CreatedTimestamp = DateTime.Now,
+                CompleteByTimestamp = request.CompleteByTimestamp,
+                IsCompleted = false
+            };
+            _unitOfWork.TaskDataRepository.Add(taskData);
+        }
+
         _unitOfWork.Complete();
+
+        _hubContext.Clients.Client(BaseHub.ConnectionIds[request.AssigneeAccountId])
+            .SendAsync(HubHandlers.Tasks.ADD_TASK, new AddTasksBroadcastData
+            {
+                NewTasks = _unitOfWork.TaskDataRepository.GetTasksByWorkerId(request.AssigneeAccountId).ToList()
+            });
 
         return new RequestResult(new Success());
     }
@@ -43,6 +74,12 @@ public class TaskService : ITaskService
         taskData.IsCompleted = true;
         taskData.CompletedTimestamp = DateTime.Now;
         _unitOfWork.Complete();
+
+        _hubContext.Clients.Client(BaseHub.ConnectionIds[taskData.AssignerAccountId])
+            .SendAsync(HubHandlers.Tasks.COMPLETE_TASK, new CompleteTaskBroadcastData
+            {
+                TaskId = taskData.Id,
+            });
 
         return new RequestResult(new Success());
     }

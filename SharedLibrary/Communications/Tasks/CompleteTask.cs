@@ -4,4 +4,9 @@
     {
         public int TaskId { get; set; }
     }
+    
+    public class CompleteTaskBroadcastData
+    {
+        public int TaskId { get; set; }
+    }
 }

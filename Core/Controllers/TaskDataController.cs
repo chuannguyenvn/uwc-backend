@@ -9,17 +9,31 @@ namespace Controllers;
 [Authorize]
 [ApiController]
 [Route("[controller]")]
-public class TaskController : Controller
+public class TaskDataController : Controller
 {
     private readonly ITaskService _taskService;
 
-    public TaskController(ITaskService taskService)
+    public TaskDataController(ITaskService taskService)
     {
         _taskService = taskService;
     }
 
+    [HttpPost(Endpoints.TaskData.GET_TASKS_OF_WORKER)]
+    public IActionResult GetTasksOfWorker(GetTasksOfWorkerRequest request)
+    {
+        var result = _taskService.GetTasksOfWorker(request);
+        return ProcessRequestResult(result);
+    }
+
+    [HttpPost(Endpoints.TaskData.GET_ALL_TASKS)]
+    public IActionResult GetAllTasks()
+    {
+        var result = _taskService.GetAllTasks();
+        return ProcessRequestResult(result);
+    }
+
     [HttpPost(Endpoints.TaskData.ADD_TASK)]
-    public IActionResult AddTask(AddTaskRequest request)
+    public IActionResult AddTask(AddTasksRequest request)
     {
         var result = _taskService.AddTask(request);
         return ProcessRequestResult(result);
