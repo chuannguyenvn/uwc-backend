@@ -4,6 +4,7 @@ using Commons.RequestStatuses;
 using Commons.Types;
 using Hubs;
 using Repositories.Managers;
+using TaskStatus = Commons.Types.TaskStatus;
 
 namespace Services.Reports;
 
@@ -32,12 +33,12 @@ public class ReportService : IReportService
     {
         var tasks = _unitOfWork.TaskDataRepository.GetTasksByDate(DateTime.Now);
         response.TotalTasksCreated = tasks.Count;
-        response.TotalTasksCompleted = tasks.Count(t => t.IsCompleted);
+        response.TotalTasksCompleted = tasks.Count(t => t.TaskStatus == TaskStatus.Completed);
         response.AverageTaskCompletionTimeInMinutes = (float)(tasks.Count == 0
             ? 0
-            : tasks.Average(taskData =>
+            : tasks.Where(data => data.TaskStatus == TaskStatus.Completed).Average(taskData =>
             {
-                var completedTimestamp = taskData.CompletedTimestamp ?? DateTime.Now;
+                var completedTimestamp = taskData.LastStatusChangeTimestamp;
                 var assignedTimestamp = taskData.CompleteByTimestamp;
                 return (completedTimestamp - assignedTimestamp).Minutes;
             }));

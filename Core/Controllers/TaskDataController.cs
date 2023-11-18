@@ -39,6 +39,13 @@ public class TaskDataController : Controller
         return ProcessRequestResult(result);
     }
 
+    [HttpPost(Endpoints.TaskData.FOCUS_TASK)]
+    public IActionResult FocusTask(FocusTaskRequest request)
+    {
+        var result = _taskService.FocusTask(request);
+        return ProcessRequestResult(result);
+    }
+
     [HttpPost(Endpoints.TaskData.COMPLETE_TASK)]
     public IActionResult CompleteTask(CompleteTaskRequest request)
     {

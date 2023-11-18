@@ -1,4 +1,5 @@
 ﻿using System;
+using Commons.Types;
 
 namespace Commons.Models
 {
@@ -13,10 +14,9 @@ namespace Commons.Models
         public int McpDataId { get; set; }
         public McpData McpData { get; set; }
         
-
         public DateTime CreatedTimestamp { get; set; }
         public DateTime CompleteByTimestamp { get; set; }
-        public DateTime? CompletedTimestamp { get; set; }
-        public bool IsCompleted { get; set; }
+        public DateTime LastStatusChangeTimestamp { get; set; }
+        public TaskStatus TaskStatus { get; set; }
     }
 }

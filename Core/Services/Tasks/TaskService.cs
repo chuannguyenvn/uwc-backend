@@ -5,6 +5,7 @@ using Commons.RequestStatuses;
 using Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Repositories.Managers;
+using TaskStatus = Commons.Types.TaskStatus;
 
 namespace Services.Tasks;
 
@@ -50,7 +51,7 @@ public class TaskService : ITaskService
                 McpDataId = mcpDataId,
                 CreatedTimestamp = DateTime.Now,
                 CompleteByTimestamp = request.CompleteByTimestamp,
-                IsCompleted = false
+                TaskStatus = TaskStatus.NotStarted,
             };
             _unitOfWork.TaskDataRepository.Add(taskData);
         }
@@ -66,13 +67,34 @@ public class TaskService : ITaskService
         return new RequestResult(new Success());
     }
 
+    public RequestResult FocusTask(FocusTaskRequest request)
+    {
+        if (!_unitOfWork.TaskDataRepository.DoesIdExist(request.TaskId)) return new RequestResult(new DataEntryNotFound());
+
+        var workerTasks = _unitOfWork.TaskDataRepository.GetTasksByWorkerId(request.WorkerId);
+        foreach (var task in workerTasks)
+        {
+            if (task.TaskStatus != TaskStatus.InProgress) continue;
+
+            task.TaskStatus = TaskStatus.NotStarted;
+            task.LastStatusChangeTimestamp = DateTime.Now;
+        }
+
+        var taskData = _unitOfWork.TaskDataRepository.GetById(request.TaskId);
+        taskData.TaskStatus = TaskStatus.InProgress;
+        taskData.LastStatusChangeTimestamp = DateTime.Now;
+        _unitOfWork.Complete();
+
+        return new RequestResult(new Success());
+    }
+
     public RequestResult CompleteTask(CompleteTaskRequest request)
     {
         if (!_unitOfWork.TaskDataRepository.DoesIdExist(request.TaskId)) return new RequestResult(new DataEntryNotFound());
 
         var taskData = _unitOfWork.TaskDataRepository.GetById(request.TaskId);
-        taskData.IsCompleted = true;
-        taskData.CompletedTimestamp = DateTime.Now;
+        taskData.TaskStatus = TaskStatus.Completed;
+        taskData.LastStatusChangeTimestamp = DateTime.Now;
         _unitOfWork.Complete();
 
         _hubContext.Clients.Client(BaseHub.ConnectionIds[taskData.AssignerAccountId])
@@ -89,8 +111,8 @@ public class TaskService : ITaskService
         if (!_unitOfWork.TaskDataRepository.DoesIdExist(request.TaskId)) return new RequestResult(new DataEntryNotFound());
 
         var taskData = _unitOfWork.TaskDataRepository.GetById(request.TaskId);
-        taskData.IsCompleted = false;
-        taskData.CompletedTimestamp = null;
+        taskData.TaskStatus = TaskStatus.Rejected;
+        taskData.LastStatusChangeTimestamp = DateTime.Now;
         _unitOfWork.Complete();
 
         _hubContext.Clients.Client(BaseHub.ConnectionIds[taskData.AssignerAccountId])
