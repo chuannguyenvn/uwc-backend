@@ -39,10 +39,31 @@ public class McpDataController : Controller
         return ProcessRequestResult(result);
     }
 
+    [HttpPost(Endpoints.McpData.GET_SINGLE)]
+    public IActionResult GetSingleMcpData(GetSingleMcpDataRequest request)
+    {
+        var result = _mcpDataService.GetSingleMcpData(request);
+        return ProcessRequestResult(result);
+    }
+
     [HttpPost(Endpoints.McpData.GET)]
     public IActionResult GetMcpData(McpDataQueryParameters parameters)
     {
         var result = _mcpDataService.GetMcpData(parameters);
+        return ProcessRequestResult(result);
+    }
+
+    [HttpPost(Endpoints.McpData.GET_EMPTY_RECORDS)]
+    public IActionResult GetEmptyRecords(GetEmptyRecordsRequest request)
+    {
+        var result = _mcpDataService.GetEmptyRecords(request);
+        return ProcessRequestResult(result);
+    }
+
+    [HttpPost(Endpoints.McpData.GET_FILL_LEVEL_LOGS)]
+    public IActionResult GetFillLevelLogs(GetFillLevelLogsRequest request)
+    {
+        var result = _mcpDataService.GetFillLevelLogs(request);
         return ProcessRequestResult(result);
     }
 }

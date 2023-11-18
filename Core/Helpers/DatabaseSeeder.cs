@@ -166,8 +166,42 @@ public class DatabaseSeeder
             new() { Capacity = 140, Coordinate = new Coordinate(10.7612, 106.661), Address = "93 Lý Thường Kiệt, P.7, Q.10" }
         };
 
+        var random = new Random();
         foreach (var mcpData in mcpDataList)
         {
+            mcpData.McpFillLevelLogs = new List<McpFillLevelLog>();
+            mcpData.McpEmptyRecords = new List<McpEmptyRecord>();
+
+            for (int i = 0; i < random.Next(20); i++)
+            {
+                var fillLevelLog = new McpFillLevelLog
+                {
+                    McpDataId = mcpData.Id,
+                    McpData = mcpData,
+                    Timestamp = DateTime.UtcNow.AddHours(-random.Next(24)).AddMinutes(-random.Next(60)),
+                    McpFillLevel = (float)random.NextDouble() * 100
+                };
+
+                mcpData.McpFillLevelLogs.Add(fillLevelLog);
+            }
+
+            for (int i = 0; i < random.Next(5); i++)
+            {
+                var id = random.Next(10, 30);
+                var emptyRecord = new McpEmptyRecord
+                {
+                    McpDataId = mcpData.Id,
+                    McpData = mcpData,
+                    Timestamp = DateTime.UtcNow.AddHours(-random.Next(24)).AddMinutes(-random.Next(60)),
+                    McpFillLevelBeforeEmptying = (float)random.NextDouble() * 100,
+                    McpFillLevelAfterEmptying = (float)random.NextDouble() * 100,
+                    EmptyingWorkerId = id,
+                    EmptyingWorker = _allAccounts[id].UserProfile
+                };
+
+                mcpData.McpEmptyRecords.Add(emptyRecord);
+            }
+
             _unitOfWork.McpDataRepository.Add(mcpData);
             _allMcps.Add(mcpData);
         }
