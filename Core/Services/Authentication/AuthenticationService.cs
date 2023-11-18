@@ -1,11 +1,15 @@
 using Commons.Categories;
 using Repositories.Managers;
 using Commons.Communications.Authentication;
+using Commons.Communications.Map;
+using Commons.Communications.Mcps;
 using Commons.Models;
 using Commons.RequestStatuses;
 using Commons.RequestStatuses.Authentication;
 using Commons.Types;
 using Hubs;
+using Services.Mcps;
+using SharedLibrary.Communications.OnlineStatus;
 
 namespace Services.Authentication;
 
@@ -47,7 +51,8 @@ public class AuthenticationService : IAuthenticationService
 
     public ParamRequestResult<RegisterResponse> Register(RegisterRequest request)
     {
-        if (_unitOfWork.AccountRepository.DoesUsernameExist(request.Username)) return new ParamRequestResult<RegisterResponse>(new UsernameAlreadyExist());
+        if (_unitOfWork.AccountRepository.DoesUsernameExist(request.Username))
+            return new ParamRequestResult<RegisterResponse>(new UsernameAlreadyExist());
 
         var account = new Account
         {
@@ -90,8 +95,9 @@ public class AuthenticationService : IAuthenticationService
         var allMcps = _unitOfWork.McpDataRepository.GetAll().ToList();
         return new InitializationData
         {
-            McpLocationByIds = allMcps.ToDictionary(mcp => mcp.Id, mcp => mcp.Coordinate),
-            OnlineAccountIds = BaseHub.ConnectionIds.Keys.ToList(),
+            McpLocationBroadcastData = new McpLocationBroadcastData() { LocationByIds = allMcps.ToDictionary(mcp => mcp.Id, mcp => mcp.Coordinate) },
+            McpFillLevelBroadcastData = new McpFillLevelBroadcastData() { FillLevelsById = McpFillLevelService.FillLevelsById },
+            OnlineStatusBroadcastData = new OnlineStatusBroadcastData() { OnlineAccountIds = BaseHub.ConnectionIds.Keys.ToList() }
         };
     }
 }

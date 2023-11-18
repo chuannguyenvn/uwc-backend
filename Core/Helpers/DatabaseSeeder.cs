@@ -3,6 +3,7 @@ using Repositories.Managers;
 using Commons.Models;
 using Commons.Types;
 using Services.Authentication;
+using TaskStatus = Commons.Types.TaskStatus;
 
 namespace Helpers;
 
@@ -733,7 +734,9 @@ public class DatabaseSeeder
                 McpDataId = mcpId,
                 McpData = _allMcps[mcpId],
                 CreatedTimestamp = DateTime.Now,
+                LastStatusChangeTimestamp = DateTime.Now,
                 CompleteByTimestamp = DateTime.Today.AddHours(randomHourOffset).AddMinutes(randomMinuteOffset),
+                TaskStatus = Utilities.GetRandomEnumValue<TaskStatus>(),
             };
 
             _unitOfWork.TaskDataRepository.Add(newTask);

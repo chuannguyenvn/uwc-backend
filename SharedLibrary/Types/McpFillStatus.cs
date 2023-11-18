@@ -6,4 +6,14 @@
         AlmostFull,
         NotFull,
     }
+
+    public static class McpFillStatusHelper
+    {
+        public static McpFillStatus GetStatus(float fillLevel)
+        {
+            if (fillLevel >= 0.95f) return McpFillStatus.Full;
+            if (fillLevel >= 0.75f) return McpFillStatus.AlmostFull;
+            return McpFillStatus.NotFull;
+        }
+    }
 }
