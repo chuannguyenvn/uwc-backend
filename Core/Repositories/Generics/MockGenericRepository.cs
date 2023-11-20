@@ -25,6 +25,11 @@ public class MockGenericRepository<T> : IGenericRepository<T> where T : IndexedE
         Context.Set<T>().AddRange(entities);
     }
 
+    public void Update(T entity)
+    {
+        throw new NotImplementedException();
+    }
+
     public IEnumerable<T> Find(Func<T, bool> condition)
     {
         return Context.Set<T>().Where(condition);

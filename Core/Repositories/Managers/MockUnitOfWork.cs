@@ -5,6 +5,7 @@ using Repositories.Implementations.Mcps.McpData;
 using Repositories.Implementations.Mcps.McpEmptyRecords;
 using Repositories.Implementations.Mcps.McpFillLevelLogs;
 using Repositories.Implementations.Messages;
+using Repositories.Implementations.Settings;
 using Repositories.Implementations.Tasks;
 using Repositories.Implementations.UserProfiles;
 using Repositories.Implementations.Vehicles;
@@ -26,6 +27,7 @@ public class MockUnitOfWork : IUnitOfWork
         MessageRepository = new MockMessageRepository(_uwcDbContext);
         TaskDataRepository = new MockTaskRepository(_uwcDbContext);
         VehicleDataRepository = new MockVehicleDataRepository(_uwcDbContext);
+        SettingRepository = new MockSettingRepository(_uwcDbContext);
 
         var dataSeeder = new DatabaseSeeder(this);
         dataSeeder.SeedDatabase();
@@ -39,6 +41,7 @@ public class MockUnitOfWork : IUnitOfWork
     public ITaskRepository TaskDataRepository { get; }
     public IMessageRepository MessageRepository { get; }
     public IVehicleDataRepository VehicleDataRepository { get; }
+    public ISettingRepository SettingRepository { get; }
 
     public int Complete()
     {

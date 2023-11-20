@@ -7,6 +7,7 @@ using Commons.Models;
 using Commons.RequestStatuses;
 using Commons.RequestStatuses.Authentication;
 using Commons.Types;
+using Commons.Types.SettingOptions;
 using Hubs;
 using Services.Mcps;
 using SharedLibrary.Communications.OnlineStatus;
@@ -16,9 +17,9 @@ namespace Services.Authentication;
 public class AuthenticationService : IAuthenticationService
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly Settings _settings;
+    private readonly Commons.Types.Settings _settings;
 
-    public AuthenticationService(IUnitOfWork unitOfWork, Settings settings)
+    public AuthenticationService(IUnitOfWork unitOfWork, Commons.Types.Settings settings)
     {
         _unitOfWork = unitOfWork;
         _settings = settings;
@@ -70,6 +71,25 @@ public class AuthenticationService : IAuthenticationService
         };
         account.GenerateSaltAndHash();
         _unitOfWork.AccountRepository.Add(account);
+        
+        var setting = new Setting
+        {
+            Account = account,
+            DarkMode = ToggleOption.Off,
+            ColorblindMode = ToggleOption.Off,
+            ReducedMotionMode = ToggleOption.Off,
+            Language = LanguageOption.English,
+            Messages = ToggleOption.On,
+            EmployeesLoggedIn = ToggleOption.On,
+            EmployeesLoggedOut = ToggleOption.On,
+            McpsAlmostFull = ToggleOption.On,
+            McpsFull = ToggleOption.On,
+            McpsEmptied = ToggleOption.On,
+            SoftwareUpdateAvailable = ToggleOption.On,
+            OnlineStatus = OnlineStatusOption.Online
+        };
+        _unitOfWork.SettingRepository.Add(setting);
+        
         _unitOfWork.Complete();
 
         var registerResponse = new RegisterResponse

@@ -4,6 +4,7 @@ using Repositories.Implementations.Mcps.McpData;
 using Repositories.Implementations.Mcps.McpEmptyRecords;
 using Repositories.Implementations.Mcps.McpFillLevelLogs;
 using Repositories.Implementations.Messages;
+using Repositories.Implementations.Settings;
 using Repositories.Implementations.Tasks;
 using Repositories.Implementations.UserProfiles;
 using Repositories.Implementations.Vehicles;
@@ -26,6 +27,7 @@ public class UnitOfWork : IUnitOfWork, IDisposable
         MessageRepository = new MessageRepository(_uwcDbContext);
         TaskDataRepository = new TaskRepository(_uwcDbContext);
         VehicleDataRepository = new VehicleDataRepository(_uwcDbContext);
+        SettingRepository = new SettingRepository(_uwcDbContext);
     }
 
     public IAccountRepository AccountRepository { get; }
@@ -36,6 +38,7 @@ public class UnitOfWork : IUnitOfWork, IDisposable
     public ITaskRepository TaskDataRepository { get; }
     public IMessageRepository MessageRepository { get; }
     public IVehicleDataRepository VehicleDataRepository { get; }
+    public ISettingRepository SettingRepository { get; }
 
     public void Dispose()
     {

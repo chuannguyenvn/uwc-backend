@@ -23,6 +23,11 @@ public abstract class GenericRepository<T> : IGenericRepository<T> where T : Ind
         Context.Set<T>().AddRange(entities);
     }
 
+    public void Update(T entity)
+    {
+        Context.Set<T>().Update(entity);
+    }
+
     public IEnumerable<T> Find(Func<T, bool> condition)
     {
         return Context.Set<T>().Where(condition);
