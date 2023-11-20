@@ -4,6 +4,9 @@ namespace Commons.Models
 {
     public class Setting : IndexedEntity
     {
+        public int AccountId { get; set; }
+        public Account Account { get; set; }
+
         // Interface settings
         public ToggleOption DarkMode { get; set; }
         public ToggleOption ColorblindMode { get; set; }

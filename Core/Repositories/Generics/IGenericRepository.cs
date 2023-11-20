@@ -6,6 +6,7 @@ public interface IGenericRepository<T> where T : IndexedEntity
 {
     void Add(T entity);
     void AddRange(IEnumerable<T> entities);
+    void Update(T entity);
     IEnumerable<T> Find(Func<T, bool> condition);
     T GetUnique(Func<T, bool> condition);
     IEnumerable<T> GetAll();
