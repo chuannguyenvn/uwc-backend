@@ -26,6 +26,10 @@ public class SettingService : ISettingService
 
     public RequestResult UpdateSetting(UpdateSettingRequest request)
     {
+        if (!_unitOfWork.AccountRepository.DoesIdExist(request.AccountId)) return new RequestResult(new DataEntryNotFound());
+
+        request.NewSetting.AccountId = request.AccountId;
+        request.NewSetting.Account = _unitOfWork.AccountRepository.GetById(request.AccountId);
         _unitOfWork.SettingRepository.Update(request.NewSetting);
         _unitOfWork.Complete();
 

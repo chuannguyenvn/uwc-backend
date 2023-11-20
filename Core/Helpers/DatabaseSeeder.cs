@@ -2,6 +2,7 @@ using Commons.Categories;
 using Repositories.Managers;
 using Commons.Models;
 using Commons.Types;
+using Commons.Types.SettingOptions;
 using Services.Authentication;
 using TaskStatus = Commons.Types.TaskStatus;
 
@@ -29,6 +30,7 @@ public class DatabaseSeeder
         SeedVehicles();
         SeedMessages();
         SeedTasks();
+        SeedSettings();
     }
 
     private void SeedSupervisorProfiles()
@@ -774,6 +776,33 @@ public class DatabaseSeeder
             };
 
             _unitOfWork.TaskDataRepository.Add(newTask);
+        }
+
+        _unitOfWork.Complete();
+    }
+
+    private void SeedSettings()
+    {
+        for (int i = 0; i < 50; i++)
+        {
+            var setting = new Setting
+            {
+                Account = _allAccounts[i],
+                DarkMode = ToggleOption.Off,
+                ColorblindMode = ToggleOption.Off,
+                ReducedMotionMode = ToggleOption.Off,
+                Language = LanguageOption.English,
+                Messages = ToggleOption.On,
+                EmployeesLoggedIn = ToggleOption.On,
+                EmployeesLoggedOut = ToggleOption.On,
+                McpsAlmostFull = ToggleOption.On,
+                McpsFull = ToggleOption.On,
+                McpsEmptied = ToggleOption.On,
+                SoftwareUpdateAvailable = ToggleOption.On,
+                OnlineStatus = OnlineStatusOption.Online
+            };
+
+            _unitOfWork.SettingRepository.Add(setting);
         }
 
         _unitOfWork.Complete();
