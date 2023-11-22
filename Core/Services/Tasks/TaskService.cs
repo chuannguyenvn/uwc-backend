@@ -23,7 +23,6 @@ public class TaskService : ITaskService
 
     public ParamRequestResult<GetTasksOfWorkerResponse> GetTasksOfWorker(GetTasksOfWorkerRequest request)
     {
-        Console.WriteLine("fuck");
         Console.WriteLine(JsonConvert.SerializeObject(_unitOfWork.TaskDataRepository.GetTasksFromTodayOrFuture()));
         
         if (!_unitOfWork.AccountRepository.DoesIdExist(request.WorkerId))
@@ -38,7 +37,6 @@ public class TaskService : ITaskService
 
     public ParamRequestResult<GetAllTasksResponse> GetAllTasks()
     {
-        Console.WriteLine("fuck");
         Console.WriteLine(JsonConvert.SerializeObject(_unitOfWork.TaskDataRepository.GetTasksFromTodayOrFuture()));
 
         return new ParamRequestResult<GetAllTasksResponse>(new Success(), new GetAllTasksResponse()

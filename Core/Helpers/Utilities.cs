@@ -1,4 +1,6 @@
-﻿namespace Helpers;
+﻿using System.Drawing;
+
+namespace Helpers;
 
 public class Utilities
 {

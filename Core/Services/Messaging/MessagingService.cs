@@ -24,8 +24,8 @@ public class MessagingService : IMessagingService
     {
         var message = new Message
         {
-            SenderAccountId = request.SenderAccountId,
-            ReceiverAccountId = request.ReceiverAccountId,
+            SenderProfileId = request.SenderAccountId,
+            ReceiverProfileId = request.ReceiverAccountId,
             Content = request.Content,
             Timestamp = DateTime.Now,
         };
@@ -61,16 +61,19 @@ public class MessagingService : IMessagingService
         var messages = _unitOfWork.MessageRepository.GetPreviewMessages(request.UserAccountId).ToList();
         foreach (var message in messages)
         {
-            var account = _unitOfWork.AccountRepository.GetById(message.SenderAccountId == request.UserAccountId
-                ? message.ReceiverAccountId
-                : message.SenderAccountId);
+            var account = _unitOfWork.AccountRepository.GetById(message.SenderProfileId == request.UserAccountId
+                ? message.ReceiverProfileId
+                : message.SenderProfileId);
             var userProfile = _unitOfWork.UserProfileRepository.GetById(account.UserProfileId);
             var fullName = userProfile.FirstName + " " + userProfile.LastName;
 
             fullNames.Add(fullName);
-            
-            message.SenderAccount = null;
-            message.ReceiverAccount = null;
+
+            message.SenderUserProfile = _unitOfWork.UserProfileRepository.GetById(message.SenderProfileId);
+            message.ReceiverUserProfile = _unitOfWork.UserProfileRepository.GetById(message.ReceiverProfileId);
+
+            message.SenderUserProfile.Account = null;
+            message.ReceiverUserProfile.Account = null;
         }
 
         var response = new GetPreviewMessagesResponse()

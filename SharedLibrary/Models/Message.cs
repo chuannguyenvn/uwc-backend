@@ -1,25 +1,14 @@
 ﻿using System;
-#if NET7_0
-using System.Text.Json.Serialization;
-#endif
 
 namespace Commons.Models
 {
     public class Message : IndexedEntity
     {
-        public int SenderAccountId { get; set; }
+        public int SenderProfileId { get; set; }
+        public UserProfile SenderUserProfile { get; set; }
 
-#if NET7_0
-        [JsonIgnore]
-#endif
-        public Account SenderAccount { get; set; }
-
-        public int ReceiverAccountId { get; set; }
-
-#if NET7_0
-        [JsonIgnore]
-#endif
-        public Account ReceiverAccount { get; set; }
+        public int ReceiverProfileId { get; set; }
+        public UserProfile ReceiverUserProfile { get; set; }
 
         public string Content { get; set; }
         public DateTime Timestamp { get; set; }

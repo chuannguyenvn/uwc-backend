@@ -12,15 +12,15 @@ public class MockMessageRepository : MockGenericRepository<Message>, IMessageRep
 
     public IEnumerable<Message> GetMessagesBetweenTwoUsers(int userAccountId, int otherUserAccountId)
     {
-        return Context.MessageTable.Where(m => (m.SenderAccountId == userAccountId && m.ReceiverAccountId == otherUserAccountId) ||
-                                               (m.ReceiverAccountId == userAccountId && m.SenderAccountId == otherUserAccountId)).ToList()
+        return Context.MessageTable.Where(m => (m.SenderProfileId == userAccountId && m.ReceiverProfileId == otherUserAccountId) ||
+                                               (m.ReceiverProfileId == userAccountId && m.SenderProfileId == otherUserAccountId)).ToList()
             .OrderByDescending(message => message.Timestamp);
     }
 
     public IEnumerable<Message> GetPreviewMessages(int userAccountId)
     {
-        return Context.MessageTable.Where(message => message.SenderAccountId == userAccountId || message.ReceiverAccountId == userAccountId)
-            .GroupBy(message => message.SenderAccountId == userAccountId ? message.ReceiverAccountId : message.SenderAccountId)
+        return Context.MessageTable.Where(message => message.SenderProfileId == userAccountId || message.ReceiverProfileId == userAccountId)
+            .GroupBy(message => message.SenderProfileId == userAccountId ? message.ReceiverProfileId : message.SenderProfileId)
             .Select(group => group.OrderByDescending(message => message.Timestamp).First()).ToList();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using Commons.Categories;
 
 namespace Commons.Models
@@ -13,6 +14,7 @@ namespace Commons.Models
         public DateTime DateOfBirth { get; set; }
         public string Address { get; set; }
         public DateTime CreatedTimestamp { get; set; }
+        public float AvatarColorHue { get; set; }
 
         public int AccountId { get; set; }
         public Account Account { get; set; }

@@ -25,15 +25,15 @@ public class UwcDbContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<Message>()
-            .HasOne(message => message.SenderAccount)
+            .HasOne(message => message.SenderUserProfile)
             .WithMany()
-            .HasForeignKey(message => message.SenderAccountId)
+            .HasForeignKey(message => message.SenderProfileId)
             .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<Message>()
-            .HasOne(message => message.ReceiverAccount)
+            .HasOne(message => message.ReceiverUserProfile)
             .WithMany()
-            .HasForeignKey(message => message.ReceiverAccountId)
+            .HasForeignKey(message => message.ReceiverProfileId)
             .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<TaskData>()

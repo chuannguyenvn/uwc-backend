@@ -60,6 +60,7 @@ public class DatabaseSeeder
                     UserRole = UserRole.Supervisor,
                     Address = "123 Test road, Test city",
                     CreatedTimestamp = DateTime.Now,
+                    AvatarColorHue = Random.Shared.NextSingle() * 360f,
                 }
             };
             account.GenerateSaltAndHash();
@@ -98,6 +99,7 @@ public class DatabaseSeeder
                     UserRole = UserRole.Driver,
                     Address = "123 Test road, Test city",
                     CreatedTimestamp = DateTime.Now,
+                    AvatarColorHue = Random.Shared.NextSingle() * 360f,
                 }
             };
             account.GenerateSaltAndHash();
@@ -136,6 +138,7 @@ public class DatabaseSeeder
                     UserRole = UserRole.Cleaner,
                     Address = "123 Test road, Test city",
                     CreatedTimestamp = DateTime.Now,
+                    AvatarColorHue = Random.Shared.NextSingle() * 360f,
                 }
             };
             account.GenerateSaltAndHash();
@@ -248,24 +251,24 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[10],
-            ReceiverAccount = _allAccounts[0],
+            SenderUserProfile = _allAccounts[10].UserProfile,
+            ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(7).AddMinutes(30).AddSeconds(5),
             Content = "Hey, just finished the morning pickups. The smell today is something else..."
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[10],
-            ReceiverAccount = _allAccounts[0],
+            SenderUserProfile = _allAccounts[10].UserProfile,
+            ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(8).AddMinutes(35).AddSeconds(14),
             Content = "Ran into some traffic too. It's like the whole city decided to hit the roads at once."
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[10],
-            ReceiverAccount = _allAccounts[10],
+            SenderUserProfile = _allAccounts[10].UserProfile,
+            ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(8).AddMinutes(54).AddSeconds(2),
             Content =
                 "Oh, and remember that alley near Green Street? Still blocked, had to do some crazy maneuvering to turn around."
@@ -273,32 +276,32 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[0],
-            ReceiverAccount = _allAccounts[10],
+            SenderUserProfile = _allAccounts[0].UserProfile,
+            ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(9).AddMinutes(2).AddSeconds(1),
             Content = "Thanks for the update. Sorry about the traffic and the alley. You're a pro at handling those tight spots!"
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[0],
-            ReceiverAccount = _allAccounts[10],
+            SenderUserProfile = _allAccounts[0].UserProfile,
+            ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(9).AddMinutes(2).AddSeconds(27),
             Content = "By the way, we got a call from Mrs. Henderson on Maple Avenue. She's concerned her bin was missed."
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[10],
-            ReceiverAccount = _allAccounts[0],
+            SenderUserProfile = _allAccounts[10].UserProfile,
+            ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(9).AddMinutes(2).AddSeconds(59),
             Content = "I remember that one, her bin was half buried in snow. I'll swing by after lunch to sort it out."
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[0],
-            ReceiverAccount = _allAccounts[10],
+            SenderUserProfile = _allAccounts[0].UserProfile,
+            ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(9).AddMinutes(3).AddSeconds(35),
             Content =
                 "Thanks, appreciate you taking care of it. And don't forget to log any unexpected delays or issues in the system."
@@ -306,16 +309,16 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[10],
-            ReceiverAccount = _allAccounts[0],
+            SenderUserProfile = _allAccounts[10].UserProfile,
+            ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(11).AddMinutes(57).AddSeconds(5),
             Content = "Sure thing, I'll log everything once I'm back in the truck. Lunch break now, I'm starving!"
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[0],
-            ReceiverAccount = _allAccounts[10],
+            SenderUserProfile = _allAccounts[0].UserProfile,
+            ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(11).AddMinutes(59).AddSeconds(1),
             Content =
                 "Enjoy your lunch! Also, we've been getting compliments on your friendly waves to the neighbors. Keep spreading that positivity."
@@ -323,16 +326,16 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[10],
-            ReceiverAccount = _allAccounts[0],
+            SenderUserProfile = _allAccounts[10].UserProfile,
+            ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(11).AddMinutes(59).AddSeconds(59),
             Content = "Thanks, boss! I figure a smile and a wave make trash days better for everyone. :)"
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[0],
-            ReceiverAccount = _allAccounts[10],
+            SenderUserProfile = _allAccounts[0].UserProfile,
+            ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(14).AddMinutes(5).AddSeconds(14),
             Content =
                 "You're absolutely right. Oh, and I'm looking into getting some AC repairs for the trucks. Hang in there with the heat!"
@@ -340,72 +343,72 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[10],
-            ReceiverAccount = _allAccounts[0],
+            SenderUserProfile = _allAccounts[10].UserProfile,
+            ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(14).AddMinutes(35).AddSeconds(7),
             Content = "That would be amazing, it feels like a sauna in here sometimes. Fingers crossed for cooler days soon."
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[0],
-            ReceiverAccount = _allAccounts[10],
+            SenderUserProfile = _allAccounts[0].UserProfile,
+            ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(14).AddMinutes(36).AddSeconds(55),
             Content = "I hear you! And speaking of repairs, the rearview camera should be fixed by Friday. Safety first!"
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[10],
-            ReceiverAccount = _allAccounts[0],
+            SenderUserProfile = _allAccounts[10].UserProfile,
+            ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(15).AddMinutes(5).AddSeconds(5),
             Content = "That's a relief. Those alley pickups won't be as nerve-wracking with a working camera. Can't wait!"
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[0],
-            ReceiverAccount = _allAccounts[10],
+            SenderUserProfile = _allAccounts[0].UserProfile,
+            ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(15).AddMinutes(10).AddSeconds(8),
             Content = "You got this. Keep up the great work, and remember, you're our waste warrior out there."
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[10],
-            ReceiverAccount = _allAccounts[0],
+            SenderUserProfile = _allAccounts[10].UserProfile,
+            ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(15).AddMinutes(11).AddSeconds(9),
             Content = "Thanks, boss. I wear the title with pride. Off to tackle the afternoon route now!"
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[0],
-            ReceiverAccount = _allAccounts[10],
+            SenderUserProfile = _allAccounts[0].UserProfile,
+            ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(15).AddMinutes(24).AddSeconds(57),
             Content = "Go show that trash who's boss! If you ever find a way to make it smell like roses, let me know."
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[10],
-            ReceiverAccount = _allAccounts[0],
+            SenderUserProfile = _allAccounts[10].UserProfile,
+            ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(15).AddMinutes(25).AddSeconds(18),
             Content = "Haha, will do! Catch you later, boss. Gotta conquer this rubbish realm!"
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[0],
-            ReceiverAccount = _allAccounts[10],
+            SenderUserProfile = _allAccounts[0].UserProfile,
+            ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(16).AddMinutes(36).AddSeconds(27),
             Content = "Well done, you have a productive day!"
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[10],
-            ReceiverAccount = _allAccounts[0],
+            SenderUserProfile = _allAccounts[10].UserProfile,
+            ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(16).AddMinutes(36).AddSeconds(45),
             Content = "Thank you, I will drive back to our company now."
         });
@@ -415,24 +418,24 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[0],
-            ReceiverAccount = _allAccounts[11],
+            SenderUserProfile = _allAccounts[0].UserProfile,
+            ReceiverUserProfile = _allAccounts[11].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(7).AddMinutes(1).AddSeconds(1),
             Content = "I have a new task, please accept if you can."
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[0],
-            ReceiverAccount = _allAccounts[12],
+            SenderUserProfile = _allAccounts[0].UserProfile,
+            ReceiverUserProfile = _allAccounts[12].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(9).AddMinutes(25).AddSeconds(45),
             Content = "Your current task is no longer needed, do the next one please."
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[13],
-            ReceiverAccount = _allAccounts[0],
+            SenderUserProfile = _allAccounts[13].UserProfile,
+            ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(12).AddMinutes(5).AddSeconds(51),
             Content =
                 "I have done transporting the waste from the assigned MCP, I think my vehicle's current load is not enough for the next task."
@@ -440,64 +443,64 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[0],
-            ReceiverAccount = _allAccounts[14],
+            SenderUserProfile = _allAccounts[0].UserProfile,
+            ReceiverUserProfile = _allAccounts[14].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(14).AddMinutes(7).AddSeconds(6),
             Content = "Hello, are you there. I need your help for this task, you are near the MCP I want to clear."
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[15],
-            ReceiverAccount = _allAccounts[0],
+            SenderUserProfile = _allAccounts[15].UserProfile,
+            ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(16).AddMinutes(6).AddSeconds(9),
             Content = "Sorry, I have a headache. May I leave now."
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[0],
-            ReceiverAccount = _allAccounts[31],
+            SenderUserProfile = _allAccounts[0].UserProfile,
+            ReceiverUserProfile = _allAccounts[31].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(9).AddMinutes(9).AddSeconds(9),
             Content = "Sorry to keep you waiting, I was busy this morning and cannot reply your message."
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[0],
-            ReceiverAccount = _allAccounts[33],
+            SenderUserProfile = _allAccounts[0].UserProfile,
+            ReceiverUserProfile = _allAccounts[33].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(13).AddMinutes(45).AddSeconds(52),
             Content = "Hmm, that's a good idea. You could help the other cleaners."
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[35],
-            ReceiverAccount = _allAccounts[0],
+            SenderUserProfile = _allAccounts[35].UserProfile,
+            ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(15).AddMinutes(4).AddSeconds(41),
             Content = "Help me, I get lost on my way!"
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[37],
-            ReceiverAccount = _allAccounts[0],
+            SenderUserProfile = _allAccounts[37].UserProfile,
+            ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(16).AddMinutes(26).AddSeconds(26),
             Content = "I'm done. Goodbye sir."
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[39],
-            ReceiverAccount = _allAccounts[0],
+            SenderUserProfile = _allAccounts[39].UserProfile,
+            ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(16).AddMinutes(45).AddSeconds(10),
             Content = "See you tomorrow, sir."
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[0],
-            ReceiverAccount = _allAccounts[16],
+            SenderUserProfile = _allAccounts[0].UserProfile,
+            ReceiverUserProfile = _allAccounts[16].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(8).AddMinutes(4).AddSeconds(15),
             Content =
                 "Are you there, please focus on the task of emptying the MCP at BK university. The students need fresh air to study. Be quick, please. Thank you."
@@ -505,64 +508,64 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[0],
-            ReceiverAccount = _allAccounts[17],
+            SenderUserProfile = _allAccounts[0].UserProfile,
+            ReceiverUserProfile = _allAccounts[17].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(8).AddMinutes(5).AddSeconds(17),
             Content = "Have you cleaned the MCP on Ly Thuong Kiet street, I see that you are traveling on the wrong route."
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[0],
-            ReceiverAccount = _allAccounts[18],
+            SenderUserProfile = _allAccounts[0].UserProfile,
+            ReceiverUserProfile = _allAccounts[18].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(9).AddMinutes(48).AddSeconds(58),
             Content = "Why are you late today. We have a strict schedule today, be quick and go to work."
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[0],
-            ReceiverAccount = _allAccounts[19],
+            SenderUserProfile = _allAccounts[0].UserProfile,
+            ReceiverUserProfile = _allAccounts[19].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(11).AddMinutes(6).AddSeconds(19),
             Content = "Haha, have a good lunch, maybe I will compose task for you during the your lunch break time."
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[0],
-            ReceiverAccount = _allAccounts[20],
+            SenderUserProfile = _allAccounts[0].UserProfile,
+            ReceiverUserProfile = _allAccounts[20].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(11).AddMinutes(7).AddSeconds(25),
             Content = "Good job, Steve. You are done for today."
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[32],
-            ReceiverAccount = _allAccounts[0],
+            SenderUserProfile = _allAccounts[32].UserProfile,
+            ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(13).AddMinutes(6).AddSeconds(5),
             Content = "The MCP is now cleaned. Be not worried."
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[34],
-            ReceiverAccount = _allAccounts[0],
+            SenderUserProfile = _allAccounts[34].UserProfile,
+            ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(8).AddMinutes(15).AddSeconds(15),
             Content = "Sir, I have sent a request for a day off. Can you sign it for me?"
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[0],
-            ReceiverAccount = _allAccounts[36],
+            SenderUserProfile = _allAccounts[0].UserProfile,
+            ReceiverUserProfile = _allAccounts[36].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(7).AddMinutes(9).AddSeconds(48),
             Content = "Good morning, sir."
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[38],
-            ReceiverAccount = _allAccounts[0],
+            SenderUserProfile = _allAccounts[38].UserProfile,
+            ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(14).AddMinutes(22).AddSeconds(11),
             Content =
                 "Wait, maybe there has been a misunderstanding here. You want me to clean the MCP on the To Hien Thanh street first, not the one on the Su Van Hanh?"
@@ -570,8 +573,8 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[40],
-            ReceiverAccount = _allAccounts[0],
+            SenderUserProfile = _allAccounts[40].UserProfile,
+            ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(15).AddMinutes(11).AddSeconds(8),
             Content = "Oh, I see. I need to go to the toilet. I'll be back."
         });
@@ -581,160 +584,160 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[10],
-            ReceiverAccount = _allAccounts[7],
+            SenderUserProfile = _allAccounts[10].UserProfile,
+            ReceiverUserProfile = _allAccounts[7].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(7).AddMinutes(5).AddSeconds(15),
             Content = "Thank you, I will drive back to our company now."
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[10],
-            ReceiverAccount = _allAccounts[11],
+            SenderUserProfile = _allAccounts[10].UserProfile,
+            ReceiverUserProfile = _allAccounts[11].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(14).AddMinutes(22).AddSeconds(17),
             Content = "Hello."
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[4],
-            ReceiverAccount = _allAccounts[10],
+            SenderUserProfile = _allAccounts[4].UserProfile,
+            ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(8).AddMinutes(12).AddSeconds(34),
             Content = "Just finished the early morning route. The streets are looking much cleaner now!"
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[10],
-            ReceiverAccount = _allAccounts[18],
+            SenderUserProfile = _allAccounts[10].UserProfile,
+            ReceiverUserProfile = _allAccounts[18].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(10).AddMinutes(25).AddSeconds(17),
             Content = "Received a report of a malfunctioning trash compactor. I'll check it out and get it fixed."
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[22],
-            ReceiverAccount = _allAccounts[10],
+            SenderUserProfile = _allAccounts[22].UserProfile,
+            ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(9).AddMinutes(8).AddSeconds(56),
             Content = "Just completed a successful trash pickup on Main Street. The team's efficiency is improving!"
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[44],
-            ReceiverAccount = _allAccounts[10],
+            SenderUserProfile = _allAccounts[44].UserProfile,
+            ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(11).AddMinutes(45).AddSeconds(23),
             Content = "Received a request for extra bins in the downtown area. How should we proceed?"
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[10],
-            ReceiverAccount = _allAccounts[46],
+            SenderUserProfile = _allAccounts[10].UserProfile,
+            ReceiverUserProfile = _allAccounts[46].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(12).AddMinutes(30).AddSeconds(59),
             Content = "Completed the trash collection for today. Ready to head back and wrap up for the day!"
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[35],
-            ReceiverAccount = _allAccounts[10],
+            SenderUserProfile = _allAccounts[35].UserProfile,
+            ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(14).AddMinutes(15).AddSeconds(42),
             Content = "Inspecting the truck before starting the afternoon routes. Safety first!"
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[10],
-            ReceiverAccount = _allAccounts[22],
+            SenderUserProfile = _allAccounts[10].UserProfile,
+            ReceiverUserProfile = _allAccounts[22].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(7).AddMinutes(40).AddSeconds(5),
             Content = "Just cleared a blocked alleyway for better access during our trash pickups. Smooth sailing ahead!"
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[19],
-            ReceiverAccount = _allAccounts[10],
+            SenderUserProfile = _allAccounts[19].UserProfile,
+            ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(13).AddMinutes(52).AddSeconds(19),
             Content = "Sorting and separating recyclables to ensure proper disposal. Every bit counts!"
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[10],
-            ReceiverAccount = _allAccounts[17],
+            SenderUserProfile = _allAccounts[10].UserProfile,
+            ReceiverUserProfile = _allAccounts[17].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(15).AddMinutes(18).AddSeconds(7),
             Content = "Planning the route for tomorrow's pickups. Time to optimize our efficiency!"
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[26],
-            ReceiverAccount = _allAccounts[10],
+            SenderUserProfile = _allAccounts[26].UserProfile,
+            ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(10).AddMinutes(59).AddSeconds(30),
             Content = "Received a call about a lost trash bin. I'll investigate and see if we can locate it."
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[10],
-            ReceiverAccount = _allAccounts[16],
+            SenderUserProfile = _allAccounts[10].UserProfile,
+            ReceiverUserProfile = _allAccounts[16].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(9).AddMinutes(30).AddSeconds(15),
             Content = "Preparing for a special waste collection event this weekend. Let's make it a success!"
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[10],
-            ReceiverAccount = _allAccounts[5],
+            SenderUserProfile = _allAccounts[10].UserProfile,
+            ReceiverUserProfile = _allAccounts[5].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(14).AddMinutes(2).AddSeconds(48),
             Content = "Sorting and segregating hazardous waste for proper disposal. Safety is our priority!"
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[10],
-            ReceiverAccount = _allAccounts[29],
+            SenderUserProfile = _allAccounts[10].UserProfile,
+            ReceiverUserProfile = _allAccounts[29].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(11).AddMinutes(23).AddSeconds(11),
             Content = "Inspecting the collection bins for damages and maintenance needs. Keeping our equipment in top shape!"
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[48],
-            ReceiverAccount = _allAccounts[10],
+            SenderUserProfile = _allAccounts[48].UserProfile,
+            ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(8).AddMinutes(54).AddSeconds(26),
             Content = "Received a request for a special recycling pickup. Coordinating with the team to ensure a smooth operation."
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[10],
-            ReceiverAccount = _allAccounts[33],
+            SenderUserProfile = _allAccounts[10].UserProfile,
+            ReceiverUserProfile = _allAccounts[33].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(15).AddMinutes(37).AddSeconds(53),
             Content = "Educating residents about proper recycling practices. Let's reduce contamination in our bins!"
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[39],
-            ReceiverAccount = _allAccounts[10],
+            SenderUserProfile = _allAccounts[39].UserProfile,
+            ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(13).AddMinutes(10).AddSeconds(39),
             Content = "Completed a community cleanup event. The neighborhood is looking much cleaner and more vibrant!"
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[10],
-            ReceiverAccount = _allAccounts[2],
+            SenderUserProfile = _allAccounts[10].UserProfile,
+            ReceiverUserProfile = _allAccounts[2].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(7).AddMinutes(20).AddSeconds(12),
             Content = "Coordinating with local schools for recycling education programs. Cultivating eco-conscious citizens!"
         });
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[47],
-            ReceiverAccount = _allAccounts[10],
+            SenderUserProfile = _allAccounts[47].UserProfile,
+            ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(12).AddMinutes(5).AddSeconds(28),
             Content =
                 "Received positive feedback from a resident about our improved trash collection efficiency. Our hard work is paying off!"
@@ -742,8 +745,8 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
-            SenderAccount = _allAccounts[10],
-            ReceiverAccount = _allAccounts[37],
+            SenderUserProfile = _allAccounts[10].UserProfile,
+            ReceiverUserProfile = _allAccounts[37].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(17).AddMinutes(5).AddSeconds(45),
             Content = "Heading out for a nighttime pickup. Let's keep the city clean even during the quiet hours!"
         });
