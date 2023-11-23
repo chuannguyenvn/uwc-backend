@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Commons.Communications.Map;
 using Commons.Communications.Mcps;
+using Commons.Models;
 using Commons.Types;
 using SharedLibrary.Communications.OnlineStatus;
 
@@ -11,5 +12,6 @@ namespace Commons.Communications.Authentication
         public McpLocationBroadcastData McpLocationBroadcastData { get; set; }
         public McpFillLevelBroadcastData McpFillLevelBroadcastData { get; set; }
         public OnlineStatusBroadcastData OnlineStatusBroadcastData { get; set; }
+        public Setting Setting { get; set; }
     }
 }

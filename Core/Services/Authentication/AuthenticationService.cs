@@ -44,7 +44,7 @@ public class AuthenticationService : IAuthenticationService
         var loginResponse = new LoginResponse
         {
             Credentials = CreateCredentials(account),
-            InitializationData = CreateInitializationData(),
+            InitializationData = CreateInitializationData(account.Id),
         };
 
         return new ParamRequestResult<LoginResponse>(new Success(), loginResponse);
@@ -73,7 +73,7 @@ public class AuthenticationService : IAuthenticationService
         };
         account.GenerateSaltAndHash();
         _unitOfWork.AccountRepository.Add(account);
-        
+
         var setting = new Setting
         {
             Account = account,
@@ -91,13 +91,13 @@ public class AuthenticationService : IAuthenticationService
             OnlineStatus = OnlineStatusOption.Online
         };
         _unitOfWork.SettingRepository.Add(setting);
-        
+
         _unitOfWork.Complete();
 
         var registerResponse = new RegisterResponse
         {
             Credentials = CreateCredentials(account),
-            InitializationData = CreateInitializationData(),
+            InitializationData = CreateInitializationData(account.Id),
         };
 
         return new ParamRequestResult<RegisterResponse>(new Success(), registerResponse);
@@ -112,14 +112,18 @@ public class AuthenticationService : IAuthenticationService
         };
     }
 
-    private InitializationData CreateInitializationData()
+    private InitializationData CreateInitializationData(int accountId)
     {
         var allMcps = _unitOfWork.McpDataRepository.GetAll().ToList();
+        var setting = _unitOfWork.SettingRepository.GetById(accountId);
+        setting.Account = null;
+
         return new InitializationData
         {
             McpLocationBroadcastData = new McpLocationBroadcastData() { LocationByIds = allMcps.ToDictionary(mcp => mcp.Id, mcp => mcp.Coordinate) },
             McpFillLevelBroadcastData = new McpFillLevelBroadcastData() { FillLevelsById = McpFillLevelService.FillLevelsById },
-            OnlineStatusBroadcastData = new OnlineStatusBroadcastData() { OnlineAccountIds = BaseHub.ConnectionIds.Keys.ToList() }
+            OnlineStatusBroadcastData = new OnlineStatusBroadcastData() { OnlineAccountIds = BaseHub.ConnectionIds.Keys.ToList() },
+            Setting = setting,
         };
     }
 }
