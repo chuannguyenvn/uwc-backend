@@ -757,7 +757,8 @@ public class DatabaseSeeder
     private void SeedTasks()
     {
         var random = new Random();
-        for (int i = 0; i < 50; i++)
+        var doesDriverHaveInProgressTask = new bool[20];
+        for (int i = 0; i < 200; i++)
         {
             var supervisorId = random.Next(10);
             var driverId = random.Next(10, 30);
@@ -775,8 +776,23 @@ public class DatabaseSeeder
                 CreatedTimestamp = DateTime.Now,
                 LastStatusChangeTimestamp = DateTime.Now,
                 CompleteByTimestamp = DateTime.Today.AddHours(randomHourOffset).AddMinutes(randomMinuteOffset),
-                TaskStatus = Utilities.GetRandomEnumValue<TaskStatus>(),
             };
+
+            if (!doesDriverHaveInProgressTask[driverId - 10])
+            {
+                newTask.TaskStatus = TaskStatus.InProgress;
+                doesDriverHaveInProgressTask[driverId - 10] = true;
+            }
+            else
+            {
+                newTask.TaskStatus = Utilities.GetRandomEnumValueExcept(TaskStatus.InProgress);
+
+                if (newTask.TaskStatus == TaskStatus.Completed)
+                {
+                    newTask.LastStatusChangeTimestamp =
+                        newTask.CompleteByTimestamp.AddHours(-Random.Shared.Next(12)).AddMinutes(-Random.Shared.Next(60));
+                }
+            }
 
             _unitOfWork.TaskDataRepository.Add(newTask);
         }
