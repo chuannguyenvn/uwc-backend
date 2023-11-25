@@ -9,6 +9,7 @@ using Commons.RequestStatuses.Authentication;
 using Commons.Types;
 using Commons.Types.SettingOptions;
 using Hubs;
+using Newtonsoft.Json;
 using Services.Mcps;
 using SharedLibrary.Communications.OnlineStatus;
 
@@ -101,6 +102,18 @@ public class AuthenticationService : IAuthenticationService
         };
 
         return new ParamRequestResult<RegisterResponse>(new Success(), registerResponse);
+    }
+
+    public ParamRequestResult<LoginResponse> LoginWithFace(LoginWithFaceRequest request)
+    {
+        Console.WriteLine(JsonConvert.SerializeObject(request));
+        return new ParamRequestResult<LoginResponse>(new Success());
+    }
+
+    public ParamRequestResult<RegisterFaceResponse> RegisterFace(RegisterFaceRequest request)
+    {
+        Console.WriteLine(JsonConvert.SerializeObject(request));
+        return new ParamRequestResult<RegisterFaceResponse>(new Success());
     }
 
     private Credentials CreateCredentials(Account account)

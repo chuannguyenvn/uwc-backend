@@ -29,4 +29,18 @@ public class AuthenticationController : Controller
         var result = _authenticationService.Register(request);
         return ProcessRequestResult(result);
     }
+    
+    [HttpPost(Endpoints.Authentication.LOGIN_WITH_FACE)]
+    public IActionResult LoginWithFace(LoginWithFaceRequest request)
+    {
+        var result = _authenticationService.LoginWithFace(request);
+        return ProcessRequestResult(result);
+    }
+    
+    [HttpPost(Endpoints.Authentication.REGISTER_FACE)]
+    public IActionResult RegisterFace(RegisterFaceRequest request)
+    {
+        var result = _authenticationService.RegisterFace(request);
+        return ProcessRequestResult(result);
+    }
 }
