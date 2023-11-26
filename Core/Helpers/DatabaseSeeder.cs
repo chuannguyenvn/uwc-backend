@@ -154,21 +154,21 @@ public class DatabaseSeeder
     {
         var mcpDataList = new List<McpData>
         {
-            new() { Capacity = 127, Coordinate = new Coordinate(10.7647293589828, 106.663266154958), Address = "580 Bà Hạt, P.6, Q.10" },
-            new() { Capacity = 82, Coordinate = new Coordinate(10.7675037535589, 106.667284093661), Address = "500 Nguyễn Tri Phương, P.9, Q.10" },
-            new() { Capacity = 142, Coordinate = new Coordinate(10.7629567124463, 106.656977523526), Address = "968 3 Tháng 2, P.15, Q.11" },
-            new() { Capacity = 98, Coordinate = new Coordinate(10.7815403101810, 106.655190599178), Address = "389 Lý Thường Kiệt, P.8, Q.Tân Bình" },
-            new() { Capacity = 162, Coordinate = new Coordinate(10.7771799685277, 106.660531841364), Address = "334 Tô Hiến Thành, P.14, Q.10" },
-            new() { Capacity = 128, Coordinate = new Coordinate(10.7712254318066, 106.665784313171), Address = "54 Thành Thái, P.10, Q.10" },
-            new() { Capacity = 89, Coordinate = new Coordinate(10.7668398628915, 106.659288627832), Address = "300 Lý Thường Kiệt, P.14, Q.10" },
-            new() { Capacity = 120, Coordinate = new Coordinate(10.752208718089143, 106.64971397274442), Address = "96 Phạm Đình Hổ, P.2, Q.6" },
-            new() { Capacity = 200, Coordinate = new Coordinate(10.786135, 106.651209), Address = "1150 Lạc Long Quân, P.8, Q.Tân Bình" },
-            new() { Capacity = 201, Coordinate = new Coordinate(10.782575, 106.660679), Address = "153 Bắc Hải, P.15, Q.10" },
-            new() { Capacity = 195, Coordinate = new Coordinate(10.775672, 106.667233), Address = "533 Sư Vạn Hạnh, P.12, Q.10" },
-            new() { Capacity = 141, Coordinate = new Coordinate(10.776559, 106.663600), Address = "218 Thành Thái, P.15, Q.10" },
-            new() { Capacity = 137, Coordinate = new Coordinate(10.771117, 106.652352), Address = "84 Nguyễn Thị Nhỏ, P.9, Q.Tân Bình" },
-            new() { Capacity = 183, Coordinate = new Coordinate(10.7807, 106.676), Address = "276 Cách Mạng Tháng Tám, P.15, Q.3" },
-            new() { Capacity = 140, Coordinate = new Coordinate(10.7612, 106.661), Address = "93 Lý Thường Kiệt, P.7, Q.10" }
+            new() { Coordinate = new Coordinate(10.7647293589828, 106.663266154958), Address = "580 Bà Hạt, P.6, Q.10" },
+            new() { Coordinate = new Coordinate(10.7675037535589, 106.667284093661), Address = "500 Nguyễn Tri Phương, P.9, Q.10" },
+            new() { Coordinate = new Coordinate(10.7629567124463, 106.656977523526), Address = "968 3 Tháng 2, P.15, Q.11" },
+            new() { Coordinate = new Coordinate(10.7815403101810, 106.655190599178), Address = "389 Lý Thường Kiệt, P.8, Q.Tân Bình" },
+            new() { Coordinate = new Coordinate(10.7771799685277, 106.660531841364), Address = "334 Tô Hiến Thành, P.14, Q.10" },
+            new() { Coordinate = new Coordinate(10.7712254318066, 106.665784313171), Address = "54 Thành Thái, P.10, Q.10" },
+            new() { Coordinate = new Coordinate(10.7668398628915, 106.659288627832), Address = "300 Lý Thường Kiệt, P.14, Q.10" },
+            new() { Coordinate = new Coordinate(10.752208718089143, 106.64971397274442), Address = "96 Phạm Đình Hổ, P.2, Q.6" },
+            new() { Coordinate = new Coordinate(10.786135, 106.651209), Address = "1150 Lạc Long Quân, P.8, Q.Tân Bình" },
+            new() { Coordinate = new Coordinate(10.782575, 106.660679), Address = "153 Bắc Hải, P.15, Q.10" },
+            new() { Coordinate = new Coordinate(10.775672, 106.667233), Address = "533 Sư Vạn Hạnh, P.12, Q.10" },
+            new() { Coordinate = new Coordinate(10.776559, 106.663600), Address = "218 Thành Thái, P.15, Q.10" },
+            new() { Coordinate = new Coordinate(10.771117, 106.652352), Address = "84 Nguyễn Thị Nhỏ, P.9, Q.Tân Bình" },
+            new() { Coordinate = new Coordinate(10.7807, 106.676), Address = "276 Cách Mạng Tháng Tám, P.15, Q.3" },
+            new() { Coordinate = new Coordinate(10.7612, 106.661), Address = "93 Lý Thường Kiệt, P.7, Q.10" }
         };
 
         var random = new Random();
@@ -758,43 +758,46 @@ public class DatabaseSeeder
     {
         var random = new Random();
         var doesDriverHaveInProgressTask = new bool[20];
-        for (int i = 0; i < 200; i++)
+        for (int driverId = 11; driverId <= 30; driverId++)
         {
-            var supervisorId = random.Next(10);
-            var driverId = random.Next(10, 30);
-            var mcpId = random.Next(15);
-            var randomHourOffset = random.Next(-12, 12);
-            var randomMinuteOffset = random.Next(0, 3) * 15;
-            var newTask = new TaskData
+            var tasksCount = random.Next(5, 15);
+            for (int i = 0; i < tasksCount; i++)
             {
-                AssignerId = supervisorId,
-                AssignerProfile = _allAccounts[supervisorId].UserProfile,
-                AssigneeId = driverId,
-                AssigneeProfile = _allAccounts[driverId].UserProfile,
-                McpDataId = mcpId,
-                McpData = _allMcps[mcpId],
-                CreatedTimestamp = DateTime.Now,
-                LastStatusChangeTimestamp = DateTime.Now,
-                CompleteByTimestamp = DateTime.Today.AddHours(randomHourOffset).AddMinutes(randomMinuteOffset),
-            };
-
-            if (!doesDriverHaveInProgressTask[driverId - 10])
-            {
-                newTask.TaskStatus = TaskStatus.InProgress;
-                doesDriverHaveInProgressTask[driverId - 10] = true;
-            }
-            else
-            {
-                newTask.TaskStatus = Utilities.GetRandomEnumValueExcept(TaskStatus.InProgress);
-
-                if (newTask.TaskStatus == TaskStatus.Completed)
+                var supervisorId = random.Next(10);
+                var mcpId = random.Next(15);
+                var randomHourOffset = random.Next(-12, 12);
+                var randomMinuteOffset = random.Next(0, 3) * 15;
+                var newTask = new TaskData
                 {
-                    newTask.LastStatusChangeTimestamp =
-                        newTask.CompleteByTimestamp.AddHours(-Random.Shared.Next(12)).AddMinutes(-Random.Shared.Next(60));
-                }
-            }
+                    AssignerId = supervisorId,
+                    AssignerProfile = _allAccounts[supervisorId].UserProfile,
+                    AssigneeId = driverId,
+                    AssigneeProfile = _allAccounts[driverId].UserProfile,
+                    McpDataId = mcpId,
+                    McpData = _allMcps[mcpId],
+                    CreatedTimestamp = DateTime.Now,
+                    LastStatusChangeTimestamp = DateTime.Now,
+                    CompleteByTimestamp = DateTime.Today.AddHours(randomHourOffset).AddMinutes(randomMinuteOffset),
+                };
 
-            _unitOfWork.TaskDataRepository.Add(newTask);
+                if (!doesDriverHaveInProgressTask[driverId - 11])
+                {
+                    newTask.TaskStatus = TaskStatus.InProgress;
+                    doesDriverHaveInProgressTask[driverId - 11] = true;
+                }
+                else
+                {
+                    newTask.TaskStatus = Utilities.GetRandomEnumValueExcept(TaskStatus.InProgress);
+
+                    if (newTask.TaskStatus == TaskStatus.Completed)
+                    {
+                        newTask.LastStatusChangeTimestamp =
+                            newTask.CompleteByTimestamp.AddHours(-Random.Shared.Next(12)).AddMinutes(-Random.Shared.Next(60));
+                    }
+                }
+
+                _unitOfWork.TaskDataDataRepository.Add(newTask);
+            }
         }
 
         _unitOfWork.Complete();

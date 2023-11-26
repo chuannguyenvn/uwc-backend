@@ -9,7 +9,7 @@ using SharedLibrary.Communications.OnlineStatus;
 
 namespace Services.Mcps;
 
-public class McpFillLevelService : IMcpFillLevelService
+public class McpFillLevelService : IMcpFillLevelService, IHostedService, IDisposable
 {
     private readonly IServiceProvider _serviceProvider;
 

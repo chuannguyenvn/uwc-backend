@@ -8,7 +8,6 @@ namespace Commons.Communications.Mcps
         public int McpId { get; set; }
         public string? NewAddress { get; set; }
         public Coordinate? NewCoordinate { get; set; }
-        public Zone? NewZone { get; set; }
         public float? NewCapacity { get; set; }
     }
 }

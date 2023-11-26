@@ -14,6 +14,8 @@ public interface IGenericRepository<T> where T : IndexedEntity
     IEnumerable<T> GetRandomWithCondition(Func<T, bool> condition, int count = 1);
     T GetById(int id);
     void Remove(T entity);
+    void RemoveAll();
+    void RemoveWhere(Func<T, bool> predicate);
     void RemoveRange(IEnumerable<T> entities);
     bool DoesIdExist(int id);
     bool HasAny();

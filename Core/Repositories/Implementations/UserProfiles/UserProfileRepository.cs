@@ -15,4 +15,10 @@ public class UserProfileRepository : GenericRepository<UserProfile>, IUserProfil
     {
         return Context.UserProfileTable.Where(userProfile => userProfile.UserRole == userRole);
     }
+
+    public IEnumerable<UserProfile> GetAllWorkers()
+    {
+        return Context.UserProfileTable.Where(userProfile =>
+            userProfile.UserRole == UserRole.Driver || userProfile.UserRole == UserRole.Cleaner);
+    }
 }
