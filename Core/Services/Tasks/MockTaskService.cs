@@ -76,6 +76,9 @@ public class MockTaskService : ITaskService
         if (!_unitOfWork.AccountRepository.DoesIdExist(request.WorkerId)) return new RequestResult(new DataEntryNotFound());
 
         var taskData = _unitOfWork.TaskDataDataRepository.GetById(request.TaskId);
+
+        if (taskData.AssigneeId.HasValue) return new RequestResult(new DataEntryAlreadyExist());
+        
         taskData.AssigneeId = request.WorkerId;
         taskData.AssigneeProfile = _unitOfWork.UserProfileRepository.GetById(request.WorkerId);
         _unitOfWork.Complete();

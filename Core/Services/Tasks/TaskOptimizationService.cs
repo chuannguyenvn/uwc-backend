@@ -1,4 +1,4 @@
-﻿using Commons.Categories;
+using Commons.Categories;
 using Commons.Communications.Map;
 using Commons.Communications.Tasks;
 using Commons.Models;
