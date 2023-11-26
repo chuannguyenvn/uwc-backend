@@ -1,5 +1,4 @@
-﻿using Commons.Models;
-using Commons.Types;
+﻿using Commons.Types;
 using Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Moq;
@@ -14,10 +13,22 @@ public class RouteOptimizationServiceTest
 {
     private readonly Mock<IHubContext<BaseHub>> _mockBaseHub = new();
 
+    private MockUnitOfWork _mockUnitOfWork;
+    private MockTaskService _mockTaskService;
+    private MockMcpFillLevelService _mockMcpFillLevelService;
+    private MockLocationService _mockLocationService;
+    private TaskOptimizationService _routeOptimizationService;
+
     [SetUp]
     public void Setup()
     {
         _mockBaseHub.Setup(mock => mock.Clients.Client(It.IsAny<string>()).SendCoreAsync(It.IsAny<string>(), It.IsAny<object[]>(), default));
+
+        _mockUnitOfWork = new MockUnitOfWork();
+        _mockTaskService = new MockTaskService(_mockUnitOfWork);
+        _mockMcpFillLevelService = new MockMcpFillLevelService(_mockUnitOfWork);
+        _mockLocationService = new MockLocationService(_mockUnitOfWork);
+        _routeOptimizationService = new TaskOptimizationService(_mockUnitOfWork, _mockTaskService, _mockLocationService, _mockMcpFillLevelService);
     }
 
     [Test]
@@ -30,12 +41,6 @@ public class RouteOptimizationServiceTest
 
         #region Arrange
 
-        var mockUnitOfWork = new MockUnitOfWork();
-        var mockTaskService = new MockTaskService(mockUnitOfWork);
-        var mockMcpFillLevelService = new MockMcpFillLevelService(mockUnitOfWork);
-        var mockLocationService = new MockLocationService(mockUnitOfWork);
-        var routeOptimizationService = new TaskOptimizationService(mockUnitOfWork, mockTaskService, mockLocationService, mockMcpFillLevelService);
-
         // The supervisor's ID
         var supervisorId = 1;
 
@@ -47,31 +52,31 @@ public class RouteOptimizationServiceTest
         var mcp2Id = 2;
 
         // Start with a clean slate (no pre-made tasks)
-        mockUnitOfWork.TaskDataDataRepository.RemoveAll();
+        _mockUnitOfWork.TaskDataDataRepository.RemoveAll();
 
         // Set the worker's location
-        mockLocationService.UpdateLocation(workerId, new Coordinate(10.5, 100));
+        _mockLocationService.UpdateLocation(workerId, new Coordinate(10.5, 100));
 
         // Set the mcp locations
-        mockUnitOfWork.McpDataRepository.GetById(mcp1Id).Coordinate = new Coordinate(10, 100);
-        mockUnitOfWork.McpDataRepository.GetById(mcp2Id).Coordinate = new Coordinate(11, 100);
+        _mockUnitOfWork.McpDataRepository.GetById(mcp1Id).Coordinate = new Coordinate(10, 100);
+        _mockUnitOfWork.McpDataRepository.GetById(mcp2Id).Coordinate = new Coordinate(11, 100);
 
         // Set the mcp fill levels
-        mockMcpFillLevelService.SetFillLevel(mcp1Id, 0.1f);
-        mockMcpFillLevelService.SetFillLevel(mcp2Id, 0.9f);
+        _mockMcpFillLevelService.SetFillLevel(mcp1Id, 0.1f);
+        _mockMcpFillLevelService.SetFillLevel(mcp2Id, 0.9f);
 
         // Task with a nearly full mcp
-        mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp1Id, DateTime.Now.AddHours(1));
+        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp1Id, DateTime.Now.AddHours(1));
 
         // Task with an empty mcp
-        mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp2Id, DateTime.Now.AddHours(1));
+        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp2Id, DateTime.Now.AddHours(1));
 
         #endregion
 
 
         #region Act
 
-        var optimizedTasks = routeOptimizationService.OptimizeRouteForWorker(mockUnitOfWork.UserProfileRepository.GetById(workerId));
+        var optimizedTasks = _routeOptimizationService.OptimizeRouteForWorker(_mockUnitOfWork.UserProfileRepository.GetById(workerId));
 
         #endregion
 
@@ -95,12 +100,6 @@ public class RouteOptimizationServiceTest
 
         #region Arrange
 
-        var mockUnitOfWork = new MockUnitOfWork();
-        var mockTaskService = new MockTaskService(mockUnitOfWork);
-        var mockMcpFillLevelService = new MockMcpFillLevelService(mockUnitOfWork);
-        var mockLocationService = new MockLocationService(mockUnitOfWork);
-        var routeOptimizationService = new TaskOptimizationService(mockUnitOfWork, mockTaskService, mockLocationService, mockMcpFillLevelService);
-
         // The supervisor's ID
         var supervisorId = 1;
 
@@ -112,31 +111,31 @@ public class RouteOptimizationServiceTest
         var mcp2Id = 2;
 
         // Start with a clean slate (no pre-made tasks)
-        mockUnitOfWork.TaskDataDataRepository.RemoveAll();
+        _mockUnitOfWork.TaskDataDataRepository.RemoveAll();
 
         // Set the worker's location
-        mockLocationService.UpdateLocation(workerId, new Coordinate(10.5, 100));
+        _mockLocationService.UpdateLocation(workerId, new Coordinate(10.5, 100));
 
         // Set the mcp locations
-        mockUnitOfWork.McpDataRepository.GetById(mcp1Id).Coordinate = new Coordinate(10, 100);
-        mockUnitOfWork.McpDataRepository.GetById(mcp2Id).Coordinate = new Coordinate(11, 100);
+        _mockUnitOfWork.McpDataRepository.GetById(mcp1Id).Coordinate = new Coordinate(10, 100);
+        _mockUnitOfWork.McpDataRepository.GetById(mcp2Id).Coordinate = new Coordinate(11, 100);
 
         // Set the mcp fill levels
-        mockMcpFillLevelService.SetFillLevel(mcp1Id, 0.5f);
-        mockMcpFillLevelService.SetFillLevel(mcp2Id, 0.5f);
+        _mockMcpFillLevelService.SetFillLevel(mcp1Id, 0.5f);
+        _mockMcpFillLevelService.SetFillLevel(mcp2Id, 0.5f);
 
         // Task with later deadline
-        mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp1Id, DateTime.Now.AddHours(10)); // Later deadline
+        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp1Id, DateTime.Now.AddHours(10)); // Later deadline
 
         // Task with earlier deadline
-        mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp2Id, DateTime.Now.AddHours(1)); // Earlier deadline
+        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp2Id, DateTime.Now.AddHours(1)); // Earlier deadline
 
         #endregion
 
 
         #region Act
 
-        var optimizedTasks = routeOptimizationService.OptimizeRouteForWorker(mockUnitOfWork.UserProfileRepository.GetById(workerId));
+        var optimizedTasks = _routeOptimizationService.OptimizeRouteForWorker(_mockUnitOfWork.UserProfileRepository.GetById(workerId));
 
         #endregion
 
@@ -158,12 +157,6 @@ public class RouteOptimizationServiceTest
 
         #region Arrange
 
-        var mockUnitOfWork = new MockUnitOfWork();
-        var mockTaskService = new MockTaskService(mockUnitOfWork);
-        var mockMcpFillLevelService = new MockMcpFillLevelService(mockUnitOfWork);
-        var mockLocationService = new MockLocationService(mockUnitOfWork);
-        var routeOptimizationService = new TaskOptimizationService(mockUnitOfWork, mockTaskService, mockLocationService, mockMcpFillLevelService);
-
         // The supervisor's ID
         var supervisorId = 1;
 
@@ -177,31 +170,31 @@ public class RouteOptimizationServiceTest
         var mcpId = 1;
 
         // Remove all tasks of the free worker
-        mockUnitOfWork.TaskDataDataRepository.RemoveAllTasksOfWorker(worker1Id);
+        _mockUnitOfWork.TaskDataDataRepository.RemoveAllTasksOfWorker(worker1Id);
 
         // A single unassigned task. The free worker must get this task
-        mockTaskService.AddTaskWithoutWorker(supervisorId, mcpId, DateTime.Now.AddHours(1));
+        _mockTaskService.AddTaskWithoutWorker(supervisorId, mcpId, DateTime.Now.AddHours(1));
 
         // Tasks count before distribution of worker 2 (worker 1 has no tasks)
-        var tasksCountBeforeWorker2 = mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker2Id).Count;
+        var tasksCountBeforeWorker2 = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker2Id).Count;
 
         #endregion
 
 
         #region Act
 
-        routeOptimizationService.DistributeTasksFromPool();
+        _routeOptimizationService.DistributeTasksFromPool();
 
         #endregion
 
 
         #region Assert
 
-        var worker1Tasks = mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker1Id);
+        var worker1Tasks = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker1Id);
         Assert.That(worker1Tasks.Count, Is.EqualTo(1));
         Assert.That(worker1Tasks[0].McpDataId, Is.EqualTo(mcpId)); // The free worker must get the task
 
-        var worker2Tasks = mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker2Id);
+        var worker2Tasks = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker2Id);
         Assert.That(worker2Tasks.Count, Is.EqualTo(tasksCountBeforeWorker2)); // The busy worker must not get the task
 
         #endregion
