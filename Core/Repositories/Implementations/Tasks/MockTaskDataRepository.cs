@@ -5,9 +5,9 @@ using TaskStatus = Commons.Types.TaskStatus;
 
 namespace Repositories.Implementations.Tasks;
 
-public class MockTaskRepository : MockGenericRepository<TaskData>, ITaskRepository
+public class MockTaskDataRepository : MockGenericRepository<TaskData>, ITaskDataRepository
 {
-    public MockTaskRepository(MockUwcDbContext mockUwcDbContext) : base(mockUwcDbContext)
+    public MockTaskDataRepository(MockUwcDbContext mockUwcDbContext) : base(mockUwcDbContext)
     {
     }
 
@@ -69,6 +69,12 @@ public class MockTaskRepository : MockGenericRepository<TaskData>, ITaskReposito
     {
         return Context.TaskDataTable.Where(task =>
             task.AssigneeId == workerId && DateTime.Now.AddHours(24) >= task.CompleteByTimestamp && task.TaskStatus != TaskStatus.Completed).ToList();
+    }
+
+    public List<TaskData> GetUnassignedTasksIn24Hours(int workerId)
+    {
+        return Context.TaskDataTable.Where(task =>
+            task.AssigneeId == null && DateTime.Now.AddHours(24) >= task.CompleteByTimestamp && task.TaskStatus != TaskStatus.Completed).ToList();
     }
 
     public List<TaskData> GetTasksFromTodayOrFuture()

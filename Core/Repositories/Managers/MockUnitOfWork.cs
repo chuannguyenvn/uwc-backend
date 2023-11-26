@@ -25,7 +25,7 @@ public class MockUnitOfWork : IUnitOfWork
         McpEmptyRecordRecordRepository = new MockMcpEmptyRecordRepository(_uwcDbContext);
         McpFillLevelLogRepository = new MockMcpFillLevelLogRepository(_uwcDbContext);
         MessageRepository = new MockMessageRepository(_uwcDbContext);
-        TaskDataRepository = new MockTaskRepository(_uwcDbContext);
+        TaskDataDataRepository = new MockTaskDataRepository(_uwcDbContext);
         VehicleDataRepository = new MockVehicleDataRepository(_uwcDbContext);
         SettingRepository = new MockSettingRepository(_uwcDbContext);
 
@@ -38,7 +38,7 @@ public class MockUnitOfWork : IUnitOfWork
     public IMcpDataRepository McpDataRepository { get; }
     public IMcpEmptyRecordRepository McpEmptyRecordRecordRepository { get; }
     public IMcpFillLevelLogRepository McpFillLevelLogRepository { get; }
-    public ITaskRepository TaskDataRepository { get; }
+    public ITaskDataRepository TaskDataDataRepository { get; }
     public IMessageRepository MessageRepository { get; }
     public IVehicleDataRepository VehicleDataRepository { get; }
     public ISettingRepository SettingRepository { get; }

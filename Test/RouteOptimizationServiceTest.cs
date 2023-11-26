@@ -45,7 +45,7 @@ public class RouteOptimizationServiceTest
         var mcp2Id = 2;
 
         // Start with a clean slate (no pre-made tasks)
-        mockUnitOfWork.TaskDataRepository.RemoveAll();
+        mockUnitOfWork.TaskDataDataRepository.RemoveAll();
 
         // Set the worker's location
         mockLocationService.UpdateLocation(workerId, new Coordinate(10.5, 100));
@@ -66,7 +66,7 @@ public class RouteOptimizationServiceTest
             McpDataId = mcp1Id,
             CompleteByTimestamp = DateTime.Now.AddHours(1), // Same deadline
         };
-        mockUnitOfWork.TaskDataRepository.Add(task1);
+        mockUnitOfWork.TaskDataDataRepository.Add(task1);
 
         // Task with an empty mcp
         var task2 = new TaskData
@@ -76,7 +76,7 @@ public class RouteOptimizationServiceTest
             McpDataId = mcp2Id,
             CompleteByTimestamp = DateTime.Now.AddHours(1), // Same deadline
         };
-        mockUnitOfWork.TaskDataRepository.Add(task2);
+        mockUnitOfWork.TaskDataDataRepository.Add(task2);
 
         #endregion
 
@@ -122,7 +122,7 @@ public class RouteOptimizationServiceTest
         var mcp2Id = 2;
 
         // Start with a clean slate (no pre-made tasks)
-        mockUnitOfWork.TaskDataRepository.RemoveAll();
+        mockUnitOfWork.TaskDataDataRepository.RemoveAll();
 
         // Set the worker's location
         mockLocationService.UpdateLocation(workerId, new Coordinate(10.5, 100));
@@ -143,7 +143,7 @@ public class RouteOptimizationServiceTest
             McpDataId = mcp1Id,
             CompleteByTimestamp = DateTime.Now.AddHours(10), // Later deadline
         };
-        mockUnitOfWork.TaskDataRepository.Add(task1);
+        mockUnitOfWork.TaskDataDataRepository.Add(task1);
 
         // Task with earlier deadline
         var task2 = new TaskData
@@ -153,7 +153,7 @@ public class RouteOptimizationServiceTest
             McpDataId = mcp2Id,
             CompleteByTimestamp = DateTime.Now.AddHours(1), // Earlier deadline
         };
-        mockUnitOfWork.TaskDataRepository.Add(task2);
+        mockUnitOfWork.TaskDataDataRepository.Add(task2);
 
         #endregion
 

@@ -7,7 +7,7 @@ namespace Commons.Communications.Tasks
     public class AddTasksRequest
     {
         public int AssignerAccountId { get; set; }
-        public int AssigneeAccountId { get; set; }
+        public int? AssigneeAccountId { get; set; }
         public List<int> McpDataIds { get; set; }
 
         public DateTime CompleteByTimestamp { get; set; }

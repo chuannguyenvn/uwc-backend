@@ -3,10 +3,11 @@ using Repositories.Generics;
 
 namespace Repositories.Implementations.Tasks;
 
-public interface ITaskRepository : IGenericRepository<TaskData>
+public interface ITaskDataRepository : IGenericRepository<TaskData>
 {
     public List<TaskData> GetTasksByDate(DateTime date);
     public List<TaskData> GetTasksByWorkerId(int workerId);
     public List<TaskData> GetWorkerRemainingTasksIn24Hours(int workerId);
+    public List<TaskData> GetUnassignedTasksIn24Hours(int workerId);
     public List<TaskData> GetTasksFromTodayOrFuture();
 }

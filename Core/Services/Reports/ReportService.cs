@@ -31,7 +31,7 @@ public class ReportService : IReportService
 
     private void CalculateTaskMetrics(GetDashboardReportResponse response)
     {
-        var tasks = _unitOfWork.TaskDataRepository.GetTasksByDate(DateTime.Now);
+        var tasks = _unitOfWork.TaskDataDataRepository.GetTasksByDate(DateTime.Now);
         response.TotalTasksCreated = tasks.Count;
         response.TotalTasksCompleted = tasks.Count(t => t.TaskStatus == TaskStatus.Completed);
         response.AverageTaskCompletionTimeInMinutes = (float)(tasks.Count == 0

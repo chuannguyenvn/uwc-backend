@@ -21,7 +21,7 @@ public class RouteOptimizationService : IRouteOptimizationService
 
     private List<TaskData> GetWorkerTasksIn24Hours(UserProfile workerProfile)
     {
-        return _unitOfWork.TaskDataRepository.GetWorkerRemainingTasksIn24Hours(workerProfile.Id);
+        return _unitOfWork.TaskDataDataRepository.GetWorkerRemainingTasksIn24Hours(workerProfile.Id);
     }
 
     private Dictionary<int, float> GetAllMcpFillLevels()

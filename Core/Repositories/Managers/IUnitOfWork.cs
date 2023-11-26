@@ -19,7 +19,7 @@ public interface IUnitOfWork
     IMcpEmptyRecordRepository McpEmptyRecordRecordRepository { get; }
     IMcpFillLevelLogRepository McpFillLevelLogRepository { get; }
     IMessageRepository MessageRepository { get; }
-    ITaskRepository TaskDataRepository { get; }
+    ITaskDataRepository TaskDataDataRepository { get; }
     IVehicleDataRepository VehicleDataRepository { get; }
     ISettingRepository SettingRepository { get; }
     int Complete();

@@ -794,7 +794,7 @@ public class DatabaseSeeder
                 }
             }
 
-            _unitOfWork.TaskDataRepository.Add(newTask);
+            _unitOfWork.TaskDataDataRepository.Add(newTask);
         }
 
         _unitOfWork.Complete();

@@ -6,9 +6,9 @@ using TaskStatus = Commons.Types.TaskStatus;
 
 namespace Repositories.Implementations.Tasks;
 
-public class TaskRepository : GenericRepository<TaskData>, ITaskRepository
+public class TaskDataDataRepository : GenericRepository<TaskData>, ITaskDataRepository
 {
-    public TaskRepository(UwcDbContext context) : base(context)
+    public TaskDataDataRepository(UwcDbContext context) : base(context)
     {
     }
 
@@ -29,6 +29,15 @@ public class TaskRepository : GenericRepository<TaskData>, ITaskRepository
     {
         return Context.TaskDataTable.Where(task =>
                 task.AssigneeId == workerId && DateTime.Now.AddHours(24) >= task.CompleteByTimestamp && task.TaskStatus != TaskStatus.Completed)
+            .Include(task => task.McpData)
+            .Include(task => task.AssigneeProfile)
+            .Include(task => task.AssignerProfile).ToList();
+    }
+
+    public List<TaskData> GetUnassignedTasksIn24Hours(int workerId)
+    {
+        return Context.TaskDataTable.Where(task =>
+                task.AssigneeId == null && DateTime.Now.AddHours(24) >= task.CompleteByTimestamp && task.TaskStatus != TaskStatus.Completed)
             .Include(task => task.McpData)
             .Include(task => task.AssigneeProfile)
             .Include(task => task.AssignerProfile).ToList();

@@ -8,8 +8,8 @@ namespace Commons.Models
         public int AssignerId { get; set; }
         public UserProfile AssignerProfile { get; set; }
 
-        public int AssigneeId { get; set; }
-        public UserProfile AssigneeProfile { get; set; }
+        public int? AssigneeId { get; set; }
+        public UserProfile? AssigneeProfile { get; set; }
 
         public int McpDataId { get; set; }
         public McpData McpData { get; set; }
