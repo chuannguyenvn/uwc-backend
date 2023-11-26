@@ -28,7 +28,6 @@ public class McpDataService : IMcpDataService
         {
             Address = request.Address,
             Coordinate = request.Coordinate,
-            Capacity = request.Capacity // TODO: Range check this
         };
         _unitOfWork.McpDataRepository.Add(mcpData);
         _unitOfWork.Complete();
@@ -45,7 +44,6 @@ public class McpDataService : IMcpDataService
         var mcpData = _unitOfWork.McpDataRepository.GetById(request.McpId);
         if (request.NewAddress != null) mcpData.Address = request.NewAddress;
         if (request.NewCoordinate != null) mcpData.Coordinate = request.NewCoordinate;
-        if (request.NewCapacity != null) mcpData.Capacity = request.NewCapacity.Value;
         _unitOfWork.Complete();
 
         _hubContext.Clients.All.SendAsync(HubHandlers.McpLocation.BROADCAST_LOCATION, mcpData);

@@ -10,7 +10,15 @@ namespace Commons.Models
         public int EmptyingWorkerId { get; set; }
         public UserProfile EmptyingWorker { get; set; }
         public DateTime Timestamp { get; set; }
+
+        /// <summary>
+        /// Fill level is a float between 0 and 1.
+        /// </summary>
         public float McpFillLevelBeforeEmptying { get; set; }
+
+        /// <summary>
+        /// Fill level is a float between 0 and 1.
+        /// </summary>
         public float McpFillLevelAfterEmptying { get; set; }
     }
 }

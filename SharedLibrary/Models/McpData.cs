@@ -27,8 +27,6 @@ namespace Commons.Models
             }
         }
         
-        public float Capacity { get; set; }
-
         public ICollection<McpFillLevelLog> McpFillLevelLogs { get; set; }
         public ICollection<McpEmptyRecord> McpEmptyRecords { get; set; }
     }
