@@ -4,5 +4,5 @@ namespace Services.Map;
 
 public interface IRouteOptimizationService
 {
-    public List<TaskData> OptimizeRoute(UserProfile workerProfile);
+    public List<TaskData> OptimizeRouteForWorker(UserProfile workerProfile);
 }

@@ -15,4 +15,9 @@ public class MockUserProfileRepository : MockGenericRepository<UserProfile>, IUs
     {
         return Context.UserProfileTable.Where(up => up.UserRole == userRole);
     }
+
+    public IEnumerable<UserProfile> GetAllWorkers()
+    {
+        return Context.UserProfileTable.Where(up => up.UserRole == UserRole.Driver || up.UserRole == UserRole.Cleaner);
+    }
 }

@@ -7,4 +7,5 @@ namespace Repositories.Implementations.UserProfiles;
 public interface IUserProfileRepository : IGenericRepository<UserProfile>
 {
     IEnumerable<UserProfile> GetByUserRole(UserRole userRole);
+    IEnumerable<UserProfile> GetAllWorkers();
 }

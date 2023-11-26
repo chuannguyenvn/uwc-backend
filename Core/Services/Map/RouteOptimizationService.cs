@@ -24,9 +24,9 @@ public class RouteOptimizationService : IRouteOptimizationService
         _mcpFillLevelService = mcpFillLevelService;
     }
 
-    private List<TaskData> GetWorkerTasksIn24Hours(UserProfile workerProfile)
+    private List<TaskData> GetWorkerTasksIn24Hours(int workerId)
     {
-        return _unitOfWork.TaskDataDataRepository.GetWorkerRemainingTasksIn24Hours(workerProfile.Id);
+        return _unitOfWork.TaskDataDataRepository.GetWorkerRemainingTasksIn24Hours(workerId);
     }
 
     private List<TaskData> GetUnassignedTaskIn24Hours()
@@ -39,35 +39,56 @@ public class RouteOptimizationService : IRouteOptimizationService
         return _mcpFillLevelService.GetAllFillLevel().Data.FillLevelsById;
     }
 
-    private Coordinate GetWorkerLocation(UserProfile workerProfile)
+    private Coordinate GetWorkerLocation(int workerId)
     {
         return _locationService.GetLocation(new GetLocationRequest
         {
-            AccountId = workerProfile.AccountId
+            AccountId = workerId
         }).Data!.Coordinate;
     }
 
-    private void AssignWorkerToTask(TaskData taskData, UserProfile workerProfile)
+    private Dictionary<int, UserProfile> GetAllWorkerProfiles()
+    {
+        return _unitOfWork.UserProfileRepository.GetAllWorkers().ToDictionary(workerProfile => workerProfile.Id);
+    }
+
+    private void AssignWorkerToTask(int taskDataId, int workerId)
     {
         _taskService.AssignWorkerToTask(new AssignWorkerToTaskRequest
         {
-            TaskId = taskData.Id,
-            WorkerId = workerProfile.Id
+            TaskId = taskDataId,
+            WorkerId = workerId
         });
     }
 
-    public List<TaskData> OptimizeRoute(UserProfile workerProfile)
+    public List<TaskData> OptimizeRouteForWorker(UserProfile workerProfile)
     {
-        var assignedTasks = GetWorkerTasksIn24Hours(workerProfile);
-        var unassignedTasks = GetUnassignedTaskIn24Hours();
+        List<TaskData> assignedTasks = GetWorkerTasksIn24Hours(workerProfile.Id);
+        List<TaskData> unassignedTasks = GetUnassignedTaskIn24Hours();
 
-        var mcpFillLevels = GetAllMcpFillLevels();
-        var workerLocation = GetWorkerLocation(workerProfile);
+        Dictionary<int, float> mcpFillLevels = GetAllMcpFillLevels();
+        Coordinate workerLocation = GetWorkerLocation(workerProfile.Id);
 
-        // TODO...
-        var optimizedTasks = new List<TaskData>();
+        List<TaskData> optimizedTasks = new List<TaskData>();
+
+        // TODO: Optimize route by reorder tasks in assignedTasks
+
+        // Example: Sort tasks by fill level of mcp and deadline
         optimizedTasks = assignedTasks.OrderByDescending(task => mcpFillLevels[task.McpDataId]).ThenBy(task => task.CompleteByTimestamp).ToList();
 
         return optimizedTasks;
+    }
+
+    public void DistributeTasksFromPool()
+    {
+        List<TaskData> unassignedTasks = GetUnassignedTaskIn24Hours();
+        Dictionary<int, float> mcpFillLevels = GetAllMcpFillLevels();
+        Dictionary<int, UserProfile> workerProfiles = GetAllWorkerProfiles();
+
+        // TODO: Distribute tasks from unassignedTasks to workers
+
+        // Example: Assign a task to the first worker if the worker is free
+        if (GetWorkerTasksIn24Hours(workerProfiles[0].Id).Count == 0)
+            AssignWorkerToTask(workerProfiles[0].Id, unassignedTasks[0].Id);
     }
 }

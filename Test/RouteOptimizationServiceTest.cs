@@ -71,7 +71,7 @@ public class RouteOptimizationServiceTest
 
         #region Act
 
-        var optimizedTasks = routeOptimizationService.OptimizeRoute(mockUnitOfWork.UserProfileRepository.GetById(workerId));
+        var optimizedTasks = routeOptimizationService.OptimizeRouteForWorker(mockUnitOfWork.UserProfileRepository.GetById(workerId));
 
         #endregion
 
@@ -135,7 +135,7 @@ public class RouteOptimizationServiceTest
 
         #region Act
 
-        var optimizedTasks = routeOptimizationService.OptimizeRoute(mockUnitOfWork.UserProfileRepository.GetById(workerId));
+        var optimizedTasks = routeOptimizationService.OptimizeRouteForWorker(mockUnitOfWork.UserProfileRepository.GetById(workerId));
 
         #endregion
 
