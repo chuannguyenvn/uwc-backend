@@ -200,4 +200,28 @@ public class TaskOptimizationServiceTest
 
         #endregion
     }
+
+    [Test]
+    public void Test_TestName() // Template
+    {
+        #region Arrange
+
+        // ...    
+
+        #endregion
+
+
+        #region Act
+
+        // ...
+
+        #endregion
+
+
+        #region Assert
+
+        // ...
+
+        #endregion
+    }
 }
