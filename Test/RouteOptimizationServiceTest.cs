@@ -6,6 +6,7 @@ using Moq;
 using Repositories.Managers;
 using Services.Map;
 using Services.Mcps;
+using Services.Tasks;
 
 namespace Test;
 
@@ -30,9 +31,10 @@ public class RouteOptimizationServiceTest
         #region Arrange
 
         var mockUnitOfWork = new MockUnitOfWork();
+        var mockTaskService = new MockTaskService(mockUnitOfWork);
         var mockMcpFillLevelService = new MockMcpFillLevelService(mockUnitOfWork);
         var mockLocationService = new MockLocationService(mockUnitOfWork);
-        var routeOptimizationService = new RouteOptimizationService(mockUnitOfWork, mockLocationService, mockMcpFillLevelService);
+        var routeOptimizationService = new RouteOptimizationService(mockUnitOfWork, mockTaskService, mockLocationService, mockMcpFillLevelService);
 
         // The supervisor's ID
         var supervisorId = 1;
@@ -59,24 +61,10 @@ public class RouteOptimizationServiceTest
         mockMcpFillLevelService.SetFillLevel(mcp2Id, 0.9f);
 
         // Task with a nearly full mcp
-        var task1 = new TaskData
-        {
-            AssignerId = supervisorId,
-            AssigneeId = workerId,
-            McpDataId = mcp1Id,
-            CompleteByTimestamp = DateTime.Now.AddHours(1), // Same deadline
-        };
-        mockUnitOfWork.TaskDataDataRepository.Add(task1);
+        mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp1Id, DateTime.Now.AddHours(1));
 
         // Task with an empty mcp
-        var task2 = new TaskData
-        {
-            AssignerId = supervisorId,
-            AssigneeId = workerId,
-            McpDataId = mcp2Id,
-            CompleteByTimestamp = DateTime.Now.AddHours(1), // Same deadline
-        };
-        mockUnitOfWork.TaskDataDataRepository.Add(task2);
+        mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp2Id, DateTime.Now.AddHours(1));
 
         #endregion
 
@@ -107,9 +95,10 @@ public class RouteOptimizationServiceTest
         #region Arrange
 
         var mockUnitOfWork = new MockUnitOfWork();
+        var mockTaskService = new MockTaskService(mockUnitOfWork);
         var mockMcpFillLevelService = new MockMcpFillLevelService(mockUnitOfWork);
         var mockLocationService = new MockLocationService(mockUnitOfWork);
-        var routeOptimizationService = new RouteOptimizationService(mockUnitOfWork, mockLocationService, mockMcpFillLevelService);
+        var routeOptimizationService = new RouteOptimizationService(mockUnitOfWork, mockTaskService, mockLocationService, mockMcpFillLevelService);
 
         // The supervisor's ID
         var supervisorId = 1;
@@ -136,24 +125,10 @@ public class RouteOptimizationServiceTest
         mockMcpFillLevelService.SetFillLevel(mcp2Id, 0.5f);
 
         // Task with later deadline
-        var task1 = new TaskData
-        {
-            AssignerId = supervisorId,
-            AssigneeId = workerId,
-            McpDataId = mcp1Id,
-            CompleteByTimestamp = DateTime.Now.AddHours(10), // Later deadline
-        };
-        mockUnitOfWork.TaskDataDataRepository.Add(task1);
+        mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp1Id, DateTime.Now.AddHours(10)); // Later deadline
 
         // Task with earlier deadline
-        var task2 = new TaskData
-        {
-            AssignerId = supervisorId,
-            AssigneeId = workerId,
-            McpDataId = mcp2Id,
-            CompleteByTimestamp = DateTime.Now.AddHours(1), // Earlier deadline
-        };
-        mockUnitOfWork.TaskDataDataRepository.Add(task2);
+        mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp2Id, DateTime.Now.AddHours(1)); // Earlier deadline
 
         #endregion
 

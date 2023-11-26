@@ -71,7 +71,7 @@ public class MockTaskDataRepository : MockGenericRepository<TaskData>, ITaskData
             task.AssigneeId == workerId && DateTime.Now.AddHours(24) >= task.CompleteByTimestamp && task.TaskStatus != TaskStatus.Completed).ToList();
     }
 
-    public List<TaskData> GetUnassignedTasksIn24Hours(int workerId)
+    public List<TaskData> GetUnassignedTasksIn24Hours()
     {
         return Context.TaskDataTable.Where(task =>
             task.AssigneeId == null && DateTime.Now.AddHours(24) >= task.CompleteByTimestamp && task.TaskStatus != TaskStatus.Completed).ToList();
