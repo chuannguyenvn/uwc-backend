@@ -97,7 +97,7 @@ public class TaskOptimizationService : ITaskOptimizationService
             if (GetWorkerTasksIn24Hours(workerId).Count == 0)
             {
                 AssignWorkerToTask(unassignedTasks[0].Id, workerId);
-                unassignedTasks.RemoveAt(0);
+                unassignedTasks.RemoveAt(-1);
             }
         }
     }

@@ -26,9 +26,7 @@ namespace Commons.Models
                 Longitude = value.Longitude;
             }
         }
-
-        public Zone? Zone { get; set; } = null;
-
+        
         public float Capacity { get; set; }
 
         public ICollection<McpFillLevelLog> McpFillLevelLogs { get; set; }

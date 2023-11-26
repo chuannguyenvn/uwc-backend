@@ -21,7 +21,6 @@ namespace Commons.Types
 
         public class FilterBy
         {
-            public Zone? Zone { get; set; } = null;
             public Range<float>? CapacityRange { get; set; } = null;
             public Range<float>? CurrentLoadRange { get; set; } = null;
             public Range<float>? CurrentLoadPercentageRange { get; set; } = null;
@@ -29,11 +28,6 @@ namespace Commons.Types
 
         public override void ExecuteFilter(ref IEnumerable<McpData> data)
         {
-            if (Filter.Zone != null)
-            {
-                data = data.Where(mcp => mcp.Zone == Filter.Zone);
-            }
-
             if (Filter.CapacityRange != null)
             {
                 data = data.Where(mcp => Filter.CapacityRange.Value.Contains(mcp.Capacity));

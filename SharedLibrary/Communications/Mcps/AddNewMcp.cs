@@ -7,7 +7,6 @@ namespace Commons.Communications.Mcps
     {
         public string Address { get; set; }
         public Coordinate Coordinate { get; set; }
-        public Zone Zone { get; set; }
         public float Capacity { get; set; }
     }
 }

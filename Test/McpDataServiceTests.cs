@@ -29,7 +29,6 @@ public class McpDataServiceTests
         {
             Address = "test_address",
             Coordinate = new Coordinate(),
-            Zone = null,
             Capacity = 100
         });
 
@@ -46,7 +45,6 @@ public class McpDataServiceTests
         {
             Address = "test_address",
             Coordinate = new Coordinate(),
-            Zone = null,
             Capacity = 100
         });
 
@@ -63,7 +61,6 @@ public class McpDataServiceTests
         {
             Address = "test_address2",
             Coordinate = new Coordinate(),
-            Zone = null,
             Capacity = 100
         });
 
@@ -101,7 +98,6 @@ public class McpDataServiceTests
         {
             Address = "test_address",
             Coordinate = new Coordinate(),
-            Zone = null,
             Capacity = 100
         });
 
@@ -113,7 +109,6 @@ public class McpDataServiceTests
             McpId = 1,
             NewAddress = newAddress,
             NewCoordinate = null,
-            NewZone = null,
         });
 
         Assert.IsInstanceOf<Success>(updateResult.RequestStatus);
