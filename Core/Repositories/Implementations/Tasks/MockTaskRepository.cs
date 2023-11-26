@@ -11,6 +11,50 @@ public class MockTaskRepository : MockGenericRepository<TaskData>, ITaskReposito
     {
     }
 
+    public override void Add(TaskData entity)
+    {
+        base.Add(entity);
+
+        if (entity.AssigneeId != 0)
+        {
+            entity.AssigneeProfile = Context.UserProfileTable.First(profile => profile.Id == entity.AssigneeId);
+        }
+        else if (entity.AssigneeProfile != null)
+        {
+            entity.AssigneeId = entity.AssigneeProfile.Id;
+        }
+        else
+        {
+            throw new Exception("AssigneeId and AssigneeProfile cannot both be null");
+        }
+
+        if (entity.AssignerId != 0)
+        {
+            entity.AssignerProfile = Context.UserProfileTable.First(profile => profile.Id == entity.AssignerId);
+        }
+        else if (entity.AssignerProfile != null)
+        {
+            entity.AssignerId = entity.AssignerProfile.Id;
+        }
+        else
+        {
+            throw new Exception("AssignerId and AssignerProfile cannot both be null");
+        }
+
+        if (entity.McpDataId != 0)
+        {
+            entity.McpData = Context.McpDataTable.First(mcpData => mcpData.Id == entity.McpDataId);
+        }
+        else if (entity.McpData != null)
+        {
+            entity.McpDataId = entity.McpData.Id;
+        }
+        else
+        {
+            throw new Exception("McpDataId and McpData cannot both be null");
+        }
+    }
+
     public List<TaskData> GetTasksByDate(DateTime date)
     {
         return Context.TaskDataTable.Where(task => task.CompleteByTimestamp == date.Date).ToList();

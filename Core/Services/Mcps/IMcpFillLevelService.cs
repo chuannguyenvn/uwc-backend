@@ -2,7 +2,7 @@
 
 namespace Services.Mcps;
 
-public interface IMcpFillLevelService : IHostedService, IDisposable
+public interface IMcpFillLevelService
 {
     public ParamRequestResult<GetFillLevelResponse> GetFillLevel(GetFillLevelRequest request);
     public ParamRequestResult<GetFillLevelResponse> GetAllFillLevel();

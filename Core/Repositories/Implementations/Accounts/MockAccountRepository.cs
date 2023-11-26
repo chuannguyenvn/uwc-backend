@@ -23,9 +23,12 @@ public class MockAccountRepository : MockGenericRepository<Account>, IAccountRep
     public override void Add(Account entity)
     {
         base.Add(entity);
+
+        entity.UserProfile.Id = Context.UserProfileTable.Count + 1;
+        Context.UserProfileTable.Add(entity.UserProfile);
+
         entity.UserProfile.AccountId = entity.Id;
         entity.UserProfile.Account = entity;
         entity.UserProfileId = entity.UserProfile.Id;
-        Context.UserProfileTable.Add(entity.UserProfile);
     }
 }

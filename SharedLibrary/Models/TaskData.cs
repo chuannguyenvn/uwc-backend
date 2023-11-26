@@ -14,9 +14,9 @@ namespace Commons.Models
         public int McpDataId { get; set; }
         public McpData McpData { get; set; }
 
-        public DateTime CreatedTimestamp { get; set; }
+        public DateTime CreatedTimestamp { get; set; } = DateTime.Now;
         public DateTime CompleteByTimestamp { get; set; }
-        public DateTime LastStatusChangeTimestamp { get; set; }
-        public TaskStatus TaskStatus { get; set; }
+        public DateTime LastStatusChangeTimestamp { get; set; } = DateTime.Now;
+        public TaskStatus TaskStatus { get; set; } = TaskStatus.NotStarted;
     }
 }

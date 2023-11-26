@@ -9,7 +9,7 @@ using Repositories.Managers;
 
 namespace Services.Map;
 
-public class LocationService : ILocationService
+public class LocationService : ILocationService, IHostedService, IDisposable
 {
     private readonly IServiceProvider _serviceProvider;
 

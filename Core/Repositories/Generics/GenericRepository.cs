@@ -71,6 +71,11 @@ public abstract class GenericRepository<T> : IGenericRepository<T> where T : Ind
         Context.Set<T>().Remove(entity);
     }
 
+    public void RemoveAll()
+    {
+        Context.Set<T>().RemoveRange(Context.Set<T>());
+    }
+
     public void RemoveRange(IEnumerable<T> entities)
     {
         Context.Set<T>().RemoveRange(entities);
