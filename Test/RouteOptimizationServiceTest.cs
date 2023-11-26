@@ -34,7 +34,7 @@ public class RouteOptimizationServiceTest
         var mockTaskService = new MockTaskService(mockUnitOfWork);
         var mockMcpFillLevelService = new MockMcpFillLevelService(mockUnitOfWork);
         var mockLocationService = new MockLocationService(mockUnitOfWork);
-        var routeOptimizationService = new RouteOptimizationService(mockUnitOfWork, mockTaskService, mockLocationService, mockMcpFillLevelService);
+        var routeOptimizationService = new TaskOptimizationService(mockUnitOfWork, mockTaskService, mockLocationService, mockMcpFillLevelService);
 
         // The supervisor's ID
         var supervisorId = 1;
@@ -78,6 +78,7 @@ public class RouteOptimizationServiceTest
 
         #region Assert
 
+        Assert.That(optimizedTasks.Count, Is.EqualTo(2));
         Assert.That(optimizedTasks[0].McpDataId, Is.EqualTo(mcp2Id)); // First task must be mcp2
         Assert.That(optimizedTasks[1].McpDataId, Is.EqualTo(mcp1Id)); // Second task must be mcp1
 
@@ -98,7 +99,7 @@ public class RouteOptimizationServiceTest
         var mockTaskService = new MockTaskService(mockUnitOfWork);
         var mockMcpFillLevelService = new MockMcpFillLevelService(mockUnitOfWork);
         var mockLocationService = new MockLocationService(mockUnitOfWork);
-        var routeOptimizationService = new RouteOptimizationService(mockUnitOfWork, mockTaskService, mockLocationService, mockMcpFillLevelService);
+        var routeOptimizationService = new TaskOptimizationService(mockUnitOfWork, mockTaskService, mockLocationService, mockMcpFillLevelService);
 
         // The supervisor's ID
         var supervisorId = 1;
@@ -142,8 +143,66 @@ public class RouteOptimizationServiceTest
 
         #region Assert
 
+        Assert.That(optimizedTasks.Count, Is.EqualTo(2));
         Assert.That(optimizedTasks[0].McpDataId, Is.EqualTo(mcp2Id)); // First task must be mcp2
         Assert.That(optimizedTasks[1].McpDataId, Is.EqualTo(mcp1Id)); // Second task must be mcp1
+
+        #endregion
+    }
+
+    [Test]
+    public void Test_TasksDistributionWithOneFreeWorker()
+    {
+        // All workers are busy except one
+        // => The free worker should receive a new task
+
+        #region Arrange
+
+        var mockUnitOfWork = new MockUnitOfWork();
+        var mockTaskService = new MockTaskService(mockUnitOfWork);
+        var mockMcpFillLevelService = new MockMcpFillLevelService(mockUnitOfWork);
+        var mockLocationService = new MockLocationService(mockUnitOfWork);
+        var routeOptimizationService = new TaskOptimizationService(mockUnitOfWork, mockTaskService, mockLocationService, mockMcpFillLevelService);
+
+        // The supervisor's ID
+        var supervisorId = 1;
+
+        // The free worker's ID
+        var worker1Id = 15;
+
+        // Another busy worker's ID
+        var worker2Id = 12;
+
+        // The mcps' ID
+        var mcpId = 1;
+
+        // Remove all tasks of the free worker
+        mockUnitOfWork.TaskDataDataRepository.RemoveAllTasksOfWorker(worker1Id);
+
+        // A single unassigned task. The free worker must get this task
+        mockTaskService.AddTaskWithoutWorker(supervisorId, mcpId, DateTime.Now.AddHours(1));
+
+        // Tasks count before distribution of worker 2 (worker 1 has no tasks)
+        var tasksCountBeforeWorker2 = mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker2Id).Count;
+
+        #endregion
+
+
+        #region Act
+
+        routeOptimizationService.DistributeTasksFromPool();
+
+        #endregion
+
+
+        #region Assert
+
+        var worker1Tasks = mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker1Id);
+        Assert.That(worker1Tasks.Count, Is.EqualTo(1));
+        Assert.That(worker1Tasks[0].McpDataId, Is.EqualTo(mcpId)); // The free worker must get the task
+
+        var worker2Tasks = mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker2Id);
+        Assert.That(worker2Tasks.Count, Is.EqualTo(tasksCountBeforeWorker2)); // The busy worker must not get the task
 
         #endregion
     }

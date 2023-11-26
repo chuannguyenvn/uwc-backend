@@ -758,43 +758,46 @@ public class DatabaseSeeder
     {
         var random = new Random();
         var doesDriverHaveInProgressTask = new bool[20];
-        for (int i = 0; i < 200; i++)
+        for (int driverId = 11; driverId <= 30; driverId++)
         {
-            var supervisorId = random.Next(10);
-            var driverId = random.Next(10, 30);
-            var mcpId = random.Next(15);
-            var randomHourOffset = random.Next(-12, 12);
-            var randomMinuteOffset = random.Next(0, 3) * 15;
-            var newTask = new TaskData
+            var tasksCount = random.Next(5, 15);
+            for (int i = 0; i < tasksCount; i++)
             {
-                AssignerId = supervisorId,
-                AssignerProfile = _allAccounts[supervisorId].UserProfile,
-                AssigneeId = driverId,
-                AssigneeProfile = _allAccounts[driverId].UserProfile,
-                McpDataId = mcpId,
-                McpData = _allMcps[mcpId],
-                CreatedTimestamp = DateTime.Now,
-                LastStatusChangeTimestamp = DateTime.Now,
-                CompleteByTimestamp = DateTime.Today.AddHours(randomHourOffset).AddMinutes(randomMinuteOffset),
-            };
-
-            if (!doesDriverHaveInProgressTask[driverId - 10])
-            {
-                newTask.TaskStatus = TaskStatus.InProgress;
-                doesDriverHaveInProgressTask[driverId - 10] = true;
-            }
-            else
-            {
-                newTask.TaskStatus = Utilities.GetRandomEnumValueExcept(TaskStatus.InProgress);
-
-                if (newTask.TaskStatus == TaskStatus.Completed)
+                var supervisorId = random.Next(10);
+                var mcpId = random.Next(15);
+                var randomHourOffset = random.Next(-12, 12);
+                var randomMinuteOffset = random.Next(0, 3) * 15;
+                var newTask = new TaskData
                 {
-                    newTask.LastStatusChangeTimestamp =
-                        newTask.CompleteByTimestamp.AddHours(-Random.Shared.Next(12)).AddMinutes(-Random.Shared.Next(60));
-                }
-            }
+                    AssignerId = supervisorId,
+                    AssignerProfile = _allAccounts[supervisorId].UserProfile,
+                    AssigneeId = driverId,
+                    AssigneeProfile = _allAccounts[driverId].UserProfile,
+                    McpDataId = mcpId,
+                    McpData = _allMcps[mcpId],
+                    CreatedTimestamp = DateTime.Now,
+                    LastStatusChangeTimestamp = DateTime.Now,
+                    CompleteByTimestamp = DateTime.Today.AddHours(randomHourOffset).AddMinutes(randomMinuteOffset),
+                };
 
-            _unitOfWork.TaskDataDataRepository.Add(newTask);
+                if (!doesDriverHaveInProgressTask[driverId - 11])
+                {
+                    newTask.TaskStatus = TaskStatus.InProgress;
+                    doesDriverHaveInProgressTask[driverId - 11] = true;
+                }
+                else
+                {
+                    newTask.TaskStatus = Utilities.GetRandomEnumValueExcept(TaskStatus.InProgress);
+
+                    if (newTask.TaskStatus == TaskStatus.Completed)
+                    {
+                        newTask.LastStatusChangeTimestamp =
+                            newTask.CompleteByTimestamp.AddHours(-Random.Shared.Next(12)).AddMinutes(-Random.Shared.Next(60));
+                    }
+                }
+
+                _unitOfWork.TaskDataDataRepository.Add(newTask);
+            }
         }
 
         _unitOfWork.Complete();

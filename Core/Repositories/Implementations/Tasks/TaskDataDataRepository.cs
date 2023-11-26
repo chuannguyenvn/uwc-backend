@@ -50,4 +50,10 @@ public class TaskDataDataRepository : GenericRepository<TaskData>, ITaskDataRepo
             .Include(task => task.AssigneeProfile)
             .Include(task => task.AssignerProfile).ToList();
     }
+
+    public void RemoveAllTasksOfWorker(int workerId)
+    {
+        var tasks = Context.TaskDataTable.Where(task => task.AssigneeId == workerId).ToList();
+        Context.TaskDataTable.RemoveRange(tasks);
+    }
 }

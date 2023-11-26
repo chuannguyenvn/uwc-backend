@@ -15,6 +15,7 @@ public interface IGenericRepository<T> where T : IndexedEntity
     T GetById(int id);
     void Remove(T entity);
     void RemoveAll();
+    void RemoveWhere(Func<T, bool> predicate);
     void RemoveRange(IEnumerable<T> entities);
     bool DoesIdExist(int id);
     bool HasAny();

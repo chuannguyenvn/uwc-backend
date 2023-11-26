@@ -1,4 +1,5 @@
-﻿using Commons.Communications.Map;
+﻿using Commons.Categories;
+using Commons.Communications.Map;
 using Commons.Communications.Tasks;
 using Commons.Models;
 using Commons.Types;
@@ -8,14 +9,14 @@ using Services.Tasks;
 
 namespace Services.Map;
 
-public class RouteOptimizationService : IRouteOptimizationService
+public class TaskOptimizationService : IRouteOptimizationService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ITaskService _taskService;
     private readonly ILocationService _locationService;
     private readonly IMcpFillLevelService _mcpFillLevelService;
 
-    public RouteOptimizationService(IUnitOfWork unitOfWork, ITaskService taskService, ILocationService locationService,
+    public TaskOptimizationService(IUnitOfWork unitOfWork, ITaskService taskService, ILocationService locationService,
         IMcpFillLevelService mcpFillLevelService)
     {
         _unitOfWork = unitOfWork;
@@ -88,7 +89,16 @@ public class RouteOptimizationService : IRouteOptimizationService
         // TODO: Distribute tasks from unassignedTasks to workers
 
         // Example: Assign a task to the first worker if the worker is free
-        if (GetWorkerTasksIn24Hours(workerProfiles[0].Id).Count == 0)
-            AssignWorkerToTask(workerProfiles[0].Id, unassignedTasks[0].Id);
+        foreach (var (workerId, workerProfile) in workerProfiles)
+        {
+            if (unassignedTasks.Count == 0) break;
+            if (workerProfile.UserRole != UserRole.Driver) continue;
+
+            if (GetWorkerTasksIn24Hours(workerId).Count == 0)
+            {
+                AssignWorkerToTask(unassignedTasks[0].Id, workerId);
+                unassignedTasks.RemoveAt(0);
+            }
+        }
     }
 }

@@ -15,17 +15,13 @@ public class MockTaskDataRepository : MockGenericRepository<TaskData>, ITaskData
     {
         base.Add(entity);
 
-        if (entity.AssigneeId != 0)
+        if (entity.AssigneeId.HasValue && entity.AssigneeId != 0 && entity.AssigneeProfile == null)
         {
             entity.AssigneeProfile = Context.UserProfileTable.First(profile => profile.Id == entity.AssigneeId);
         }
-        else if (entity.AssigneeProfile != null)
+        else if (entity.AssigneeProfile != null && entity.AssigneeId == 0)
         {
             entity.AssigneeId = entity.AssigneeProfile.Id;
-        }
-        else
-        {
-            throw new Exception("AssigneeId and AssigneeProfile cannot both be null");
         }
 
         if (entity.AssignerId != 0)
@@ -80,5 +76,10 @@ public class MockTaskDataRepository : MockGenericRepository<TaskData>, ITaskData
     public List<TaskData> GetTasksFromTodayOrFuture()
     {
         return Context.TaskDataTable.Where(task => task.CompleteByTimestamp >= DateTime.Now.Date).ToList();
+    }
+
+    public void RemoveAllTasksOfWorker(int workerId)
+    {
+        Context.TaskDataTable.RemoveAll(task => task.AssigneeId == workerId);
     }
 }

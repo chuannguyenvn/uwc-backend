@@ -109,7 +109,7 @@ builder.Services.AddHostedService<LocationService>(provider => provider.GetRequi
 
 builder.Services.AddScoped<IDirectionService, DirectionService>();
 
-builder.Services.AddScoped<IRouteOptimizationService, RouteOptimizationService>();
+builder.Services.AddScoped<IRouteOptimizationService, TaskOptimizationService>();
 
 builder.Services.AddScoped<IVehicleDataService, VehicleDataService>();
 

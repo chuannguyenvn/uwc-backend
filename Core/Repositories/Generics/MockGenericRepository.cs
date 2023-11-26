@@ -78,6 +78,11 @@ public class MockGenericRepository<T> : IGenericRepository<T> where T : IndexedE
         Context.Set<T>().Clear();
     }
 
+    public void RemoveWhere(Func<T, bool> predicate)
+    {
+        RemoveRange(Context.Set<T>().Where(predicate));
+    }
+
     public void RemoveRange(IEnumerable<T> entities)
     {
         Context.Set<T>(Context.Set<T>().Where(t => !entities.Contains(t)));

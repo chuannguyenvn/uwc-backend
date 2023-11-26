@@ -77,6 +77,7 @@ public class MockTaskService : ITaskService
 
         var taskData = _unitOfWork.TaskDataDataRepository.GetById(request.TaskId);
         taskData.AssigneeId = request.WorkerId;
+        taskData.AssigneeProfile = _unitOfWork.UserProfileRepository.GetById(request.WorkerId);
         _unitOfWork.Complete();
 
         return new RequestResult(new Success());

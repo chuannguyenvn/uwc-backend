@@ -10,4 +10,5 @@ public interface ITaskDataRepository : IGenericRepository<TaskData>
     public List<TaskData> GetWorkerRemainingTasksIn24Hours(int workerId);
     public List<TaskData> GetUnassignedTasksIn24Hours();
     public List<TaskData> GetTasksFromTodayOrFuture();
+    public void RemoveAllTasksOfWorker(int workerId);
 }
