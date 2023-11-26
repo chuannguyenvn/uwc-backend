@@ -1,4 +1,5 @@
-﻿using Commons.Types;
+﻿using Commons.Models;
+using Commons.Types;
 using Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Moq;
@@ -9,7 +10,7 @@ using Services.Tasks;
 
 namespace Test;
 
-public class RouteOptimizationServiceTest
+public class TaskOptimizationServiceTest
 {
     private readonly Mock<IHubContext<BaseHub>> _mockBaseHub = new();
 
@@ -42,14 +43,14 @@ public class RouteOptimizationServiceTest
         #region Arrange
 
         // The supervisor's ID
-        var supervisorId = 1;
+        int supervisorId = 1;
 
         // The worker's ID
-        var workerId = 11;
+        int workerId = 11;
 
         // The mcps' IDs
-        var mcp1Id = 1;
-        var mcp2Id = 2;
+        int mcp1Id = 1;
+        int mcp2Id = 2;
 
         // Start with a clean slate (no pre-made tasks)
         _mockUnitOfWork.TaskDataDataRepository.RemoveAll();
@@ -76,7 +77,7 @@ public class RouteOptimizationServiceTest
 
         #region Act
 
-        var optimizedTasks = _routeOptimizationService.OptimizeRouteForWorker(_mockUnitOfWork.UserProfileRepository.GetById(workerId));
+        List<TaskData> optimizedTasks = _routeOptimizationService.OptimizeRouteForWorker(_mockUnitOfWork.UserProfileRepository.GetById(workerId));
 
         #endregion
 
@@ -101,14 +102,14 @@ public class RouteOptimizationServiceTest
         #region Arrange
 
         // The supervisor's ID
-        var supervisorId = 1;
+        int supervisorId = 1;
 
         // The worker's ID
-        var workerId = 11;
+        int workerId = 11;
 
         // The mcps' IDs
-        var mcp1Id = 1;
-        var mcp2Id = 2;
+        int mcp1Id = 1;
+        int mcp2Id = 2;
 
         // Start with a clean slate (no pre-made tasks)
         _mockUnitOfWork.TaskDataDataRepository.RemoveAll();
@@ -135,7 +136,7 @@ public class RouteOptimizationServiceTest
 
         #region Act
 
-        var optimizedTasks = _routeOptimizationService.OptimizeRouteForWorker(_mockUnitOfWork.UserProfileRepository.GetById(workerId));
+        List<TaskData> optimizedTasks = _routeOptimizationService.OptimizeRouteForWorker(_mockUnitOfWork.UserProfileRepository.GetById(workerId));
 
         #endregion
 
@@ -158,16 +159,16 @@ public class RouteOptimizationServiceTest
         #region Arrange
 
         // The supervisor's ID
-        var supervisorId = 1;
+        int supervisorId = 1;
 
         // The free worker's ID
-        var worker1Id = 15;
+        int worker1Id = 15;
 
         // Another busy worker's ID
-        var worker2Id = 12;
+        int worker2Id = 12;
 
         // The mcps' ID
-        var mcpId = 1;
+        int mcpId = 1;
 
         // Remove all tasks of the free worker
         _mockUnitOfWork.TaskDataDataRepository.RemoveAllTasksOfWorker(worker1Id);
@@ -176,7 +177,7 @@ public class RouteOptimizationServiceTest
         _mockTaskService.AddTaskWithoutWorker(supervisorId, mcpId, DateTime.Now.AddHours(1));
 
         // Tasks count before distribution of worker 2 (worker 1 has no tasks)
-        var tasksCountBeforeWorker2 = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker2Id).Count;
+        int tasksCountBeforeWorker2 = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker2Id).Count;
 
         #endregion
 
@@ -190,11 +191,11 @@ public class RouteOptimizationServiceTest
 
         #region Assert
 
-        var worker1Tasks = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker1Id);
+        List<TaskData> worker1Tasks = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker1Id);
         Assert.That(worker1Tasks.Count, Is.EqualTo(1));
         Assert.That(worker1Tasks[0].McpDataId, Is.EqualTo(mcpId)); // The free worker must get the task
 
-        var worker2Tasks = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker2Id);
+        List<TaskData> worker2Tasks = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker2Id);
         Assert.That(worker2Tasks.Count, Is.EqualTo(tasksCountBeforeWorker2)); // The busy worker must not get the task
 
         #endregion
