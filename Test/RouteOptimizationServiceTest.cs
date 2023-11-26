@@ -1,5 +1,4 @@
-﻿using Commons.Communications.Mcps;
-using Commons.Models;
+﻿using Commons.Models;
 using Commons.Types;
 using Hubs;
 using Microsoft.AspNetCore.SignalR;
@@ -7,13 +6,12 @@ using Moq;
 using Repositories.Managers;
 using Services.Map;
 using Services.Mcps;
-using TaskStatus = Commons.Types.TaskStatus;
 
 namespace Test;
 
 public class RouteOptimizationServiceTest
 {
-    private Mock<IHubContext<BaseHub>> _mockBaseHub = new Mock<IHubContext<BaseHub>>();
+    private readonly Mock<IHubContext<BaseHub>> _mockBaseHub = new();
 
     [SetUp]
     public void Setup()
@@ -137,7 +135,7 @@ public class RouteOptimizationServiceTest
         mockMcpFillLevelService.SetFillLevel(mcp1Id, 0.5f);
         mockMcpFillLevelService.SetFillLevel(mcp2Id, 0.5f);
 
-        // Task with a nearly full mcp
+        // Task with later deadline
         var task1 = new TaskData
         {
             AssignerId = supervisorId,
@@ -147,7 +145,7 @@ public class RouteOptimizationServiceTest
         };
         mockUnitOfWork.TaskDataRepository.Add(task1);
 
-        // Task with an empty mcp
+        // Task with earlier deadline
         var task2 = new TaskData
         {
             AssignerId = supervisorId,

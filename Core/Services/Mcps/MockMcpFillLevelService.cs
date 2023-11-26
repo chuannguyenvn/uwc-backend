@@ -13,6 +13,7 @@ public class MockMcpFillLevelService : IMcpFillLevelService
 
     public MockMcpFillLevelService(IUnitOfWork unitOfWork)
     {
+        _fillLevelsById.Clear();
         _unitOfWork = unitOfWork;
         InitializeFillLevelDictionary();
     }
