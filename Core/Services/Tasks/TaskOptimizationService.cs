@@ -4,12 +4,12 @@ using Commons.Communications.Tasks;
 using Commons.Models;
 using Commons.Types;
 using Repositories.Managers;
+using Services.Map;
 using Services.Mcps;
-using Services.Tasks;
 
-namespace Services.Map;
+namespace Services.Tasks;
 
-public class TaskOptimizationService : IRouteOptimizationService
+public class TaskOptimizationService : ITaskOptimizationService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ITaskService _taskService;
@@ -88,7 +88,7 @@ public class TaskOptimizationService : IRouteOptimizationService
 
         // TODO: Distribute tasks from unassignedTasks to workers
 
-        // Example: Assign a task to the first worker if the worker is free
+        // Example: Assign a task to the first free worker
         foreach (var (workerId, workerProfile) in workerProfiles)
         {
             if (unassignedTasks.Count == 0) break;
