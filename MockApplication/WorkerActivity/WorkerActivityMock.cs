@@ -12,7 +12,7 @@ public class WorkerActivityMock : BaseMock
     protected override async Task Main()
     {
         await PickRandomDrivers(10);
-        // await PickRandomCleaners(10);
+        await PickRandomCleaners(10);
         await MockBehavior();
     }
 

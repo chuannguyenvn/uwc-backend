@@ -11,8 +11,6 @@ public class DirectionService : IDirectionService
     private const string MAPBOX_DIRECTION_API =
         "https://api.mapbox.com/directions/v5/mapbox/driving-traffic/{0};{1}?geometries=geojson&steps=true&access_token=pk.eyJ1IjoiY2h1YW4tbmd1eWVudm4iLCJhIjoiY2xsYTkycjJoMGg1MjNxbGhhcW5mMzNuOCJ9.tpAt14HVH_j1IKuKxsK31A";
 
-    private static Dictionary<int, Direction> _cachedDirections = new();
-
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILocationService _locationService;
 
@@ -24,15 +22,6 @@ public class DirectionService : IDirectionService
 
     public ParamRequestResult<GetDirectionResponse> GetDirection(GetDirectionRequest request)
     {
-        // if (_cachedDirections.TryGetValue(request.AccountId, out var cachedDirection))
-        // {
-        //     var currentLocation = _locationService.GetLocation(new GetLocationRequest { AccountId = request.AccountId }).Data.Coordinate;
-        //     if (cachedDirection.Waypoints[0].DistanceTo(currentLocation) < 0.0001)
-        //     {
-        //         return new ParamRequestResult<GetDirectionResponse>(new Success(), new GetDirectionResponse { Direction = cachedDirection });
-        //     }
-        // }
-
         var mcpCoordinates = request.McpIds.Select(mcpId => _unitOfWork.McpDataRepository.GetById(mcpId).Coordinate).ToList();
         var mapboxDirection = RequestMapboxDirection(request.CurrentLocation, mcpCoordinates);
         return new ParamRequestResult<GetDirectionResponse>(new Success(),
