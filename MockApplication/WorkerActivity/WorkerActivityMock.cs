@@ -11,7 +11,7 @@ public class WorkerActivityMock : BaseMock
 
     protected override async Task Main()
     {
-        await PickRandomDrivers(1);
+        await PickRandomDrivers(10);
         // await PickRandomCleaners(10);
         await MockBehavior();
     }
@@ -23,7 +23,7 @@ public class WorkerActivityMock : BaseMock
 
         foreach (var randomDriver in randomDrivers)
         {
-            var newDirection = new Direction(true);
+            var newDirection = new Direction();
             newDirection.CurrentCoordinate = new Coordinate(10.7670552457392, 106.656326672901);
             _ongoingDirectionByDriverAccountIds[randomDriver.AccountId] = newDirection;
         }
@@ -36,7 +36,7 @@ public class WorkerActivityMock : BaseMock
 
         foreach (var randomCleaner in randomCleaners)
         {
-            var newDirection = new Direction(true);
+            var newDirection = new Direction();
             newDirection.CurrentCoordinate = new Coordinate(10.7670552457392, 106.656326672901);
             _ongoingDirectionByCleanerAccountIds[randomCleaner.AccountId] = newDirection;
         }
@@ -59,7 +59,7 @@ public class WorkerActivityMock : BaseMock
         {
             if (direction.IsCompleted)
             {
-                var randomMcps = (await GetAllMcpData()).Results.GetRandom();
+                var randomMcps = (await GetAllMcpData()).Results.GetRandom(1);
                 var newDirection = await GetDirection(id, direction.CurrentCoordinate, randomMcps.Select(mcp => mcp.Id).ToList());
 
                 if (newDirection == null)
