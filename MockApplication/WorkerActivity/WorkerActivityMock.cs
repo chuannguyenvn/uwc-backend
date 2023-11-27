@@ -18,7 +18,7 @@ public class WorkerActivityMock : BaseMock
 
     private async Task PickRandomDrivers(int countToPick)
     {
-        var allDrivers = (await GetAllDriverProfiles()).DriverProfiles;
+        var allDrivers = (await GetAllDriverProfiles()).DriverProfiles.Where(profile => profile.Id != 11).ToList();
         var randomDrivers = allDrivers.GetRandom(countToPick);
 
         foreach (var randomDriver in randomDrivers)
@@ -100,7 +100,7 @@ public class WorkerActivityMock : BaseMock
             }
             else
             {
-                UpdateLocation(id, _ongoingDirectionByCleanerAccountIds[id].TravelBy(0.0001));
+                UpdateLocation(id, _ongoingDirectionByCleanerAccountIds[id].TravelBy(0.00005));
             }
         }
     }

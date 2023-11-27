@@ -3,6 +3,7 @@ using Repositories.Managers;
 using Commons.Communications.Authentication;
 using Commons.Communications.Map;
 using Commons.Communications.Mcps;
+using Commons.Communications.Status;
 using Commons.Models;
 using Commons.RequestStatuses;
 using Commons.RequestStatuses.Authentication;
@@ -11,7 +12,6 @@ using Commons.Types.SettingOptions;
 using Hubs;
 using Newtonsoft.Json;
 using Services.Mcps;
-using SharedLibrary.Communications.OnlineStatus;
 
 namespace Services.Authentication;
 

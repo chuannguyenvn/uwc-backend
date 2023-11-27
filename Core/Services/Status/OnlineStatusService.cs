@@ -1,9 +1,9 @@
+using Commons.Communications.Status;
 using Commons.HubHandlers;
 using Hubs;
 using Microsoft.AspNetCore.SignalR;
-using SharedLibrary.Communications.OnlineStatus;
 
-namespace Services.OnlineStatus;
+namespace Services.Status;
 
 public class OnlineStatusService : IOnlineStatusService
 {

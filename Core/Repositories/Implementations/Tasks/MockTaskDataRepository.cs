@@ -78,6 +78,12 @@ public class MockTaskDataRepository : MockGenericRepository<TaskData>, ITaskData
         return Context.TaskDataTable.Where(task => task.CompleteByTimestamp >= DateTime.Now.Date).ToList();
     }
 
+    public TaskData? GetFocusedTaskByWorkerId(int workerId)
+    {
+        if (!Context.TaskDataTable.Any(task => task.AssigneeId == workerId && task.TaskStatus == TaskStatus.InProgress)) return null;
+        return Context.TaskDataTable.First(task => task.AssigneeId == workerId && task.TaskStatus == TaskStatus.InProgress);
+    }
+
     public void RemoveAllTasksOfWorker(int workerId)
     {
         Context.TaskDataTable.RemoveAll(task => task.AssigneeId == workerId);

@@ -10,9 +10,9 @@ using Services.Authentication;
 using Services.Map;
 using Services.Mcps;
 using Services.Messaging;
-using Services.OnlineStatus;
 using Services.Reports;
 using Services.Settings;
+using Services.Status;
 using Services.Tasks;
 using Services.UserProfiles;
 using Services.Vehicles;
@@ -98,6 +98,8 @@ builder.Services.AddScoped<IMcpDataService, McpDataService>();
 builder.Services.AddSingleton<OnlineStatusService>();
 builder.Services.AddSingleton<IOnlineStatusService>(provider => provider.GetRequiredService<OnlineStatusService>());
 builder.Services.AddHostedService<OnlineStatusService>(provider => provider.GetRequiredService<OnlineStatusService>());
+
+builder.Services.AddScoped<IWorkingStatusService, WorkingStatusService>();
 
 builder.Services.AddSingleton<McpFillLevelService>();
 builder.Services.AddSingleton<IMcpFillLevelService>(provider => provider.GetRequiredService<McpFillLevelService>());

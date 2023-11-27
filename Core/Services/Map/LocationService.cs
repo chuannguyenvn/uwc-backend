@@ -49,12 +49,10 @@ public class LocationService : ILocationService, IHostedService, IDisposable
         using var scope = _serviceProvider.CreateScope();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
-        var account = unitOfWork.AccountRepository.GetById(request.AccountId);
-        var userProfile = unitOfWork.UserProfileRepository.GetById(account.UserProfileId);
-        if (userProfile.UserRole == UserRole.Driver)
-            _driverLocationsById[request.AccountId] = request.NewLocation;
-        else if (userProfile.UserRole == UserRole.Cleaner)
-            _cleanerLocationsById[request.AccountId] = request.NewLocation;
+        var userProfile = unitOfWork.UserProfileRepository.GetById(request.AccountId);
+
+        if (userProfile.UserRole == UserRole.Driver) _driverLocationsById[request.AccountId] = request.NewLocation;
+        else if (userProfile.UserRole == UserRole.Cleaner) _cleanerLocationsById[request.AccountId] = request.NewLocation;
 
         return new RequestResult(new Success());
     }

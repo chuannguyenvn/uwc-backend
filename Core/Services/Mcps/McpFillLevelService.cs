@@ -5,7 +5,6 @@ using Commons.RequestStatuses;
 using Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Repositories.Managers;
-using SharedLibrary.Communications.OnlineStatus;
 
 namespace Services.Mcps;
 
