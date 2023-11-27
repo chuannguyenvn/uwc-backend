@@ -6,35 +6,39 @@ namespace MockApplication.WorkerActivity;
 
 public class WorkerActivityMock : BaseMock
 {
-    private readonly Dictionary<int, MockCurrentRoute> _ongoingRouteByDriverAccountIds = new();
-    private readonly Dictionary<int, MockCurrentRoute> _ongoingRouteByCleanerAccountIds = new();
+    private readonly Dictionary<int, Direction> _ongoingDirectionByDriverAccountIds = new();
+    private readonly Dictionary<int, Direction> _ongoingDirectionByCleanerAccountIds = new();
 
     protected override async Task Main()
     {
-        PickRandomDrivers(10);
-        PickRandomCleaners(10);
+        await PickRandomDrivers(1);
+        // await PickRandomCleaners(10);
         await MockBehavior();
     }
 
-    private async void PickRandomDrivers(int countToPick)
+    private async Task PickRandomDrivers(int countToPick)
     {
         var allDrivers = (await GetAllDriverProfiles()).DriverProfiles;
         var randomDrivers = allDrivers.GetRandom(countToPick);
 
         foreach (var randomDriver in randomDrivers)
         {
-            _ongoingRouteByDriverAccountIds[randomDriver.AccountId] = new MockCurrentRoute();
+            var newDirection = new Direction(true);
+            newDirection.CurrentCoordinate = new Coordinate(10.7670552457392, 106.656326672901);
+            _ongoingDirectionByDriverAccountIds[randomDriver.AccountId] = newDirection;
         }
     }
 
-    private async void PickRandomCleaners(int countToPick)
+    private async Task PickRandomCleaners(int countToPick)
     {
         var allCleaners = (await GetAllCleanerProfiles()).CleanerProfiles;
         var randomCleaners = allCleaners.GetRandom(countToPick);
 
         foreach (var randomCleaner in randomCleaners)
         {
-            _ongoingRouteByCleanerAccountIds[randomCleaner.AccountId] = new MockCurrentRoute();
+            var newDirection = new Direction(true);
+            newDirection.CurrentCoordinate = new Coordinate(10.7670552457392, 106.656326672901);
+            _ongoingDirectionByCleanerAccountIds[randomCleaner.AccountId] = newDirection;
         }
     }
 
@@ -42,23 +46,21 @@ public class WorkerActivityMock : BaseMock
     {
         while (true)
         {
-            MockDriverBehavior();
-            MockCleanerBehavior();
-
             await Task.Delay(1000);
+
+            await MockDriverBehavior();
+            await MockCleanerBehavior();
         }
     }
 
-    private async void MockDriverBehavior()
+    private async Task MockDriverBehavior()
     {
-        foreach (var (id, direction) in _ongoingRouteByDriverAccountIds.ToList())
+        foreach (var (id, direction) in _ongoingDirectionByDriverAccountIds)
         {
             if (direction.IsCompleted)
             {
-                var randomMcps = (await GetAllMcpData()).Results.GetRandom(5);
-                var waypoints = randomMcps.Select(mcp => mcp.Coordinate).ToList();
-                var currentLocation = await GetLocation(id);
-                var newDirection = await GetDirection(id, currentLocation, waypoints);
+                var randomMcps = (await GetAllMcpData()).Results.GetRandom();
+                var newDirection = await GetDirection(id, direction.CurrentCoordinate, randomMcps.Select(mcp => mcp.Id).ToList());
 
                 if (newDirection == null)
                 {
@@ -66,29 +68,27 @@ public class WorkerActivityMock : BaseMock
                     continue;
                 }
 
-                _ongoingRouteByDriverAccountIds[id] = new MockCurrentRoute(
-                    currentLocation,
-                    randomMcps.Select(mcp => mcp.Id).ToList(),
-                    newDirection.Direction,
-                    mcpId => EmptyMcp(mcpId, id));
+                _ongoingDirectionByDriverAccountIds[id] = newDirection.Direction;
+
+                Console.WriteLine("New direction for driver {0} is {1}", id, newDirection.Direction);
             }
             else
             {
-                UpdateLocation(id, _ongoingRouteByDriverAccountIds[id].TravelBy(0.0001));
+                var newCoordinate = _ongoingDirectionByDriverAccountIds[id].TravelBy(0.0001);
+                Console.WriteLine("Driver {0} is at {1}", id, newCoordinate);
+                UpdateLocation(id, newCoordinate);
             }
         }
     }
 
-    private async void MockCleanerBehavior()
+    private async Task MockCleanerBehavior()
     {
-        foreach (var (id, direction) in _ongoingRouteByCleanerAccountIds.ToList())
+        foreach (var (id, direction) in _ongoingDirectionByCleanerAccountIds)
         {
             if (direction.IsCompleted)
             {
-                var randomMcps = (await GetAllMcpData()).Results.GetRandom(5);
-                var waypoints = randomMcps.Select(mcp => mcp.Coordinate).ToList();
-                var currentLocation = await GetLocation(id);
-                var newDirection = await GetDirection(id, currentLocation, waypoints);
+                var randomMcps = (await GetAllMcpData()).Results.GetRandom();
+                var newDirection = await GetDirection(id, direction.CurrentCoordinate, randomMcps.Select(mcp => mcp.Id).ToList());
 
                 if (newDirection == null)
                 {
@@ -96,15 +96,11 @@ public class WorkerActivityMock : BaseMock
                     continue;
                 }
 
-                _ongoingRouteByCleanerAccountIds[id] = new MockCurrentRoute(
-                    currentLocation,
-                    randomMcps.Select(mcp => mcp.Id).ToList(),
-                    newDirection.Direction,
-                    mcpId => EmptyMcp(mcpId, id));
+                _ongoingDirectionByCleanerAccountIds[id] = newDirection.Direction;
             }
             else
             {
-                UpdateLocation(id, _ongoingRouteByCleanerAccountIds[id].TravelBy(0.0001));
+                UpdateLocation(id, _ongoingDirectionByCleanerAccountIds[id].TravelBy(0.0001));
             }
         }
     }

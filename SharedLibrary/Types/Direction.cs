@@ -4,23 +4,28 @@ using System.Linq;
 
 namespace Commons.Types
 {
-    public class MockCurrentRoute
+    public class Direction
     {
         private readonly Action<int> _mcpPassedCallback;
-        public Coordinate CurrentCoordinate { get; private set; }
+        public Coordinate CurrentCoordinate { get; set; }
         public List<Coordinate> Waypoints { get; private set; }
         public List<int> IsMcpFlags { get; private set; }
 
-        public bool IsCompleted => Waypoints.Count == 0;
+        public bool IsCompleted { get; private set; }
 
-        public MockCurrentRoute()
+        public Direction()
         {
             Waypoints = new List<Coordinate>();
             IsMcpFlags = new List<int>();
         }
 
-        public MockCurrentRoute(Coordinate currentCoordinate, List<int> assignedMcpIds, RawMapboxDirectionResponse direction,
-            Action<int> mcpPassedCallback) : this()
+        public Direction(bool isCompleted) : this()
+        {
+            IsCompleted = isCompleted;
+        }
+
+        public Direction(Coordinate currentCoordinate, List<int> assignedMcpIds,
+            RawMapboxDirectionResponse direction, Action<int> mcpPassedCallback = null) : this()
         {
             CurrentCoordinate = currentCoordinate;
             _mcpPassedCallback = mcpPassedCallback;
@@ -28,25 +33,20 @@ namespace Commons.Types
             var mcpCoordinates = direction.Waypoints.Select(waypoint => new Coordinate(waypoint.Location)).ToList();
             var routeCoordinates = direction.Routes.First().Geometry.Coordinates.Select(coordinate => new Coordinate(coordinate)).ToList();
 
-            while (mcpCoordinates.Count > 2)
+            var mcpIndex = 0;
+            foreach (var routeCoordinate in routeCoordinates)
             {
-                if (mcpCoordinates[0].IsApproximatelyEqualTo(routeCoordinates[0]))
+                Waypoints.Add(routeCoordinate);
+                if (mcpCoordinates.Any(mcpCoordinate => mcpCoordinate.IsApproximatelyEqualTo(routeCoordinate)))
                 {
-                    IsMcpFlags.Add(assignedMcpIds[0]);
-                    mcpCoordinates.RemoveAt(0);
-                    assignedMcpIds.RemoveAt(0);
+                    IsMcpFlags.Add(assignedMcpIds[mcpIndex]);
+                    mcpIndex++;
                 }
                 else
                 {
                     IsMcpFlags.Add(-1);
                 }
-
-                Waypoints.Add(routeCoordinates[0]);
-                routeCoordinates.RemoveAt(0);
             }
-
-            Waypoints.Add(routeCoordinates[0]);
-            IsMcpFlags.Add(assignedMcpIds[0]);
         }
 
         public Coordinate TravelBy(double distance)
@@ -75,6 +75,8 @@ namespace Commons.Types
                 Waypoints.RemoveAt(i - 1);
                 IsMcpFlags.RemoveAt(i - 1);
             }
+
+            if (Waypoints.Count <= 1) IsCompleted = true;
 
             return CurrentCoordinate;
         }

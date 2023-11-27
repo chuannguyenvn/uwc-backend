@@ -19,7 +19,7 @@ public class LocationService : ILocationService, IHostedService, IDisposable
     private readonly Dictionary<int, Coordinate> _cleanerLocationsById = new();
     public Dictionary<int, Coordinate> CleanerLocationsByAccountId => _cleanerLocationsById;
 
-    private const int REFRESH_INTERVAL = 1000;
+    private const int REFRESH_INTERVAL = 5000;
     private Timer? _locationBroadcastTimer;
 
     public LocationService(IServiceProvider serviceProvider)
