@@ -28,6 +28,11 @@ public class DirectionService : IDirectionService
             new GetDirectionResponse { Direction = new Direction(request.CurrentLocation, request.McpIds, mapboxDirection) });
     }
 
+    public RawMapboxDirectionResponse GetRawDirection(Coordinate from, Coordinate to)
+    {
+        return RequestMapboxDirection(from, new List<Coordinate> { to });
+    }
+
     private RawMapboxDirectionResponse RequestMapboxDirection(Coordinate fromLocation, List<Coordinate> toLocations)
     {
         var client = new HttpClient();
