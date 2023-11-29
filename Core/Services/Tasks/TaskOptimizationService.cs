@@ -368,7 +368,7 @@ public class TaskOptimizationService : ITaskOptimizationService
     {
         // Cost: Minimize the cost of the additional task
         // Fast: Minimize the maximum travel time of any driver
-        if (stopAutomation is false)
+        if (stopAutomation is true)
         {
             routeGen = 3;
         }
@@ -604,14 +604,14 @@ public class TaskOptimizationService : ITaskOptimizationService
             McpId = mcp2Id,
             FillLevel = 0.7f
         };
-        _mcpFillLevelService.SetFillLevel(mcp1SetFillLevel);
+        _mcpFillLevelService.SetFillLevel(mcp2SetFillLevel);
         
         SetFillLevelRequest mcp3SetFillLevel = new SetFillLevelRequest
         {
             McpId = mcp3Id,
             FillLevel = 0.86f
         };
-        _mcpFillLevelService.SetFillLevel(mcp1SetFillLevel);
+        _mcpFillLevelService.SetFillLevel(mcp3SetFillLevel);
         
 
         while (true)
@@ -641,9 +641,6 @@ public class TaskOptimizationService : ITaskOptimizationService
                         CompleteByTimestamp = DateTime.Now.AddHours(1),
                     };
                     _taskService.AddTask(addTaskRequest);
-
-                    Console.Write("Assign task with Mcp: ");
-                    Console.WriteLine(mcpId);
                 }
             }
 
