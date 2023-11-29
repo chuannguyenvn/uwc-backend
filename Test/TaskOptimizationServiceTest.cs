@@ -1163,17 +1163,15 @@ public class TaskOptimizationServiceTest
         Dictionary<int, UserProfile> workerProfile = new Dictionary<int, UserProfile>();
         workerProfile.Add(worker1Id, _mockUnitOfWork.UserProfileRepository.GetById(worker1Id));
         workerProfile.Add(worker2Id, _mockUnitOfWork.UserProfileRepository.GetById(worker2Id));
-        _routeOptimizationService.DistributeTasksFromPoolGen3(workerProfile, costOrFast, option);
+        List<List<TaskData>> result = _routeOptimizationService.DistributeTasksFromPoolGen3(workerProfile, costOrFast, option);
 
         #endregion
     
     
         #region Assert
-    
-        List<TaskData> worker1Tasks = _routeOptimizationService.OptimizeRouteGen2(_mockUnitOfWork.UserProfileRepository.GetById(worker1Id),
-            option);
-        List<TaskData> worker2Tasks = _routeOptimizationService.OptimizeRouteGen2(_mockUnitOfWork.UserProfileRepository.GetById(worker2Id),
-            option);
+
+        List<TaskData> worker1Tasks = result[0];
+        List<TaskData> worker2Tasks = result[1];
         
         Assert.That(worker1Tasks.Count, Is.EqualTo(tasksCountBeforeWorker1 + 1));
         Assert.That(worker1Tasks[0].McpDataId, Is.EqualTo(mcp3Id)); 
@@ -1347,7 +1345,58 @@ public class TaskOptimizationServiceTest
     [Test]
     public void Test_Automation()
     {
-        _routeOptimizationService.Automation();
-    }
+        #region Arrange
+        
+        // The worker's ID
+        int worker1Id = 11;
+        int worker2Id = 12;
+    
+        // The mcpId
+        int mcp1Id = 1;
+        int mcp2Id = 2;
+        int mcp3Id = 3;
 
+        // Remove all tasks of the free worker
+        _mockUnitOfWork.TaskDataDataRepository.RemoveAll();
+        
+        // Set the worker's location
+        _mockLocationService.UpdateLocation(worker1Id, new Coordinate(0, 0));
+        _mockLocationService.UpdateLocation(worker2Id, new Coordinate(2, 1));
+
+        // Set the mcp locations
+        _mockUnitOfWork.McpDataRepository.GetById(mcp1Id).Coordinate = new Coordinate(0, 3);
+        _mockUnitOfWork.McpDataRepository.GetById(mcp2Id).Coordinate = new Coordinate(0, 10);
+        _mockUnitOfWork.McpDataRepository.GetById(mcp3Id).Coordinate = new Coordinate(1, 1);
+
+        // Set the mcp fill levels
+        _mockMcpFillLevelService.SetFillLevel(mcp1Id, 0.9f);
+        _mockMcpFillLevelService.SetFillLevel(mcp2Id, 0.7f);
+        _mockMcpFillLevelService.SetFillLevel(mcp3Id, 0.86f);
+        
+        #endregion
+
+        
+        #region Act
+
+        Dictionary<int, UserProfile> workerProfiles = new Dictionary<int, UserProfile>();
+        workerProfiles.Add(worker1Id, _mockUnitOfWork.UserProfileRepository.GetById(worker1Id));
+        workerProfiles.Add(worker2Id, _mockUnitOfWork.UserProfileRepository.GetById(worker2Id));
+        
+        _routeOptimizationService.Automation(workerProfiles);
+
+        #endregion
+        
+        
+        #region Assert
+        
+        List<TaskData> worker1Tasks = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker1Id);
+        Assert.That(worker1Tasks.Count, Is.EqualTo(0));
+        
+        List<TaskData> worker2Tasks = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker2Id);
+        Assert.That(worker2Tasks.Count, Is.EqualTo(2)); 
+        Assert.That(worker2Tasks[0].McpDataId, Is.EqualTo(mcp1Id));
+        Assert.That(worker2Tasks[1].McpDataId, Is.EqualTo(mcp3Id));
+
+        #endregion
+    }
 }

@@ -18,6 +18,7 @@ public class TaskOptimizationService : ITaskOptimizationService
     private readonly IMcpFillLevelService _mcpFillLevelService;
     
     private int routeGen = 1;
+    float threshold = 0.85f;
 
     public TaskOptimizationService(IUnitOfWork unitOfWork, ITaskService taskService, ILocationService locationService,
         IMcpFillLevelService mcpFillLevelService)
@@ -364,7 +365,7 @@ public class TaskOptimizationService : ITaskOptimizationService
     
     // --------------------------- GEN3: TASK DISTRIBUTION FROM THE COMMON POOL ----------------------------------------
     // Maybe - refactor: Code is longer than 150 lines
-    public void DistributeTasksFromPoolGen3(Dictionary<int, UserProfile> workerProfiles, bool costOrFast = true, bool option = true, List<bool> priority = null, bool stopAutomation = true)
+    public List<List<TaskData>> DistributeTasksFromPoolGen3(Dictionary<int, UserProfile> workerProfiles, bool costOrFast = true, bool option = true, List<bool> priority = null, bool stopAutomation = true)
     {
         // Cost: Minimize the cost of the additional task
         // Fast: Minimize the maximum travel time of any driver
@@ -413,14 +414,13 @@ public class TaskOptimizationService : ITaskOptimizationService
             sortedUnassignedTasks = combined.Select(pair => pair.Item1).ToList();
         }
         
-        
         // Distribute task from the pool to either
         // 1. Minimize the additional cost of the task
         // 2. Minimize the maximal travel time of any worker
         
         double minMaxCost = 1e9;
         int index = 0;
-        
+
         for (int i = 0; i < sortedUnassignedTasks.Count; i++)
         {
             foreach (var (workerId, workerProfile) in workerProfiles)
@@ -486,6 +486,7 @@ public class TaskOptimizationService : ITaskOptimizationService
                  if (costOrFast)
                  {
                      double deltaCost = costAfter - costBefore;
+                     
                      if (deltaCost < minMaxCost)
                      {
                          minMaxCost = deltaCost;
@@ -519,26 +520,19 @@ public class TaskOptimizationService : ITaskOptimizationService
                 }
             }
         }
+
+        List<List<TaskData>> result = new List<List<TaskData>>();
+        foreach (var (workerId, workerProfile) in workerProfiles)
+        { 
+            List<TaskData> optimizedTaskList = OptimizeRouteGen2(workerProfile, option);
+            result.Add(optimizedTaskList);
+        }
+
+        return result;
     }
 
     public void DistributeTasksFromPool()
     {
-        // List<TaskData> unassignedTasks = GetUnassignedTaskIn24Hours();
-        // Dictionary<int, float> mcpFillLevels = GetAllMcpFillLevels();
-        // Dictionary<int, UserProfile> workerProfiles = GetAllWorkerProfiles();
-        //
-        // // Example: Assign a task to the first free worker
-        // foreach (var (workerId, workerProfile) in workerProfiles)
-        // {
-        //     if (unassignedTasks.Count == 0) break;
-        //     if (workerProfile.UserRole != UserRole.Driver) continue;
-        //
-        //     if (GetWorkerTasksIn24Hours(workerId).Count == 0)
-        //     {
-        //         AssignWorkerToTask(unassignedTasks[0].Id, workerId);
-        //         unassignedTasks.RemoveAt(0);
-        //     }
-        // }
     }
     
     // ------------------------------------ GEN 4: ADD TASKS TO POOL ---------------------------------------------------
@@ -554,66 +548,10 @@ public class TaskOptimizationService : ITaskOptimizationService
         }
     }
     
-    public void Automation()
+    public void Automation(Dictionary<int, UserProfile> workerProfiles = null)
     {
         routeGen = 4;
-        float threshold = 0.85f;
         
-        // The workers' Id
-        int worker1Id = 11;
-        int worker2Id = 12;
-        
-        // Remove all tasks of the free worker
-        _unitOfWork.TaskDataDataRepository.RemoveAll();
-        
-        // Set the worker's location
-        LocationUpdateRequest worker1Location = new LocationUpdateRequest
-        {
-            AccountId = worker1Id,
-            NewLocation = new Coordinate(0, 0)
-        };
-        _locationService.UpdateLocation(worker1Location);
-
-        LocationUpdateRequest worker2Location = new LocationUpdateRequest
-        {
-            AccountId = worker2Id,
-            NewLocation = new Coordinate(2, 1)
-        };
-        _locationService.UpdateLocation(worker2Location);
-
-        // The mcp to add to pool
-        int mcp1Id = 1;
-        int mcp2Id = 2;
-        int mcp3Id = 3;
-        
-        // Set the mcp locations
-        _unitOfWork.McpDataRepository.GetById(mcp1Id).Coordinate = new Coordinate(0, 3);
-        _unitOfWork.McpDataRepository.GetById(mcp2Id).Coordinate = new Coordinate(0, 10);
-        _unitOfWork.McpDataRepository.GetById(mcp3Id).Coordinate = new Coordinate(1, 1);
-        
-        // Set the mcp fill levels
-        SetFillLevelRequest mcp1SetFillLevel = new SetFillLevelRequest
-        {
-            McpId = mcp1Id,
-            FillLevel = 0.9f
-        };
-        _mcpFillLevelService.SetFillLevel(mcp1SetFillLevel);
-        
-        SetFillLevelRequest mcp2SetFillLevel = new SetFillLevelRequest
-        {
-            McpId = mcp2Id,
-            FillLevel = 0.7f
-        };
-        _mcpFillLevelService.SetFillLevel(mcp2SetFillLevel);
-        
-        SetFillLevelRequest mcp3SetFillLevel = new SetFillLevelRequest
-        {
-            McpId = mcp3Id,
-            FillLevel = 0.86f
-        };
-        _mcpFillLevelService.SetFillLevel(mcp3SetFillLevel);
-        
-
         while (true)
         {
             Dictionary<int, float> mcpFillLevels = GetAllMcpFillLevels();
@@ -644,23 +582,27 @@ public class TaskOptimizationService : ITaskOptimizationService
                 }
             }
 
-            if (!ShouldContinueAutomation())
+            if (workerProfiles is null)
             {
-                break;
+                workerProfiles = GetAllWorkerProfiles();
             }
-
+            List<List<TaskData>> optimizedTaskListForAllWorkers = DistributeTasksFromPoolGen3(workerProfiles, true, true, stopAutomation:false);
             
-            Thread.Sleep(10);
+            // 1. I need to return the optimizedTaskListForAllWorkers back to the server
+            // Because the automation here just add tasks and have not optimized.
             
-            Dictionary<int, UserProfile> workerProfiles = new Dictionary<int, UserProfile>();
-            workerProfiles.Add(worker1Id, _unitOfWork.UserProfileRepository.GetById(worker1Id));
-            workerProfiles.Add(worker2Id, _unitOfWork.UserProfileRepository.GetById(worker2Id));
-            DistributeTasksFromPoolGen3(workerProfiles, true, true, stopAutomation:false);
-            
+            // 2. I should use multi-threaded programming to evaluate whether I should stop the automation or not.
             if (assign is false)
             {
                 break;
             }
+            
+            if (!ShouldContinueAutomation())
+            {
+                break;
+            }
+            
+            Thread.Sleep(10);
         }
     }
 }
