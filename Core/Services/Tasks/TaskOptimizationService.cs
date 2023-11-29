@@ -1,5 +1,6 @@
 using Commons.Categories;
 using Commons.Communications.Map;
+using Commons.Communications.Mcps;
 using Commons.Communications.Tasks;
 using Commons.Models;
 using Commons.Types;
@@ -16,11 +17,6 @@ public class TaskOptimizationService : ITaskOptimizationService
     private readonly ILocationService _locationService;
     private readonly IMcpFillLevelService _mcpFillLevelService;
     
-    private MockUnitOfWork _mockUnitOfWork;
-    private MockTaskService _mockTaskService;
-    private MockMcpFillLevelService _mockMcpFillLevelService;
-    private MockLocationService _mockLocationService;
-    private TaskOptimizationService _routeOptimizationService;
     private int routeGen = 1;
 
     public TaskOptimizationService(IUnitOfWork unitOfWork, ITaskService taskService, ILocationService locationService,
@@ -563,21 +559,27 @@ public class TaskOptimizationService : ITaskOptimizationService
         routeGen = 4;
         float threshold = 0.85f;
         
-        _mockUnitOfWork = new MockUnitOfWork();
-        _mockTaskService = new MockTaskService(_mockUnitOfWork);
-        _mockMcpFillLevelService = new MockMcpFillLevelService(_mockUnitOfWork);
-        _mockLocationService = new MockLocationService(_mockUnitOfWork);
-        
         // The workers' Id
         int worker1Id = 11;
         int worker2Id = 12;
         
         // Remove all tasks of the free worker
-        _mockUnitOfWork.TaskDataDataRepository.RemoveAll();
+        _unitOfWork.TaskDataDataRepository.RemoveAll();
         
         // Set the worker's location
-        _mockLocationService.UpdateLocation(worker1Id, new Coordinate(0, 0));
-        _mockLocationService.UpdateLocation(worker2Id, new Coordinate(2, 1));
+        LocationUpdateRequest worker1Location = new LocationUpdateRequest
+        {
+            AccountId = worker1Id,
+            NewLocation = new Coordinate(0, 0)
+        };
+        _locationService.UpdateLocation(worker1Location);
+
+        LocationUpdateRequest worker2Location = new LocationUpdateRequest
+        {
+            AccountId = worker2Id,
+            NewLocation = new Coordinate(2, 1)
+        };
+        _locationService.UpdateLocation(worker2Location);
 
         // The mcp to add to pool
         int mcp1Id = 1;
@@ -585,26 +587,61 @@ public class TaskOptimizationService : ITaskOptimizationService
         int mcp3Id = 3;
         
         // Set the mcp locations
-        _mockUnitOfWork.McpDataRepository.GetById(mcp1Id).Coordinate = new Coordinate(0, 3);
-        _mockUnitOfWork.McpDataRepository.GetById(mcp2Id).Coordinate = new Coordinate(0, 10);
-        _mockUnitOfWork.McpDataRepository.GetById(mcp3Id).Coordinate = new Coordinate(1, 1);
+        _unitOfWork.McpDataRepository.GetById(mcp1Id).Coordinate = new Coordinate(0, 3);
+        _unitOfWork.McpDataRepository.GetById(mcp2Id).Coordinate = new Coordinate(0, 10);
+        _unitOfWork.McpDataRepository.GetById(mcp3Id).Coordinate = new Coordinate(1, 1);
         
         // Set the mcp fill levels
-        _mockMcpFillLevelService.SetFillLevel(mcp1Id, 0.9f);
-        _mockMcpFillLevelService.SetFillLevel(mcp2Id, 0.7f);
-        _mockMcpFillLevelService.SetFillLevel(mcp3Id, 0.85f);
+        SetFillLevelRequest mcp1SetFillLevel = new SetFillLevelRequest
+        {
+            McpId = mcp1Id,
+            FillLevel = 0.9f
+        };
+        _mcpFillLevelService.SetFillLevel(mcp1SetFillLevel);
+        
+        SetFillLevelRequest mcp2SetFillLevel = new SetFillLevelRequest
+        {
+            McpId = mcp2Id,
+            FillLevel = 0.7f
+        };
+        _mcpFillLevelService.SetFillLevel(mcp1SetFillLevel);
+        
+        SetFillLevelRequest mcp3SetFillLevel = new SetFillLevelRequest
+        {
+            McpId = mcp3Id,
+            FillLevel = 0.86f
+        };
+        _mcpFillLevelService.SetFillLevel(mcp1SetFillLevel);
+        
 
         while (true)
         {
             Dictionary<int, float> mcpFillLevels = GetAllMcpFillLevels();
+            bool assign = false;
             
             foreach (var (mcpId, mcpFillLevel) in mcpFillLevels)
             {
                 if (mcpFillLevel >= threshold)
                 {
                     // Assign task
-                    _mockMcpFillLevelService.SetFillLevel(mcpId, mcpFillLevel - 0.01f);
-                    _mockTaskService.AddTaskWithoutWorker(1, mcpId, DateTime.Now.AddHours(1));
+                    assign = true;
+                    
+                    SetFillLevelRequest mcpSetFillLevel = new SetFillLevelRequest
+                    {
+                        McpId = mcpId,
+                        FillLevel = mcpFillLevel - 0.01f
+                    };
+                    _mcpFillLevelService.SetFillLevel(mcpSetFillLevel);
+                    
+                    var addTaskRequest = new AddTasksRequest
+                    {
+                        AssignerAccountId = 1,
+                        AssigneeAccountId = null,
+                        McpDataIds = new List<int>() { mcpId },
+                        CompleteByTimestamp = DateTime.Now.AddHours(1),
+                    };
+                    _taskService.AddTask(addTaskRequest);
+
                     Console.Write("Assign task with Mcp: ");
                     Console.WriteLine(mcpId);
                 }
@@ -614,12 +651,19 @@ public class TaskOptimizationService : ITaskOptimizationService
             {
                 break;
             }
+
+            
             Thread.Sleep(10);
             
             Dictionary<int, UserProfile> workerProfiles = new Dictionary<int, UserProfile>();
-            workerProfiles.Add(worker1Id, _mockUnitOfWork.UserProfileRepository.GetById(worker1Id));
-            workerProfiles.Add(worker2Id, _mockUnitOfWork.UserProfileRepository.GetById(worker2Id));
+            workerProfiles.Add(worker1Id, _unitOfWork.UserProfileRepository.GetById(worker1Id));
+            workerProfiles.Add(worker2Id, _unitOfWork.UserProfileRepository.GetById(worker2Id));
             DistributeTasksFromPoolGen3(workerProfiles, true, true, stopAutomation:false);
+            
+            if (assign is false)
+            {
+                break;
+            }
         }
     }
 }
