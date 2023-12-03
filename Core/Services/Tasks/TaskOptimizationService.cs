@@ -321,6 +321,39 @@ public class TaskOptimizationService : ITaskOptimizationService
         return optimizedTasks;
     }
 
+    private async Task<List<TaskData>> OptimizeRouteForWorker(UserProfile workerProfile, List<RoutingOptimizationStrategy>? strategies = null)
+    {
+        List<TaskData> optimizedTasks = new List<TaskData>();
+
+        if (strategies != null)
+        {
+            foreach (var strategy in strategies)
+            {
+                optimizedTasks = await SortTaskList(optimizedTasks, strategy);
+            }
+        }
+
+        return optimizedTasks;
+    }
+    
+    // Async as sorting by distance might require multi-threading?
+    private async Task<List<TaskData>> SortTaskList(List<TaskData> list, RoutingOptimizationStrategy strategy)
+    {
+        switch (strategy)
+        {
+            case RoutingOptimizationStrategy.ByDistance:
+                // TODO: ???
+                return new List<TaskData>();
+            case RoutingOptimizationStrategy.ByDeadline:
+                return list.OrderBy(task => task.CompleteByTimestamp).ToList();
+            case RoutingOptimizationStrategy.ByFillLevel:
+                var mcpFillLevels = GetAllMcpFillLevels();
+                return list.OrderByDescending(task => mcpFillLevels[task.McpDataId]).ToList();
+            default:
+                throw new ArgumentOutOfRangeException(nameof(strategy), strategy, null);
+        }
+    }
+
     // ------------------------------------------ GEN2 GENERAL ---------------------------------------------------------
     public List<TaskData> OptimizeRouteGen2(UserProfile workerProfile, bool option = true, List<bool> priority = null)
     {
