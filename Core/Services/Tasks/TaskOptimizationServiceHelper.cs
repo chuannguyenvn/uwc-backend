@@ -27,7 +27,7 @@ public class TaskOptimizationServiceHelper
     public TaskOptimizationServiceHelper(IUnitOfWork unitOfWork, IHubContext<BaseHub> hubContext, ILocationService locationService,
         IMcpFillLevelService mcpFillLevelService, IOnlineStatusService onlineStatusService)
     {
-        CurrentTaskGroupId = unitOfWork.TaskDataDataRepository.GetMaxTaskGroupId() + 1;
+        CurrentTaskGroupId = unitOfWork.TaskDataDataRepository.GetMaxTaskGroupId();
 
         _unitOfWork = unitOfWork;
         _hubContext = hubContext;
