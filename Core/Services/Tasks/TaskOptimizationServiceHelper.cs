@@ -16,6 +16,8 @@ namespace Services.Tasks;
 
 public class TaskOptimizationServiceHelper
 {
+    private static int CurrentTaskGroupId = 0;
+
     private readonly IUnitOfWork _unitOfWork;
     private readonly IHubContext<BaseHub> _hubContext;
     private readonly ILocationService _locationService;
@@ -25,6 +27,8 @@ public class TaskOptimizationServiceHelper
     public TaskOptimizationServiceHelper(IUnitOfWork unitOfWork, IHubContext<BaseHub> hubContext, ILocationService locationService,
         IMcpFillLevelService mcpFillLevelService, IOnlineStatusService onlineStatusService)
     {
+        CurrentTaskGroupId = unitOfWork.TaskDataDataRepository.GetMaxTaskGroupId() + 1;
+
         _unitOfWork = unitOfWork;
         _hubContext = hubContext;
         _locationService = locationService;
@@ -94,8 +98,40 @@ public class TaskOptimizationServiceHelper
             CompleteByTimestamp = completeByTimestamp,
             TaskStatus = TaskStatus.NotStarted,
         };
-
         _unitOfWork.TaskDataDataRepository.Add(taskData);
+
+        _unitOfWork.Complete();
+
+        if (BaseHub.ConnectionIds.TryGetValue(workerId, out var connectionId))
+        {
+            _hubContext.Clients.Client(connectionId)
+                .SendAsync(HubHandlers.Tasks.ADD_TASK, new AddTasksBroadcastData
+                {
+                    NewTasks = _unitOfWork.TaskDataDataRepository.GetTasksByWorkerId(workerId).ToList()
+                });
+        }
+    }
+
+    public void AddTasksWithWorker(int assignerId, int workerId, List<int> mcpIds, DateTime completeByTimestamp, bool isGrouped)
+    {
+        if (isGrouped) CurrentTaskGroupId++;
+
+        foreach (var mcpId in mcpIds)
+        {
+            var taskData = new TaskData
+            {
+                AssignerId = assignerId,
+                AssigneeId = workerId,
+                McpDataId = mcpId,
+                GroupId = isGrouped ? CurrentTaskGroupId : null,
+                CreatedTimestamp = DateTime.Now,
+                CompleteByTimestamp = completeByTimestamp,
+                TaskStatus = TaskStatus.NotStarted,
+            };
+
+            _unitOfWork.TaskDataDataRepository.Add(taskData);
+        }
+
         _unitOfWork.Complete();
 
         if (BaseHub.ConnectionIds.TryGetValue(workerId, out var connectionId))
@@ -113,14 +149,35 @@ public class TaskOptimizationServiceHelper
         var taskData = new TaskData
         {
             AssignerId = assignerId,
-            AssigneeId = null,
             McpDataId = mcpId,
             CreatedTimestamp = DateTime.Now,
             CompleteByTimestamp = completeByTimestamp,
             TaskStatus = TaskStatus.NotStarted,
         };
-
         _unitOfWork.TaskDataDataRepository.Add(taskData);
+
+        _unitOfWork.Complete();
+    }
+
+    public void AddTasksWithoutWorker(int assignerId, List<int> mcpIds, DateTime completeByTimestamp, bool isGrouped)
+    {
+        if (isGrouped) CurrentTaskGroupId++;
+
+        foreach (var mcpId in mcpIds)
+        {
+            var taskData = new TaskData
+            {
+                AssignerId = assignerId,
+                McpDataId = mcpId,
+                GroupId = isGrouped ? CurrentTaskGroupId : null,
+                CreatedTimestamp = DateTime.Now,
+                CompleteByTimestamp = completeByTimestamp,
+                TaskStatus = TaskStatus.NotStarted,
+            };
+
+            _unitOfWork.TaskDataDataRepository.Add(taskData);
+        }
+
         _unitOfWork.Complete();
     }
 

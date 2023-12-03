@@ -66,4 +66,9 @@ public class TaskDataDataRepository : GenericRepository<TaskData>, ITaskDataRepo
         var tasks = Context.TaskDataTable.Where(task => task.AssigneeId == workerId).ToList();
         Context.TaskDataTable.RemoveRange(tasks);
     }
+
+    public int GetMaxTaskGroupId()
+    {
+        return Context.TaskDataTable.Max(task => task.GroupId ?? 0);
+    }
 }

@@ -84,4 +84,9 @@ public class MockTaskDataRepository : MockGenericRepository<TaskData>, ITaskData
     {
         Context.TaskDataTable.RemoveAll(task => task.AssigneeId == workerId);
     }
+
+    public int GetMaxTaskGroupId()
+    {
+        return Context.TaskDataTable.Max(task => task.GroupId ?? 0);
+    }
 }
