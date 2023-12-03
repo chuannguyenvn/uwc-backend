@@ -11,8 +11,8 @@
     {
         public static McpFillStatus GetStatus(float fillLevel)
         {
-            if (fillLevel >= 0.95f) return McpFillStatus.Full;
-            if (fillLevel >= 0.75f) return McpFillStatus.AlmostFull;
+            if (fillLevel >= 0.9f) return McpFillStatus.Full;
+            if (fillLevel >= 0.5f) return McpFillStatus.AlmostFull;
             return McpFillStatus.NotFull;
         }
     }
