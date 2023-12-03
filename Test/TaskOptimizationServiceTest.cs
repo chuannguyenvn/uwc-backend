@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Commons.Communications.Tasks;
 using Commons.Models;
 using Commons.Types;
 using Hubs;
@@ -1388,5 +1389,75 @@ public class TaskOptimizationServiceTest
         var result = _taskOptimizationServiceHelper.RequestMapboxMatrix(coordinates);
 
         Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
+    }
+
+    [Test]
+    public void Test_GroupedTask()
+    {
+        // This test assign 5 tasks to a worker, with 3 tasks in the first group and 2 tasks in the second group
+        // In the testing environment, group id always starts from 1 and increases by 1 for each new group
+
+        #region Arrange
+
+        // The supervisor's ID
+        int supervisorId = 1;
+
+        // The worker's ID
+        int workerId = 11;
+
+        // The mcpId
+        int mcp1Id = 1;
+        int mcp2Id = 2;
+        int mcp3Id = 3;
+        int mcp4Id = 4;
+        int mcp5Id = 5;
+
+        // Remove all tasks of the free worker
+        _mockUnitOfWork.TaskDataDataRepository.RemoveAll();
+
+        // Set the worker's online status
+        _mockOnlineStatusService.SetAsOnline(workerId);
+
+        #endregion
+
+
+        #region Act
+
+        _taskOptimizationService.ProcessAddTaskRequest(new AddTasksRequest
+        {
+            AssignerAccountId = supervisorId,
+            AssigneeAccountId = workerId,
+            McpDataIds = new List<int> { mcp1Id, mcp2Id, mcp3Id }, // First 3 MCPs
+            CompleteByTimestamp = default,
+        });
+
+        _taskOptimizationService.ProcessAddTaskRequest(new AddTasksRequest
+        {
+            AssignerAccountId = supervisorId,
+            AssigneeAccountId = workerId,
+            McpDataIds = new List<int> { mcp4Id, mcp5Id }, // Last 2 MCPs
+            CompleteByTimestamp = default,
+        });
+
+        #endregion
+
+
+        #region Assert
+
+        var tasks = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(workerId);
+
+        // There should be 5 tasks
+        Assert.That(tasks.Count, Is.EqualTo(5));
+
+        // The first 3 tasks should be grouped with group id = 1
+        Assert.That(tasks[0].GroupId, Is.EqualTo(1));
+        Assert.That(tasks[1].GroupId, Is.EqualTo(1));
+        Assert.That(tasks[2].GroupId, Is.EqualTo(1));
+
+        // The last 2 tasks should be grouped with group id = 2
+        Assert.That(tasks[3].GroupId, Is.EqualTo(2));
+        Assert.That(tasks[4].GroupId, Is.EqualTo(2));
+
+        #endregion
     }
 }
