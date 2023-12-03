@@ -1,4 +1,5 @@
-﻿using Commons.Models;
+﻿using System.Reflection;
+using Commons.Models;
 using Commons.Types;
 using Hubs;
 using Microsoft.AspNetCore.SignalR;
@@ -20,7 +21,8 @@ public class TaskOptimizationServiceTest
     private MockMcpFillLevelService _mockMcpFillLevelService;
     private MockLocationService _mockLocationService;
     private MockOnlineStatusService _mockOnlineStatusService;
-    private TaskOptimizationService _routeOptimizationService;
+    private TaskOptimizationService _taskOptimizationService;
+    private TaskOptimizationServiceHelper _taskOptimizationServiceHelper;
 
     [SetUp]
     public void Setup()
@@ -32,8 +34,12 @@ public class TaskOptimizationServiceTest
         _mockMcpFillLevelService = new MockMcpFillLevelService(_mockUnitOfWork);
         _mockLocationService = new MockLocationService(_mockUnitOfWork);
         _mockOnlineStatusService = new MockOnlineStatusService();
-        _routeOptimizationService = new TaskOptimizationService(_mockUnitOfWork, _mockTaskService, _mockLocationService, _mockMcpFillLevelService,
+        _taskOptimizationService = new TaskOptimizationService(_mockUnitOfWork, _mockTaskService, _mockLocationService, _mockMcpFillLevelService,
             _mockOnlineStatusService);
+
+        _taskOptimizationServiceHelper =
+            typeof(TaskOptimizationService).GetField("_helper", BindingFlags.NonPublic | BindingFlags.Instance)
+                .GetValue(_taskOptimizationService) as TaskOptimizationServiceHelper;
     }
 
     // ------------------------------------------ GEN 1 TESTCASE -------------------------------------------------------
@@ -63,10 +69,6 @@ public class TaskOptimizationServiceTest
         // Set the worker's location
         _mockLocationService.UpdateLocation(worker1Id, new Coordinate(10.77, 106.65));
 
-        // Set the mcp locations
-        _mockUnitOfWork.McpDataRepository.GetById(mcp1Id).Coordinate = _routeOptimizationService.GetMcpCoordinateById(mcp1Id);
-        _mockUnitOfWork.McpDataRepository.GetById(mcp2Id).Coordinate = _routeOptimizationService.GetMcpCoordinateById(mcp2Id);
-
         // Set the mcp fill levels
         _mockMcpFillLevelService.SetFillLevel(mcp1Id, 0.15f);
         _mockMcpFillLevelService.SetFillLevel(mcp2Id, 0.15f);
@@ -84,7 +86,7 @@ public class TaskOptimizationServiceTest
 
         #region Act
 
-        List<TaskData> unassignedTasks = _routeOptimizationService.GetUnassignedTaskIn24Hours();
+        List<TaskData> unassignedTasks = _taskOptimizationServiceHelper.GetUnassignedTaskIn24Hours();
 
         #endregion
 
@@ -160,7 +162,7 @@ public class TaskOptimizationServiceTest
 
         #region Act
 
-        List<TaskData> optimizedTasks = _routeOptimizationService.OptimizeRouteGen2(_mockUnitOfWork.UserProfileRepository.GetById(workerId), true);
+        List<TaskData> optimizedTasks = _taskOptimizationService.OptimizeRouteGen2(_mockUnitOfWork.UserProfileRepository.GetById(workerId), true);
 
         #endregion
 
@@ -233,7 +235,7 @@ public class TaskOptimizationServiceTest
 
         #region Act
 
-        List<TaskData> optimizedTasks = _routeOptimizationService.OptimizeRouteGen2(_mockUnitOfWork.UserProfileRepository.GetById(workerId), false);
+        List<TaskData> optimizedTasks = _taskOptimizationService.OptimizeRouteGen2(_mockUnitOfWork.UserProfileRepository.GetById(workerId), false);
 
         #endregion
 
@@ -304,7 +306,7 @@ public class TaskOptimizationServiceTest
 
         #region Act
 
-        List<TaskData> optimizedTasks = _routeOptimizationService.OptimizeRouteGen2(_mockUnitOfWork.UserProfileRepository.GetById(workerId), true);
+        List<TaskData> optimizedTasks = _taskOptimizationService.OptimizeRouteGen2(_mockUnitOfWork.UserProfileRepository.GetById(workerId), true);
 
         #endregion
 
@@ -394,7 +396,7 @@ public class TaskOptimizationServiceTest
 
         #region Act
 
-        List<TaskData> optimizedTasks = _routeOptimizationService.OptimizeRouteGen2(_mockUnitOfWork.UserProfileRepository.GetById(workerId), true);
+        List<TaskData> optimizedTasks = _taskOptimizationService.OptimizeRouteGen2(_mockUnitOfWork.UserProfileRepository.GetById(workerId), true);
 
         #endregion
 
@@ -455,7 +457,7 @@ public class TaskOptimizationServiceTest
 
         #region Act
 
-        List<TaskData> optimizedTasks = _routeOptimizationService.OptimizeRouteGen2(_mockUnitOfWork.UserProfileRepository.GetById(workerId), false);
+        List<TaskData> optimizedTasks = _taskOptimizationService.OptimizeRouteGen2(_mockUnitOfWork.UserProfileRepository.GetById(workerId), false);
 
         #endregion
 
@@ -520,7 +522,7 @@ public class TaskOptimizationServiceTest
         priority.Add(false);
         priority[1] = true;
         List<TaskData> optimizedTasks =
-            _routeOptimizationService.OptimizeRouteGen2(_mockUnitOfWork.UserProfileRepository.GetById(workerId), true, priority);
+            _taskOptimizationService.OptimizeRouteGen2(_mockUnitOfWork.UserProfileRepository.GetById(workerId), true, priority);
 
         #endregion
 
@@ -585,7 +587,7 @@ public class TaskOptimizationServiceTest
         priority[0] = true;
 
         List<TaskData> optimizedTasks =
-            _routeOptimizationService.OptimizeRouteGen2(_mockUnitOfWork.UserProfileRepository.GetById(workerId), true, priority);
+            _taskOptimizationService.OptimizeRouteGen2(_mockUnitOfWork.UserProfileRepository.GetById(workerId), true, priority);
 
         #endregion
 
@@ -650,7 +652,7 @@ public class TaskOptimizationServiceTest
         priority.Add(true);
 
         List<TaskData> optimizedTasks =
-            _routeOptimizationService.OptimizeRouteGen2(_mockUnitOfWork.UserProfileRepository.GetById(workerId), true, priority);
+            _taskOptimizationService.OptimizeRouteGen2(_mockUnitOfWork.UserProfileRepository.GetById(workerId), true, priority);
 
         #endregion
 
@@ -714,7 +716,7 @@ public class TaskOptimizationServiceTest
         Dictionary<int, UserProfile> workerProfile = new Dictionary<int, UserProfile>();
         workerProfile.Add(worker1Id, _mockUnitOfWork.UserProfileRepository.GetById(worker1Id));
         workerProfile.Add(worker2Id, _mockUnitOfWork.UserProfileRepository.GetById(worker2Id));
-        _routeOptimizationService.DistributeTasksFromPoolGen3(workerProfile, costOrFast, option);
+        _taskOptimizationService.DistributeTasksFromPoolGen3(workerProfile, costOrFast, option);
 
         #endregion
 
@@ -794,7 +796,7 @@ public class TaskOptimizationServiceTest
         Dictionary<int, UserProfile> workerProfile = new Dictionary<int, UserProfile>();
         workerProfile.Add(worker1Id, _mockUnitOfWork.UserProfileRepository.GetById(worker1Id));
         workerProfile.Add(worker2Id, _mockUnitOfWork.UserProfileRepository.GetById(worker2Id));
-        _routeOptimizationService.DistributeTasksFromPoolGen3(workerProfile, costOrFast, option);
+        _taskOptimizationService.DistributeTasksFromPoolGen3(workerProfile, costOrFast, option);
 
         #endregion
 
@@ -876,7 +878,7 @@ public class TaskOptimizationServiceTest
         Dictionary<int, UserProfile> workerProfile = new Dictionary<int, UserProfile>();
         workerProfile.Add(worker1Id, _mockUnitOfWork.UserProfileRepository.GetById(worker1Id));
         workerProfile.Add(worker2Id, _mockUnitOfWork.UserProfileRepository.GetById(worker2Id));
-        _routeOptimizationService.DistributeTasksFromPoolGen3(workerProfile, costOrFast, option);
+        _taskOptimizationService.DistributeTasksFromPoolGen3(workerProfile, costOrFast, option);
 
         #endregion
 
@@ -959,7 +961,7 @@ public class TaskOptimizationServiceTest
         Dictionary<int, UserProfile> workerProfile = new Dictionary<int, UserProfile>();
         workerProfile.Add(worker1Id, _mockUnitOfWork.UserProfileRepository.GetById(worker1Id));
         workerProfile.Add(worker2Id, _mockUnitOfWork.UserProfileRepository.GetById(worker2Id));
-        _routeOptimizationService.DistributeTasksFromPoolGen3(workerProfile, costOrFast, option);
+        _taskOptimizationService.DistributeTasksFromPoolGen3(workerProfile, costOrFast, option);
 
         #endregion
 
@@ -1048,7 +1050,7 @@ public class TaskOptimizationServiceTest
         Dictionary<int, UserProfile> workerProfile = new Dictionary<int, UserProfile>();
         workerProfile.Add(worker1Id, _mockUnitOfWork.UserProfileRepository.GetById(worker1Id));
         workerProfile.Add(worker2Id, _mockUnitOfWork.UserProfileRepository.GetById(worker2Id));
-        _routeOptimizationService.DistributeTasksFromPoolGen3(workerProfile, costOrFast, option);
+        _taskOptimizationService.DistributeTasksFromPoolGen3(workerProfile, costOrFast, option);
 
         #endregion
 
@@ -1131,7 +1133,7 @@ public class TaskOptimizationServiceTest
         Dictionary<int, UserProfile> workerProfile = new Dictionary<int, UserProfile>();
         workerProfile.Add(worker1Id, _mockUnitOfWork.UserProfileRepository.GetById(worker1Id));
         workerProfile.Add(worker2Id, _mockUnitOfWork.UserProfileRepository.GetById(worker2Id));
-        List<List<TaskData>> result = _routeOptimizationService.DistributeTasksFromPoolGen3(workerProfile, costOrFast, option);
+        List<List<TaskData>> result = _taskOptimizationService.DistributeTasksFromPoolGen3(workerProfile, costOrFast, option);
 
         #endregion
 
@@ -1212,16 +1214,16 @@ public class TaskOptimizationServiceTest
         Dictionary<int, UserProfile> workerProfile = new Dictionary<int, UserProfile>();
         workerProfile.Add(worker1Id, _mockUnitOfWork.UserProfileRepository.GetById(worker1Id));
         workerProfile.Add(worker2Id, _mockUnitOfWork.UserProfileRepository.GetById(worker2Id));
-        _routeOptimizationService.DistributeTasksFromPoolGen3(workerProfile, costOrFast, option);
+        _taskOptimizationService.DistributeTasksFromPoolGen3(workerProfile, costOrFast, option);
 
         #endregion
 
 
         #region Assert
 
-        List<TaskData> worker1Tasks = _routeOptimizationService.OptimizeRouteGen2(_mockUnitOfWork.UserProfileRepository.GetById(worker1Id),
+        List<TaskData> worker1Tasks = _taskOptimizationService.OptimizeRouteGen2(_mockUnitOfWork.UserProfileRepository.GetById(worker1Id),
             option);
-        List<TaskData> worker2Tasks = _routeOptimizationService.OptimizeRouteGen2(_mockUnitOfWork.UserProfileRepository.GetById(worker2Id),
+        List<TaskData> worker2Tasks = _taskOptimizationService.OptimizeRouteGen2(_mockUnitOfWork.UserProfileRepository.GetById(worker2Id),
             option);
 
         Assert.That(worker1Tasks.Count, Is.EqualTo(tasksCountBeforeWorker1 + 1));
@@ -1293,16 +1295,16 @@ public class TaskOptimizationServiceTest
         priority.Add(false);
         priority.Add(false);
         priority[0] = true;
-        _routeOptimizationService.DistributeTasksFromPoolGen3(workerProfile, costOrFast, option, priority);
+        _taskOptimizationService.DistributeTasksFromPoolGen3(workerProfile, costOrFast, option, priority);
 
         #endregion
 
 
         #region Assert
 
-        List<TaskData> worker1Tasks = _routeOptimizationService.OptimizeRouteGen2(_mockUnitOfWork.UserProfileRepository.GetById(worker1Id),
+        List<TaskData> worker1Tasks = _taskOptimizationService.OptimizeRouteGen2(_mockUnitOfWork.UserProfileRepository.GetById(worker1Id),
             option, priority);
-        List<TaskData> worker2Tasks = _routeOptimizationService.OptimizeRouteGen2(_mockUnitOfWork.UserProfileRepository.GetById(worker2Id),
+        List<TaskData> worker2Tasks = _taskOptimizationService.OptimizeRouteGen2(_mockUnitOfWork.UserProfileRepository.GetById(worker2Id),
             option, priority);
 
         // Check the total number of tasks assigned
@@ -1357,7 +1359,7 @@ public class TaskOptimizationServiceTest
 
         #region Act
 
-        _routeOptimizationService.DistributeTasksFromPool();
+        _taskOptimizationService.DistributeTasksFromPool();
 
         #endregion
 

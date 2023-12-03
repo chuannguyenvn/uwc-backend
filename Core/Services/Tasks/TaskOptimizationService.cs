@@ -19,6 +19,8 @@ public class TaskOptimizationService : ITaskOptimizationService
     private readonly IMcpFillLevelService _mcpFillLevelService;
     private readonly IOnlineStatusService _onlineStatusService;
 
+    private readonly TaskOptimizationServiceHelper _helper;
+
     private const float FILL_LEVEL_ASSIGNMENT_THRESHOLD = 0.85f;
 
     private Timer? _autoDistributionTimer;
@@ -32,52 +34,18 @@ public class TaskOptimizationService : ITaskOptimizationService
         _locationService = locationService;
         _mcpFillLevelService = mcpFillLevelService;
         _onlineStatusService = onlineStatusService;
+
+        _helper = new TaskOptimizationServiceHelper(unitOfWork, taskService, locationService, mcpFillLevelService, onlineStatusService);
     }
 
     // --------------------------------------------------- HELPER FUNCTIONS --------------------------------------------
-    private List<TaskData> GetWorkerTasksIn24Hours(int workerId)
-    {
-        return _unitOfWork.TaskDataDataRepository.GetWorkerRemainingTasksIn24Hours(workerId);
-    }
-
-    public List<TaskData> GetUnassignedTaskIn24Hours()
-    {
-        return _unitOfWork.TaskDataDataRepository.GetUnassignedTasksIn24Hours();
-    }
-
-    private Dictionary<int, float> GetAllMcpFillLevels()
-    {
-        return _mcpFillLevelService.GetAllFillLevel().Data.FillLevelsById;
-    }
-
-    public Coordinate GetMcpCoordinateById(int mcpId)
-    {
-        return _unitOfWork.McpDataRepository.GetById(mcpId).Coordinate;
-    }
-
-    private Coordinate GetWorkerLocation(int workerId)
-    {
-        return _locationService.GetLocation(new GetLocationRequest
-        {
-            AccountId = workerId
-        }).Data!.Coordinate;
-    }
-
-    private Dictionary<int, UserProfile> GetAllWorkerProfiles()
-    {
-        return _unitOfWork.UserProfileRepository.GetAllWorkers().ToDictionary(workerProfile => workerProfile.Id);
-    }
-
-    private bool IsWorkerOnline(int workerId)
-    {
-        return _onlineStatusService.IsAccountOnline(workerId);
-    }
+  
 
     // --------------------------------------- GEN2 WITH DIJKSTRA ALGORITHM --------------------------------------------
     private double CalculateCost(UserProfile workerProfile, TaskData taskData)
     {
-        Coordinate workerLocation = GetWorkerLocation(workerProfile.Id);
-        Coordinate mcpLocation = GetMcpCoordinateById(taskData.McpDataId);
+        Coordinate workerLocation = _helper.GetWorkerLocation(workerProfile.Id);
+        Coordinate mcpLocation = _helper.GetMcpCoordinateById(taskData.McpDataId);
         double cost = Double.Sqrt(Double.Pow(workerLocation.Latitude - mcpLocation.Latitude, 2) +
                                   Double.Pow(workerLocation.Longitude - mcpLocation.Longitude, 2));
         return cost;
@@ -85,8 +53,8 @@ public class TaskOptimizationService : ITaskOptimizationService
 
     private double CalculateCost(TaskData taskData1, TaskData taskData2)
     {
-        Coordinate mcp1Location = GetMcpCoordinateById(taskData1.McpDataId);
-        Coordinate mcp2Location = GetMcpCoordinateById(taskData2.McpDataId);
+        Coordinate mcp1Location = _helper.GetMcpCoordinateById(taskData1.McpDataId);
+        Coordinate mcp2Location = _helper.GetMcpCoordinateById(taskData2.McpDataId);
         double cost = Double.Sqrt(Double.Pow(mcp1Location.Latitude - mcp2Location.Latitude, 2) +
                                   Double.Pow(mcp1Location.Longitude - mcp2Location.Longitude, 2));
         return cost;
@@ -205,7 +173,7 @@ public class TaskOptimizationService : ITaskOptimizationService
     private List<TaskData> OptimizeRouteGen2WithDijkstra(UserProfile workerProfile)
     {
         // Get the worker taskList
-        List<TaskData> assignedTasks = GetWorkerTasksIn24Hours(workerProfile.Id);
+        List<TaskData> assignedTasks = _helper.GetWorkerTasksIn24Hours(workerProfile.Id);
         return OptimizeRouteGen2WithDijkstraList(workerProfile, ref assignedTasks).Item1;
     }
 
@@ -280,7 +248,7 @@ public class TaskOptimizationService : ITaskOptimizationService
 
     private List<TaskData> OptimizeRouteGen2WithPermutation(UserProfile workerProfile)
     {
-        List<TaskData> assignedTasks = GetWorkerTasksIn24Hours(workerProfile.Id);
+        List<TaskData> assignedTasks = _helper.GetWorkerTasksIn24Hours(workerProfile.Id);
         return OptimizeRouteGen2WithPermutationList(workerProfile, ref assignedTasks).Item1;
     }
 
@@ -292,11 +260,11 @@ public class TaskOptimizationService : ITaskOptimizationService
 
     private List<TaskData> OptimizeRouteForWorker(UserProfile workerProfile, List<bool> priority = null)
     {
-        List<TaskData> assignedTasks = GetWorkerTasksIn24Hours(workerProfile.Id);
-        List<TaskData> unassignedTasks = GetUnassignedTaskIn24Hours();
+        List<TaskData> assignedTasks = _helper.GetWorkerTasksIn24Hours(workerProfile.Id);
+        List<TaskData> unassignedTasks = _helper.GetUnassignedTaskIn24Hours();
 
-        Dictionary<int, float> mcpFillLevels = GetAllMcpFillLevels();
-        Coordinate workerLocation = GetWorkerLocation(workerProfile.Id);
+        Dictionary<int, float> mcpFillLevels = _helper.GetAllMcpFillLevels();
+        Coordinate workerLocation = _helper.GetWorkerLocation(workerProfile.Id);
 
         List<TaskData> optimizedTasks = new List<TaskData>();
 
@@ -335,7 +303,7 @@ public class TaskOptimizationService : ITaskOptimizationService
 
         return optimizedTasks;
     }
-    
+
     // Async as sorting by distance might require multi-threading?
     private async Task<List<TaskData>> SortTaskList(List<TaskData> list, RoutingOptimizationStrategy strategy)
     {
@@ -347,7 +315,7 @@ public class TaskOptimizationService : ITaskOptimizationService
             case RoutingOptimizationStrategy.ByDeadline:
                 return list.OrderBy(task => task.CompleteByTimestamp).ToList();
             case RoutingOptimizationStrategy.ByFillLevel:
-                var mcpFillLevels = GetAllMcpFillLevels();
+                var mcpFillLevels = _helper.GetAllMcpFillLevels();
                 return list.OrderByDescending(task => mcpFillLevels[task.McpDataId]).ToList();
             default:
                 throw new ArgumentOutOfRangeException(nameof(strategy), strategy, null);
@@ -398,7 +366,7 @@ public class TaskOptimizationService : ITaskOptimizationService
         // Cost: Minimize the cost of the additional task
         // Fast: Minimize the maximum travel time of any driver
 
-        List<TaskData> unassignedTasks = GetUnassignedTaskIn24Hours();
+        List<TaskData> unassignedTasks = _helper.GetUnassignedTaskIn24Hours();
         List<TaskData> sortedUnassignedTasks = new List<TaskData>();
 
         if (priority is not null && priority[0] == true)
@@ -407,7 +375,7 @@ public class TaskOptimizationService : ITaskOptimizationService
         }
         else
         {
-            Dictionary<int, float> allMcpFillLevels = GetAllMcpFillLevels();
+            Dictionary<int, float> allMcpFillLevels = _helper.GetAllMcpFillLevels();
             Dictionary<int, float> mcpFillLevels = new Dictionary<int, float>();
 
             foreach (var task in unassignedTasks)
@@ -450,14 +418,14 @@ public class TaskOptimizationService : ITaskOptimizationService
             foreach (var (workerId, workerProfile) in workerProfiles)
             {
                 if (workerProfile.UserRole != UserRole.Driver) continue;
-                if (!IsWorkerOnline(workerProfile.Id)) continue;
+                if (!_helper.IsWorkerOnline(workerProfile.Id)) continue;
 
                 // Switch case based on CostOrFast
                 // Cost: Compare delta(cost after - cost before)
                 // Fast: Compare (total time after - total time before)
 
                 // Run Dijkstra to optimize: Cost before
-                List<TaskData> tempTaskList = GetWorkerTasksIn24Hours(workerProfile.Id);
+                List<TaskData> tempTaskList = _helper.GetWorkerTasksIn24Hours(workerProfile.Id);
 
                 double costBefore = 1e9;
                 if (option)
@@ -476,7 +444,7 @@ public class TaskOptimizationService : ITaskOptimizationService
                 }
 
                 // Run Dijkstra to optimize: Cost after
-                tempTaskList = GetWorkerTasksIn24Hours(workerProfile.Id);
+                tempTaskList = _helper.GetWorkerTasksIn24Hours(workerProfile.Id);
 
 
                 TaskData trialAndError = new TaskData
@@ -602,7 +570,7 @@ public class TaskOptimizationService : ITaskOptimizationService
     // Testable
     public void DistributeTasksFromPool()
     {
-        Dictionary<int, float> mcpFillLevels = GetAllMcpFillLevels();
+        Dictionary<int, float> mcpFillLevels = _helper.GetAllMcpFillLevels();
 
         foreach (var (mcpId, mcpFillLevel) in mcpFillLevels)
         {
@@ -626,6 +594,6 @@ public class TaskOptimizationService : ITaskOptimizationService
             }
         }
 
-        DistributeTasksFromPoolGen3(GetAllWorkerProfiles(), true, true);
+        DistributeTasksFromPoolGen3(_helper.GetAllWorkerProfiles(), true, true);
     }
 }
