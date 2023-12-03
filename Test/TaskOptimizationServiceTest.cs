@@ -4,6 +4,7 @@ using Commons.Types;
 using Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Moq;
+using Newtonsoft.Json;
 using Repositories.Managers;
 using Services.Map;
 using Services.Mcps;
@@ -1375,5 +1376,19 @@ public class TaskOptimizationServiceTest
         Assert.That(worker2Tasks[1].McpDataId, Is.EqualTo(mcp3Id));
 
         #endregion
+    }
+
+    [Test]
+    public void A()
+    {
+        var coordinate1 = new Coordinate(37.78, -122.42);
+        var coordinate2 = new Coordinate(37.91, -122.45);
+        var coordinate3 = new Coordinate(37.73, -122.48);
+
+        var coordinates = new List<Coordinate>() { coordinate1, coordinate2, coordinate3 };
+
+        var result = _taskOptimizationServiceHelper.RequestMapboxMatrix(coordinates);
+
+        Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
     }
 }

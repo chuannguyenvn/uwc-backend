@@ -1,6 +1,7 @@
 ﻿using Commons.Communications.Map;
 using Commons.Models;
 using Commons.Types;
+using Newtonsoft.Json;
 using Repositories.Managers;
 using Services.Map;
 using Services.Mcps;
@@ -62,5 +63,18 @@ public class TaskOptimizationServiceHelper
     public bool IsWorkerOnline(int workerId)
     {
         return _onlineStatusService.IsAccountOnline(workerId);
+    }
+
+    private string ConstructMapboxMatrixRequest(List<Coordinate> coordinates)
+    {
+        return string.Format(Constants.MAPBOX_MATRIX_API, String.Join(';', coordinates.Select(location => location.ToStringApi())));
+    }
+
+    public MapboxMatrixResponse RequestMapboxMatrix(List<Coordinate> coordinates)
+    {
+        var client = new HttpClient();
+        var httpResponse = client.GetStringAsync(ConstructMapboxMatrixRequest(coordinates)).Result;
+        var mapboxMatrixResponse = JsonConvert.DeserializeObject<MapboxMatrixResponse>(httpResponse);
+        return mapboxMatrixResponse;
     }
 }
