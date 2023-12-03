@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace Services.Status;
 
-public class OnlineStatusService : IOnlineStatusService
+public class OnlineStatusService : IOnlineStatusService, IHostedService, IDisposable
 {
     private const int UPDATE_INTERVAL_SECONDS = 5;
     
@@ -32,6 +32,11 @@ public class OnlineStatusService : IOnlineStatusService
     public void Dispose()
     {
         _timer?.Dispose();
+    }
+
+    public bool IsAccountOnline(int accountId)
+    {
+        return BaseHub.ConnectionIds.ContainsKey(accountId);
     }
 
     private void UpdateAccountStatus(object? state)

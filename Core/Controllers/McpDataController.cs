@@ -3,7 +3,6 @@ using Services.Mcps;
 using Commons.Communications.Mcps;
 using Commons.Endpoints;
 using Commons.Types;
-using Microsoft.AspNetCore.Authorization;
 
 namespace Controllers;
 

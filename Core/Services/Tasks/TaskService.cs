@@ -4,7 +4,6 @@ using Commons.Models;
 using Commons.RequestStatuses;
 using Hubs;
 using Microsoft.AspNetCore.SignalR;
-using Newtonsoft.Json;
 using Repositories.Managers;
 using TaskStatus = Commons.Types.TaskStatus;
 
@@ -13,18 +12,18 @@ namespace Services.Tasks;
 public class TaskService : ITaskService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ITaskOptimizationService _taskOptimizationService;
     private readonly IHubContext<BaseHub> _hubContext;
 
-    public TaskService(IUnitOfWork unitOfWork, IHubContext<BaseHub> hubContext)
+    public TaskService(IUnitOfWork unitOfWork, ITaskOptimizationService taskOptimizationService, IHubContext<BaseHub> hubContext)
     {
         _unitOfWork = unitOfWork;
+        _taskOptimizationService = taskOptimizationService;
         _hubContext = hubContext;
     }
 
     public ParamRequestResult<GetTasksOfWorkerResponse> GetTasksOfWorker(GetTasksOfWorkerRequest request)
     {
-        Console.WriteLine(JsonConvert.SerializeObject(_unitOfWork.TaskDataDataRepository.GetTasksFromTodayOrFuture()));
-
         if (!_unitOfWork.AccountRepository.DoesIdExist(request.WorkerId))
             return new ParamRequestResult<GetTasksOfWorkerResponse>(new DataEntryNotFound());
 
@@ -37,31 +36,15 @@ public class TaskService : ITaskService
 
     public ParamRequestResult<GetAllTasksResponse> GetAllTasks()
     {
-        Console.WriteLine(JsonConvert.SerializeObject(_unitOfWork.TaskDataDataRepository.GetTasksFromTodayOrFuture()));
-
         return new ParamRequestResult<GetAllTasksResponse>(new Success(), new GetAllTasksResponse()
         {
             Tasks = _unitOfWork.TaskDataDataRepository.GetTasksFromTodayOrFuture(),
         });
     }
 
-    public RequestResult AddTask(AddTasksRequest request)
+    public RequestResult ProcessAddTaskRequest(AddTasksRequest request)
     {
-        foreach (var mcpDataId in request.McpDataIds)
-        {
-            var taskData = new TaskData
-            {
-                AssignerId = request.AssignerAccountId,
-                AssigneeId = request.AssigneeAccountId,
-                McpDataId = mcpDataId,
-                CreatedTimestamp = DateTime.Now,
-                CompleteByTimestamp = request.CompleteByTimestamp,
-                TaskStatus = TaskStatus.NotStarted,
-            };
-            _unitOfWork.TaskDataDataRepository.Add(taskData);
-        }
-
-        _unitOfWork.Complete();
+        _taskOptimizationService.ProcessAddTaskRequest(request);
 
         if (request.AssigneeAccountId.HasValue)
             _hubContext.Clients.Client(BaseHub.ConnectionIds[request.AssigneeAccountId.Value])
@@ -73,25 +56,55 @@ public class TaskService : ITaskService
         return new RequestResult(new Success());
     }
 
-    public RequestResult AssignWorkerToTask(AssignWorkerToTaskRequest request)
+    public void AddTaskWithWorker(int assignerId, int workerId, int mcpId, DateTime completeByTimestamp)
     {
-        if (!_unitOfWork.TaskDataDataRepository.DoesIdExist(request.TaskId)) return new RequestResult(new DataEntryNotFound());
-        if (!_unitOfWork.AccountRepository.DoesIdExist(request.WorkerId)) return new RequestResult(new DataEntryNotFound());
+        var taskData = new TaskData
+        {
+            AssignerId = assignerId,
+            AssigneeId = workerId,
+            McpDataId = mcpId,
+            CreatedTimestamp = DateTime.Now,
+            CompleteByTimestamp = completeByTimestamp,
+            TaskStatus = TaskStatus.NotStarted,
+        };
 
-        var taskData = _unitOfWork.TaskDataDataRepository.GetById(request.TaskId);
+        _unitOfWork.TaskDataDataRepository.Add(taskData);
+        _unitOfWork.Complete();
+    }
 
-        if (taskData.AssigneeId.HasValue) return new RequestResult(new DataEntryAlreadyExist());
+    public void AddTaskWithoutWorker(int assignerId, int mcpId, DateTime completeByTimestamp)
+    {
+        var taskData = new TaskData
+        {
+            AssignerId = assignerId,
+            AssigneeId = null,
+            McpDataId = mcpId,
+            CreatedTimestamp = DateTime.Now,
+            CompleteByTimestamp = completeByTimestamp,
+            TaskStatus = TaskStatus.NotStarted,
+        };
 
-        taskData.AssigneeId = request.WorkerId;
+        _unitOfWork.TaskDataDataRepository.Add(taskData);
+        _unitOfWork.Complete();
+    }
+
+    public void AssignWorkerToTask(int taskId, int workerId)
+    {
+        if (!_unitOfWork.TaskDataDataRepository.DoesIdExist(taskId)) throw new Exception("Task not found");
+        if (!_unitOfWork.AccountRepository.DoesIdExist(workerId)) throw new Exception("Worker not found");
+
+        var taskData = _unitOfWork.TaskDataDataRepository.GetById(taskId);
+
+        if (taskData.AssigneeId.HasValue) throw new Exception("Task already has a worker assigned");
+
+        taskData.AssigneeId = workerId;
         _unitOfWork.Complete();
 
-        _hubContext.Clients.Client(BaseHub.ConnectionIds[request.WorkerId])
+        _hubContext.Clients.Client(BaseHub.ConnectionIds[workerId])
             .SendAsync(HubHandlers.Tasks.ADD_TASK, new AddTasksBroadcastData
             {
-                NewTasks = _unitOfWork.TaskDataDataRepository.GetTasksByWorkerId(request.WorkerId).ToList()
+                NewTasks = _unitOfWork.TaskDataDataRepository.GetTasksByWorkerId(workerId).ToList()
             });
-
-        return new RequestResult(new Success());
     }
 
     public RequestResult FocusTask(FocusTaskRequest request)

@@ -1,4 +1,3 @@
-﻿using System.Collections.Generic;
 using Commons.Communications.Map;
 using Commons.Communications.Mcps;
 using Commons.Communications.Status;

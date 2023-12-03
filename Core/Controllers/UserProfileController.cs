@@ -1,8 +1,5 @@
-﻿using Commons.Communications.Tasks;
-using Commons.Endpoints;
-using Microsoft.AspNetCore.Authorization;
+﻿using Commons.Endpoints;
 using Microsoft.AspNetCore.Mvc;
-using Services.Tasks;
 using Services.UserProfiles;
 
 namespace Controllers;

@@ -1,5 +1,6 @@
 ﻿namespace Services.Status;
 
-public interface IOnlineStatusService : IHostedService, IDisposable
+public interface IOnlineStatusService
 {
+    public bool IsAccountOnline(int accountId);
 }

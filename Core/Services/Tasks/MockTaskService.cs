@@ -34,7 +34,7 @@ public class MockTaskService : ITaskService
             McpDataIds = new List<int>() { mcpId },
             CompleteByTimestamp = deadline,
         };
-        AddTask(addTaskRequest);
+        ProcessAddTaskRequest(addTaskRequest);
     }
 
     public void AddTaskWithoutWorker(int supervisorId, int mcpId, DateTime deadline)
@@ -46,10 +46,10 @@ public class MockTaskService : ITaskService
             McpDataIds = new List<int>() { mcpId },
             CompleteByTimestamp = deadline,
         };
-        AddTask(addTaskRequest);
+        ProcessAddTaskRequest(addTaskRequest);
     }
 
-    public RequestResult AddTask(AddTasksRequest request)
+    public RequestResult ProcessAddTaskRequest(AddTasksRequest request)
     {
         foreach (var mcpDataId in request.McpDataIds)
         {
@@ -70,20 +70,17 @@ public class MockTaskService : ITaskService
         return new RequestResult(new Success());
     }
 
-    public RequestResult AssignWorkerToTask(AssignWorkerToTaskRequest request)
+    public void AssignWorkerToTask(int taskId, int workerId)
     {
-        if (!_unitOfWork.TaskDataDataRepository.DoesIdExist(request.TaskId)) return new RequestResult(new DataEntryNotFound());
-        if (!_unitOfWork.AccountRepository.DoesIdExist(request.WorkerId)) return new RequestResult(new DataEntryNotFound());
+        if (!_unitOfWork.TaskDataDataRepository.DoesIdExist(taskId)) throw new Exception("Task not found");
+        if (!_unitOfWork.AccountRepository.DoesIdExist(workerId)) throw new Exception("Worker not found");
 
-        var taskData = _unitOfWork.TaskDataDataRepository.GetById(request.TaskId);
+        var taskData = _unitOfWork.TaskDataDataRepository.GetById(taskId);
 
-        if (taskData.AssigneeId.HasValue) return new RequestResult(new DataEntryAlreadyExist());
-        
-        taskData.AssigneeId = request.WorkerId;
-        taskData.AssigneeProfile = _unitOfWork.UserProfileRepository.GetById(request.WorkerId);
+        if (taskData.AssigneeId.HasValue) throw new Exception("Task already has a worker assigned");
+
+        taskData.AssigneeId = workerId;
         _unitOfWork.Complete();
-
-        return new RequestResult(new Success());
     }
 
     public RequestResult FocusTask(FocusTaskRequest request)

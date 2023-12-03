@@ -1,6 +1,6 @@
 ﻿namespace Commons.Types
 {
-    public enum OptimizeAutoAssignment
+    public enum AutoAssignmentOptimizationStrategy
     {
         TimeEfficient,
         CostOptimized,

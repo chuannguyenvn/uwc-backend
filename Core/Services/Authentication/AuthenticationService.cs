@@ -7,7 +7,6 @@ using Commons.Communications.Status;
 using Commons.Models;
 using Commons.RequestStatuses;
 using Commons.RequestStatuses.Authentication;
-using Commons.Types;
 using Commons.Types.SettingOptions;
 using Hubs;
 using Newtonsoft.Json;

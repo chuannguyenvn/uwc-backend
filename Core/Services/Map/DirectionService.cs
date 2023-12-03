@@ -1,4 +1,4 @@
-﻿using Commons.Communications.Map;
+using Commons.Communications.Map;
 using Commons.RequestStatuses;
 using Commons.Types;
 using Newtonsoft.Json;
@@ -8,9 +8,6 @@ namespace Services.Map;
 
 public class DirectionService : IDirectionService
 {
-    private const string MAPBOX_DIRECTION_API =
-        "https://api.mapbox.com/directions/v5/mapbox/driving-traffic/{0};{1}?geometries=geojson&steps=true&access_token=pk.eyJ1IjoiY2h1YW4tbmd1eWVudm4iLCJhIjoiY2xsYTkycjJoMGg1MjNxbGhhcW5mMzNuOCJ9.tpAt14HVH_j1IKuKxsK31A";
-
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILocationService _locationService;
 
@@ -43,7 +40,7 @@ public class DirectionService : IDirectionService
 
     private string ConstructMapboxDirectionRequest(Coordinate currentLocation, List<Coordinate> destinationLocations)
     {
-        return string.Format(MAPBOX_DIRECTION_API,
+        return string.Format(Constants.MAPBOX_DIRECTION_API,
             currentLocation.ToStringApi(),
             String.Join(';', destinationLocations.Select(location => location.ToStringApi())));
     }

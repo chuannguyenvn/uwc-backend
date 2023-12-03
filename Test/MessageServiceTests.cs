@@ -4,7 +4,6 @@ using Commons.Communications.Messages;
 using Commons.RequestStatuses;
 using Commons.RequestStatuses.Authentication;
 using Hubs;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.SignalR;
 using Moq;
 
