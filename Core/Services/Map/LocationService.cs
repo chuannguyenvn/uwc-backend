@@ -19,7 +19,7 @@ public class LocationService : ILocationService, IHostedService, IDisposable
     private readonly Dictionary<int, Coordinate> _cleanerLocationsById = new();
     public Dictionary<int, Coordinate> CleanerLocationsByAccountId => _cleanerLocationsById;
 
-    private const int REFRESH_INTERVAL = 1000;
+    private const int REFRESH_INTERVAL = 5000;
     private Timer? _locationBroadcastTimer;
 
     public LocationService(IServiceProvider serviceProvider)
@@ -49,12 +49,10 @@ public class LocationService : ILocationService, IHostedService, IDisposable
         using var scope = _serviceProvider.CreateScope();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
-        var account = unitOfWork.AccountRepository.GetById(request.AccountId);
-        var userProfile = unitOfWork.UserProfileRepository.GetById(account.UserProfileId);
-        if (userProfile.UserRole == UserRole.Driver)
-            _driverLocationsById[request.AccountId] = request.NewLocation;
-        else if (userProfile.UserRole == UserRole.Cleaner)
-            _cleanerLocationsById[request.AccountId] = request.NewLocation;
+        var userProfile = unitOfWork.UserProfileRepository.GetById(request.AccountId);
+
+        if (userProfile.UserRole == UserRole.Driver) _driverLocationsById[request.AccountId] = request.NewLocation;
+        else if (userProfile.UserRole == UserRole.Cleaner) _cleanerLocationsById[request.AccountId] = request.NewLocation;
 
         return new RequestResult(new Success());
     }

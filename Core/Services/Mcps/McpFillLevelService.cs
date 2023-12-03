@@ -94,7 +94,7 @@ public class McpFillLevelService : IMcpFillLevelService, IHostedService, IDispos
     public Task StartAsync(CancellationToken cancellationToken)
     {
         InitializeFillLevelDictionary();
-        _fillTimer = new Timer(FillMcps, null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
+        // _fillTimer = new Timer(FillMcps, null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
         _broadcastTimer = new Timer(BroadcastFillLevels, null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
         return Task.CompletedTask;
     }
@@ -105,7 +105,7 @@ public class McpFillLevelService : IMcpFillLevelService, IHostedService, IDispos
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
         foreach (var mcpData in unitOfWork.McpDataRepository.GetAll())
         {
-            _fillLevelsById.Add(mcpData.Id, 0f);
+            _fillLevelsById.Add(mcpData.Id, Random.Shared.NextSingle());
         }
     }
 

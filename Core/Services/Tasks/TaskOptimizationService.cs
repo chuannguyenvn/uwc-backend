@@ -13,6 +13,8 @@ namespace Services.Tasks;
 
 public class TaskOptimizationService : ITaskOptimizationService
 {
+    public static Dictionary<int, List<int>> TaskIdsByWorkerId = new();
+
     private readonly IUnitOfWork _unitOfWork;
     private readonly ITaskService _taskService;
     private readonly ILocationService _locationService;

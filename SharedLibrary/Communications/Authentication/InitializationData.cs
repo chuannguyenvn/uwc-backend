@@ -1,7 +1,8 @@
-﻿using Commons.Communications.Map;
+using Commons.Communications.Map;
 using Commons.Communications.Mcps;
+using Commons.Communications.Status;
 using Commons.Models;
-using SharedLibrary.Communications.OnlineStatus;
+using Commons.Types;
 
 namespace Commons.Communications.Authentication
 {

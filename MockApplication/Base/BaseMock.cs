@@ -3,6 +3,7 @@ using Commons.Communications.Mcps;
 using Commons.Communications.UserProfiles;
 using Commons.Endpoints;
 using Commons.Helpers;
+using Commons.Models;
 using Commons.Types;
 
 namespace MockApplication.Base;
@@ -13,7 +14,7 @@ public abstract class BaseMock : IHostedService
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        Task.Run(Main, cancellationToken);
+        Main();
         return Task.CompletedTask;
     }
 
@@ -106,13 +107,13 @@ public abstract class BaseMock : IHostedService
         });
     }
     
-    protected async Task<GetDirectionResponse> GetDirection(int accountId, Coordinate currentLocation, List<Coordinate> destinations)
+    protected async Task<GetDirectionResponse> GetDirection(int accountId, Coordinate currentLocation, List<int> mcpIds)
     {
         var result = await RequestHelper.Post<GetDirectionResponse>(Endpoints.Map.GetDirection, new GetDirectionRequest()
         {
             AccountId = accountId,
             CurrentLocation = currentLocation,
-            Destinations = destinations
+            McpIds = mcpIds
         });
         return result;
     }

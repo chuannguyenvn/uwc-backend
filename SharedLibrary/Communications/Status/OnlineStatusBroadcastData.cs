@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SharedLibrary.Communications.OnlineStatus
+namespace Commons.Communications.Status
 {
     public class OnlineStatusBroadcastData
     {
