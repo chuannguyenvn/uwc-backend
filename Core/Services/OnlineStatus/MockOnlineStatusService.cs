@@ -1,4 +1,4 @@
-﻿namespace Services.OnlineStatus;
+﻿namespace Services.Status;
 
 public class MockOnlineStatusService : IOnlineStatusService
 {

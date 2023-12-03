@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using Repositories.Managers;
 using Services.Map;
 using Services.Mcps;
-using Services.OnlineStatus;
+using Services.Status;
 using Services.Tasks;
 
 namespace Test;
