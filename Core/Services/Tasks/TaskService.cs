@@ -4,7 +4,6 @@ using Commons.Models;
 using Commons.RequestStatuses;
 using Hubs;
 using Microsoft.AspNetCore.SignalR;
-using Newtonsoft.Json;
 using Repositories.Managers;
 using TaskStatus = Commons.Types.TaskStatus;
 

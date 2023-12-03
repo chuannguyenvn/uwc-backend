@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace Helpers;
+﻿namespace Helpers;
 
 public class Utilities
 {

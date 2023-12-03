@@ -1,6 +1,5 @@
 ﻿using Commons.Communications.Mcps;
 using Commons.Endpoints;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Mcps;
 

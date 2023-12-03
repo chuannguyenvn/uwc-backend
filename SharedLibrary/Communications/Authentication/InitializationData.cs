@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using Commons.Communications.Map;
+﻿using Commons.Communications.Map;
 using Commons.Communications.Mcps;
 using Commons.Models;
-using Commons.Types;
 using SharedLibrary.Communications.OnlineStatus;
 
 namespace Commons.Communications.Authentication
