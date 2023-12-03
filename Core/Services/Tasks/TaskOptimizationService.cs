@@ -7,6 +7,7 @@ using Commons.Types;
 using Repositories.Managers;
 using Services.Map;
 using Services.Mcps;
+using Services.OnlineStatus;
 
 namespace Services.Tasks;
 
@@ -16,6 +17,7 @@ public class TaskOptimizationService : ITaskOptimizationService
     private readonly ITaskService _taskService;
     private readonly ILocationService _locationService;
     private readonly IMcpFillLevelService _mcpFillLevelService;
+    private readonly IOnlineStatusService _onlineStatusService;
 
     private const float FILL_LEVEL_ASSIGNMENT_THRESHOLD = 0.85f;
 
@@ -23,12 +25,13 @@ public class TaskOptimizationService : ITaskOptimizationService
     private const int AUTO_DISTRIBUTION_INTERVAL_SECONDS = 10;
 
     public TaskOptimizationService(IUnitOfWork unitOfWork, ITaskService taskService, ILocationService locationService,
-        IMcpFillLevelService mcpFillLevelService)
+        IMcpFillLevelService mcpFillLevelService, IOnlineStatusService onlineStatusService)
     {
         _unitOfWork = unitOfWork;
         _taskService = taskService;
         _locationService = locationService;
         _mcpFillLevelService = mcpFillLevelService;
+        _onlineStatusService = onlineStatusService;
     }
 
     // --------------------------------------------------- HELPER FUNCTIONS --------------------------------------------
@@ -63,6 +66,11 @@ public class TaskOptimizationService : ITaskOptimizationService
     private Dictionary<int, UserProfile> GetAllWorkerProfiles()
     {
         return _unitOfWork.UserProfileRepository.GetAllWorkers().ToDictionary(workerProfile => workerProfile.Id);
+    }
+
+    private bool IsWorkerOnline(int workerId)
+    {
+        return _onlineStatusService.IsAccountOnline(workerId);
     }
 
     // -------------------------------------------- GEN 1 --------------------------------------------------------------
@@ -431,10 +439,8 @@ public class TaskOptimizationService : ITaskOptimizationService
         {
             foreach (var (workerId, workerProfile) in workerProfiles)
             {
-                if (workerProfile.UserRole != UserRole.Driver)
-                {
-                    continue;
-                }
+                if (workerProfile.UserRole != UserRole.Driver) continue;
+                if (!IsWorkerOnline(workerProfile.Id)) continue;
 
                 // Switch case based on CostOrFast
                 // Cost: Compare delta(cost after - cost before)
