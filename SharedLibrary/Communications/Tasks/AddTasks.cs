@@ -11,8 +11,8 @@ namespace Commons.Communications.Tasks
         public int? AssigneeAccountId { get; set; }
         public List<int> McpDataIds { get; set; }
         public DateTime CompleteByTimestamp { get; set; }
-        public OptimizeRouting OptimizeRouting { get; set; }
-        public OptimizeAutoAssignment OptimizeAutoAssignment { get; set; }
+        public RoutingOptimizationScope RoutingOptimizationScope { get; set; }
+        public AutoAssignmentOptimizationStrategy AutoAssignmentOptimizationStrategy { get; set; }
     }
 
     public class AddTasksBroadcastData

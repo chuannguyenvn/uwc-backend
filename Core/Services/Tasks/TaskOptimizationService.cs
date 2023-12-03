@@ -196,7 +196,7 @@ public class TaskOptimizationService : ITaskOptimizationService
 
             result.Add(copiedAssignedTasks[index - 1]);
             visited[index] = true;
-            totalCost = totalCost + cost;
+            totalCost += cost;
         }
 
         return Tuple.Create(result, totalCost);
@@ -523,23 +523,29 @@ public class TaskOptimizationService : ITaskOptimizationService
 
     public void ProcessAddTaskRequest(AddTasksRequest request)
     {
-        if (request.OptimizeRouting == OptimizeRouting.None)
+        if (request.RoutingOptimizationScope == RoutingOptimizationScope.None)
         {
-            // GEN 1
+            // Supervisor specified not to optimize anything
+            // => GEN 1
         }
         else
         {
             if (request.AssigneeAccountId != null)
             {
-                // GEN 2
+                // Supervisor specified to optimize something, and provide a worker to assign to
+                // => GEN 2
             }
             else
             {
-                // GEN 3
+                // Supervisor specified to optimize something, but did not provide a worker to assign to
+                // => GEN 3
             }
         }
     }
 
+    // ------------------------------------ GEN 4: ADD TASKS TO POOL ---------------------------------------------------
+
+    // Supervisor use this to toggle the auto task distribution feature
     public void ToggleAutoTaskDistribution(bool isOn)
     {
         if (isOn)
@@ -552,12 +558,15 @@ public class TaskOptimizationService : ITaskOptimizationService
         }
     }
 
-    // ------------------------------------ GEN 4: ADD TASKS TO POOL ---------------------------------------------------
+    // This method run one optimization attempt every few seconds
+    // Not testable
     private void Automation(object? state = null)
     {
         DistributeTasksFromPool();
     }
 
+    // A single optimization attempt
+    // Testable
     public void DistributeTasksFromPool()
     {
         Dictionary<int, float> mcpFillLevels = GetAllMcpFillLevels();

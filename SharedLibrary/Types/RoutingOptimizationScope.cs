@@ -1,6 +1,6 @@
 ﻿namespace Commons.Types
 {
-    public enum OptimizeRouting
+    public enum RoutingOptimizationScope
     {
         None,
         Selected,
