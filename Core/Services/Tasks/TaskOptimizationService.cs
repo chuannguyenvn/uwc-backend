@@ -38,8 +38,6 @@ public class TaskOptimizationService : ITaskOptimizationService
         _helper = new TaskOptimizationServiceHelper(unitOfWork, taskService, locationService, mcpFillLevelService, onlineStatusService);
     }
 
-    // --------------------------------------------------- HELPER FUNCTIONS --------------------------------------------
-  
 
     // --------------------------------------- GEN2 WITH DIJKSTRA ALGORITHM --------------------------------------------
     private double CalculateCost(UserProfile workerProfile, TaskData taskData)
@@ -528,6 +526,14 @@ public class TaskOptimizationService : ITaskOptimizationService
         {
             // Supervisor specified not to optimize anything
             // => GEN 1
+
+            // Impossible
+            if (request.AssigneeAccountId == null) throw new Exception("AssigneeAccountId cannot be null");
+            
+            foreach (var mcpDataId in request.McpDataIds)
+            {
+                _taskService.AddTaskWithWorker(request.AssignerAccountId, request.AssigneeAccountId.Value, mcpDataId, request.CompleteByTimestamp);
+            }
         }
         else
         {
@@ -535,11 +541,15 @@ public class TaskOptimizationService : ITaskOptimizationService
             {
                 // Supervisor specified to optimize something, and provide a worker to assign to
                 // => GEN 2
+                
+                // TODO
             }
             else
             {
                 // Supervisor specified to optimize something, but did not provide a worker to assign to
                 // => GEN 3
+                
+                // TODO
             }
         }
     }
