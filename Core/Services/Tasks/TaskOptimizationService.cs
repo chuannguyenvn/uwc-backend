@@ -8,6 +8,7 @@ using Repositories.Managers;
 using Services.Map;
 using Services.Mcps;
 using Services.OnlineStatus;
+using TaskStatus = Commons.Types.TaskStatus;
 
 namespace Services.Tasks;
 
@@ -71,29 +72,6 @@ public class TaskOptimizationService : ITaskOptimizationService
     private bool IsWorkerOnline(int workerId)
     {
         return _onlineStatusService.IsAccountOnline(workerId);
-    }
-
-    // -------------------------------------------- GEN 1 --------------------------------------------------------------
-    public void AssignWorkerToTask(TaskData taskData, int workerId)
-    {
-        Dictionary<int, UserProfile> workerProfiles = GetAllWorkerProfiles();
-        foreach (var (userId, workerProfile) in workerProfiles)
-        {
-            if (workerProfile.UserRole != UserRole.Driver) continue;
-
-            List<TaskData> workerTask = GetWorkerTasksIn24Hours(userId);
-
-            for (int index = 0; index < workerTask.Count; index++)
-            {
-                if (workerTask[index].McpDataId == taskData.McpDataId) return;
-            }
-        }
-
-        _taskService.AssignWorkerToTask(new AssignWorkerToTaskRequest
-        {
-            TaskId = taskData.Id,
-            WorkerId = workerId
-        });
     }
 
     // --------------------------------------- GEN2 WITH DIJKSTRA ALGORITHM --------------------------------------------
@@ -383,7 +361,7 @@ public class TaskOptimizationService : ITaskOptimizationService
     // --------------------------- GEN3: TASK DISTRIBUTION FROM THE COMMON POOL ----------------------------------------
     // Maybe - refactor: Code is longer than 150 lines
     public List<List<TaskData>> DistributeTasksFromPoolGen3(Dictionary<int, UserProfile> workerProfiles, bool costOrFast = true, bool option = true,
-        List<bool> priority = null, bool stopAutomation = true)
+        List<bool> priority = null)
     {
         // Cost: Minimize the cost of the additional task
         // Fast: Minimize the maximum travel time of any driver
@@ -527,7 +505,7 @@ public class TaskOptimizationService : ITaskOptimizationService
 
                     if (index == workerId)
                     {
-                        AssignWorkerToTask(sortedUnassignedTasks[i], index);
+                        _taskService.AssignWorkerToTask(sortedUnassignedTasks[i].Id, index);
                         break;
                     }
                 }
@@ -543,7 +521,6 @@ public class TaskOptimizationService : ITaskOptimizationService
 
         return result;
     }
-
 
     public void ProcessAddTaskRequest(AddTasksRequest request)
     {
@@ -570,10 +547,14 @@ public class TaskOptimizationService : ITaskOptimizationService
         {
             _autoDistributionTimer = new Timer(Automation, null, 0, AUTO_DISTRIBUTION_INTERVAL_SECONDS);
         }
+        else
+        {
+            _autoDistributionTimer?.Dispose();
+        }
     }
 
     // ------------------------------------ GEN 4: ADD TASKS TO POOL ---------------------------------------------------
-    public void Automation(object? state = null)
+    private void Automation(object? state = null)
     {
         DistributeTasksFromPool();
     }
@@ -600,11 +581,10 @@ public class TaskOptimizationService : ITaskOptimizationService
                     McpDataIds = new List<int>() { mcpId },
                     CompleteByTimestamp = DateTime.Now.AddHours(1),
                 };
-                _taskService.AddTask(addTaskRequest);
+                _taskService.ProcessAddTaskRequest(addTaskRequest);
             }
         }
 
-        List<List<TaskData>> optimizedTaskListForAllWorkers =
-            DistributeTasksFromPoolGen3(GetAllWorkerProfiles(), true, true, stopAutomation: false);
+        DistributeTasksFromPoolGen3(GetAllWorkerProfiles(), true, true);
     }
 }

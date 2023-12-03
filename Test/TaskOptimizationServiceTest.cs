@@ -39,71 +39,6 @@ public class TaskOptimizationServiceTest
 
     // ------------------------------------------ GEN 1 TESTCASE -------------------------------------------------------
     [Test]
-    public void Test_TaskAlreadyAssigned()
-    {
-        // Worker 1 is assigned to Mcp1
-        // Worker 2 is assigned to Mcp1
-        // => Only worker 1 is assigned to avoid unwanted duplication
-
-        #region Arrange
-
-        // The supervisor's Id
-        int supervisorId = 1;
-
-        // The workers' Id
-        int worker1Id = 11;
-        int worker2Id = 12;
-
-        // The Mcps' Id
-        int mcpId = 1;
-
-        // Start with a clean state (no pre-made tasks)
-        _mockUnitOfWork.TaskDataDataRepository.RemoveAll();
-
-        // Set the worker's location
-        _mockLocationService.UpdateLocation(worker1Id, new Coordinate(10.77, 106.65));
-
-        // Set the mcp locations
-        _mockUnitOfWork.McpDataRepository.GetById(mcpId).Coordinate = _routeOptimizationService.GetMcpCoordinateById(mcpId);
-
-        // Set the mcp fill levels
-        _mockMcpFillLevelService.SetFillLevel(mcpId, 0.15f);
-
-        // Tasks count before distribution 
-        int tasksCountBeforeWorker1 = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker1Id).Count;
-        int tasksCountBeforeWorker2 = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker2Id).Count;
-
-        // Assign task to worker
-        _mockTaskService.AddTaskWithoutWorker(supervisorId, mcpId, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithoutWorker(supervisorId, mcpId, DateTime.Now.AddHours(1));
-
-        #endregion
-
-
-        #region Act
-
-        List<TaskData> unassignedTasks = _routeOptimizationService.GetUnassignedTaskIn24Hours();
-
-        #endregion
-
-
-        #region Assert
-
-        Assert.That(unassignedTasks.Count, Is.EqualTo(2));
-        _routeOptimizationService.AssignWorkerToTask(unassignedTasks[0], worker1Id);
-        _routeOptimizationService.AssignWorkerToTask(unassignedTasks[1], worker2Id);
-
-        List<TaskData> worker1Tasks = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker1Id);
-        Assert.That(worker1Tasks.Count, Is.EqualTo(tasksCountBeforeWorker1 + 1));
-        Assert.That(worker1Tasks[0].McpDataId, Is.EqualTo(mcpId)); // The first worker must get the task
-
-        List<TaskData> worker2Tasks = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker2Id);
-        Assert.That(worker2Tasks.Count, Is.EqualTo(tasksCountBeforeWorker2)); // The second worker must not get the task
-
-        #endregion
-    }
-
-    [Test]
     public void Test_TaskNormalAssignment()
     {
         // Worker 1 is assigned to Mcp1
@@ -158,8 +93,8 @@ public class TaskOptimizationServiceTest
         #region Assert
 
         Assert.That(unassignedTasks.Count, Is.EqualTo(2));
-        _routeOptimizationService.AssignWorkerToTask(unassignedTasks[0], worker1Id);
-        _routeOptimizationService.AssignWorkerToTask(unassignedTasks[1], worker2Id);
+        _mockTaskService.AssignWorkerToTask(unassignedTasks[0].Id, worker1Id);
+        _mockTaskService.AssignWorkerToTask(unassignedTasks[1].Id, worker2Id);
 
         List<TaskData> worker1Tasks = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker1Id);
         Assert.That(worker1Tasks.Count, Is.EqualTo(tasksCountBeforeWorker1 + 1));
