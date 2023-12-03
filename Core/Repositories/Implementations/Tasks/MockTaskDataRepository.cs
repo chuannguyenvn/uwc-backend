@@ -32,10 +32,6 @@ public class MockTaskDataRepository : MockGenericRepository<TaskData>, ITaskData
         {
             entity.AssignerId = entity.AssignerProfile.Id;
         }
-        else
-        {
-            throw new Exception("AssignerId and AssignerProfile cannot both be null");
-        }
 
         if (entity.McpDataId != 0)
         {
@@ -87,5 +83,10 @@ public class MockTaskDataRepository : MockGenericRepository<TaskData>, ITaskData
     public void RemoveAllTasksOfWorker(int workerId)
     {
         Context.TaskDataTable.RemoveAll(task => task.AssigneeId == workerId);
+    }
+
+    public int GetMaxTaskGroupId()
+    {
+        return Context.TaskDataTable.Max(task => task.GroupId ?? 0);
     }
 }

@@ -1,9 +1,9 @@
 using Commons.Categories;
-using Commons.Communications.Map;
-using Commons.Communications.Mcps;
 using Commons.Communications.Tasks;
 using Commons.Models;
 using Commons.Types;
+using Hubs;
+using Microsoft.AspNetCore.SignalR;
 using Repositories.Managers;
 using Services.Map;
 using Services.Mcps;
@@ -13,14 +13,6 @@ namespace Services.Tasks;
 
 public class TaskOptimizationService : ITaskOptimizationService
 {
-    public static Dictionary<int, List<int>> TaskIdsByWorkerId = new();
-
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly ITaskService _taskService;
-    private readonly ILocationService _locationService;
-    private readonly IMcpFillLevelService _mcpFillLevelService;
-    private readonly IOnlineStatusService _onlineStatusService;
-
     private readonly TaskOptimizationServiceHelper _helper;
 
     private const float FILL_LEVEL_ASSIGNMENT_THRESHOLD = 0.85f;
@@ -28,18 +20,11 @@ public class TaskOptimizationService : ITaskOptimizationService
     private Timer? _autoDistributionTimer;
     private const int AUTO_DISTRIBUTION_INTERVAL_SECONDS = 10;
 
-    public TaskOptimizationService(IUnitOfWork unitOfWork, ITaskService taskService, ILocationService locationService,
+    public TaskOptimizationService(IUnitOfWork unitOfWork, IHubContext<BaseHub> hubContext, ILocationService locationService,
         IMcpFillLevelService mcpFillLevelService, IOnlineStatusService onlineStatusService)
     {
-        _unitOfWork = unitOfWork;
-        _taskService = taskService;
-        _locationService = locationService;
-        _mcpFillLevelService = mcpFillLevelService;
-        _onlineStatusService = onlineStatusService;
-
-        _helper = new TaskOptimizationServiceHelper(unitOfWork, taskService, locationService, mcpFillLevelService, onlineStatusService);
+        _helper = new TaskOptimizationServiceHelper(unitOfWork, hubContext, locationService, mcpFillLevelService, onlineStatusService);
     }
-
 
     // --------------------------------------- GEN2 WITH DIJKSTRA ALGORITHM --------------------------------------------
     private double CalculateCost(UserProfile workerProfile, TaskData taskData)
@@ -367,6 +352,16 @@ public class TaskOptimizationService : ITaskOptimizationService
         // Fast: Minimize the maximum travel time of any driver
 
         List<TaskData> unassignedTasks = _helper.GetUnassignedTaskIn24Hours();
+        
+        // Thoải mái, nó k có group
+        List<TaskData> unassignedTasksWithNoGroup = unassignedTasks.Where(task => task.GroupId == null).ToList();
+        
+        // Cẩn thận, mỗi group là 1 list.
+        // Access bằng unassignedTaskGroups[groupId]
+        // Traverse bằng foreach (var (groupId, taskList) in unassignedTaskGroups)
+        Dictionary<int, List<TaskData>> unassignedTaskGroups = unassignedTasks.Where(task => task.GroupId != null).GroupBy(task => task.GroupId)
+            .ToDictionary(group => group.Key.Value, group => group.ToList());
+
         List<TaskData> sortedUnassignedTasks = new List<TaskData>();
 
         if (priority is not null && priority[0] == true)
@@ -505,7 +500,7 @@ public class TaskOptimizationService : ITaskOptimizationService
 
                     if (index == workerId)
                     {
-                        _taskService.AssignWorkerToTask(sortedUnassignedTasks[i].Id, index);
+                        _helper.AssignWorkerToTask(sortedUnassignedTasks[i].Id, index);
                         break;
                     }
                 }
@@ -527,30 +522,53 @@ public class TaskOptimizationService : ITaskOptimizationService
         if (request.RoutingOptimizationScope == RoutingOptimizationScope.None)
         {
             // Supervisor specified not to optimize anything
-            // => GEN 1
+            // => GEN 1 (done)
 
             // Impossible
             if (request.AssigneeAccountId == null) throw new Exception("AssigneeAccountId cannot be null");
-            
-            foreach (var mcpDataId in request.McpDataIds)
+
+            var supervisorId = request.AssignerAccountId;
+            var workerId = request.AssigneeAccountId.Value;
+            var mcpIds = request.McpDataIds;
+            var completeByTimestamp = request.CompleteByTimestamp;
+
+            _helper.AddTasksWithWorker(supervisorId, workerId, mcpIds, completeByTimestamp, true);
+        }
+        else if (request.RoutingOptimizationScope == RoutingOptimizationScope.Selected)
+        {
+            // Selected => Do not xé lẻ tùm lum
+            if (request.AssigneeAccountId != null)
             {
-                _taskService.AddTaskWithWorker(request.AssignerAccountId, request.AssigneeAccountId.Value, mcpDataId, request.CompleteByTimestamp);
+                // Supervisor specified to optimize something, and provide a worker to assign to
+                // => GEN 2 (grouped)
+
+                // TODO
+            }
+            else
+            {
+                // When distributing these tasks, make sure all of them end up with the same worker,
+                // and the tasks are grouped together
+
+                // Supervisor specified to optimize something, but did not provide a worker to assign to
+                // => GEN 3 (grouped)
+
+                // TODO
             }
         }
-        else
+        else // All
         {
             if (request.AssigneeAccountId != null)
             {
                 // Supervisor specified to optimize something, and provide a worker to assign to
-                // => GEN 2
-                
+                // => GEN 2 (ungrouped)
+
                 // TODO
             }
             else
             {
                 // Supervisor specified to optimize something, but did not provide a worker to assign to
-                // => GEN 3
-                
+                // => GEN 3 (ungrouped)
+
                 // TODO
             }
         }
@@ -588,21 +606,9 @@ public class TaskOptimizationService : ITaskOptimizationService
         {
             if (mcpFillLevel >= FILL_LEVEL_ASSIGNMENT_THRESHOLD)
             {
-                SetFillLevelRequest mcpSetFillLevel = new SetFillLevelRequest
-                {
-                    McpId = mcpId,
-                    FillLevel = mcpFillLevel - 0.01f
-                };
-                _mcpFillLevelService.SetFillLevel(mcpSetFillLevel);
-
-                var addTaskRequest = new AddTasksRequest
-                {
-                    AssignerAccountId = 1,
-                    AssigneeAccountId = null,
-                    McpDataIds = new List<int>() { mcpId },
-                    CompleteByTimestamp = DateTime.Now.AddHours(1),
-                };
-                _taskService.ProcessAddTaskRequest(addTaskRequest);
+                // assignerId = 0 => system assigned
+                // TODO: Must do something dynamic about completeByTimestamp (can't just add 1 hour)
+                _helper.AddTasksWithoutWorker(0, new() { mcpId }, DateTime.Now.AddHours(1), false);
             }
         }
 

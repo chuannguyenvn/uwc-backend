@@ -18,7 +18,6 @@ public class TaskOptimizationServiceTest
     private readonly Mock<IHubContext<BaseHub>> _mockBaseHub = new();
 
     private MockUnitOfWork _mockUnitOfWork;
-    private MockTaskService _mockTaskService;
     private MockMcpFillLevelService _mockMcpFillLevelService;
     private MockLocationService _mockLocationService;
     private MockOnlineStatusService _mockOnlineStatusService;
@@ -31,11 +30,10 @@ public class TaskOptimizationServiceTest
         _mockBaseHub.Setup(mock => mock.Clients.Client(It.IsAny<string>()).SendCoreAsync(It.IsAny<string>(), It.IsAny<object[]>(), default));
 
         _mockUnitOfWork = new MockUnitOfWork();
-        _mockTaskService = new MockTaskService(_mockUnitOfWork);
         _mockMcpFillLevelService = new MockMcpFillLevelService(_mockUnitOfWork);
         _mockLocationService = new MockLocationService(_mockUnitOfWork);
         _mockOnlineStatusService = new MockOnlineStatusService();
-        _taskOptimizationService = new TaskOptimizationService(_mockUnitOfWork, _mockTaskService, _mockLocationService, _mockMcpFillLevelService,
+        _taskOptimizationService = new TaskOptimizationService(_mockUnitOfWork, _mockBaseHub.Object, _mockLocationService, _mockMcpFillLevelService,
             _mockOnlineStatusService);
 
         _taskOptimizationServiceHelper =
@@ -79,8 +77,8 @@ public class TaskOptimizationServiceTest
         int tasksCountBeforeWorker2 = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker2Id).Count;
 
         // Assign task to worker
-        _mockTaskService.AddTaskWithoutWorker(supervisorId, mcp1Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithoutWorker(supervisorId, mcp2Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithoutWorker(supervisorId, mcp1Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithoutWorker(supervisorId, mcp2Id, DateTime.Now.AddHours(1));
 
         #endregion
 
@@ -95,8 +93,8 @@ public class TaskOptimizationServiceTest
         #region Assert
 
         Assert.That(unassignedTasks.Count, Is.EqualTo(2));
-        _mockTaskService.AssignWorkerToTask(unassignedTasks[0].Id, worker1Id);
-        _mockTaskService.AssignWorkerToTask(unassignedTasks[1].Id, worker2Id);
+        _taskOptimizationServiceHelper.AssignWorkerToTask(unassignedTasks[0].Id, worker1Id);
+        _taskOptimizationServiceHelper.AssignWorkerToTask(unassignedTasks[1].Id, worker2Id);
 
         List<TaskData> worker1Tasks = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker1Id);
         Assert.That(worker1Tasks.Count, Is.EqualTo(tasksCountBeforeWorker1 + 1));
@@ -152,11 +150,11 @@ public class TaskOptimizationServiceTest
         _mockMcpFillLevelService.SetFillLevel(mcp5Id, 0.47f);
 
         // Assign task to worker
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp1Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp2Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp3Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp4Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp5Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp1Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp2Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp3Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp4Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp5Id, DateTime.Now.AddHours(1));
 
         #endregion
 
@@ -225,11 +223,11 @@ public class TaskOptimizationServiceTest
         _mockMcpFillLevelService.SetFillLevel(mcp5Id, 0.47f);
 
         // Assign task to worker
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp1Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp2Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp3Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp4Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp5Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp1Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp2Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp3Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp4Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp5Id, DateTime.Now.AddHours(1));
 
         #endregion
 
@@ -296,11 +294,11 @@ public class TaskOptimizationServiceTest
         _mockMcpFillLevelService.SetFillLevel(mcp5Id, 0.47f);
 
         // Assign task to worker
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp1Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp2Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp3Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp4Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp5Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp1Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp2Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp3Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp4Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp5Id, DateTime.Now.AddHours(1));
 
         #endregion
 
@@ -386,11 +384,11 @@ public class TaskOptimizationServiceTest
         _mockMcpFillLevelService.SetFillLevel(mcp5Id, 0.47f);
 
         // Assign task to worker
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp1Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp2Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp3Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp4Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp5Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp1Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp2Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp3Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp4Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp5Id, DateTime.Now.AddHours(1));
 
         #endregion
 
@@ -449,9 +447,9 @@ public class TaskOptimizationServiceTest
         _mockMcpFillLevelService.SetFillLevel(mcp3Id, 0.15f);
 
         // Assign task to worker
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp1Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp2Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp3Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp1Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp2Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp3Id, DateTime.Now.AddHours(1));
 
         #endregion
 
@@ -508,10 +506,10 @@ public class TaskOptimizationServiceTest
         _mockMcpFillLevelService.SetFillLevel(mcp2Id, 0.9f);
 
         // Task with a nearly full mcp
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp1Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp1Id, DateTime.Now.AddHours(1));
 
         // Task with an empty mcp
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp2Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp2Id, DateTime.Now.AddHours(1));
 
         #endregion
 
@@ -572,10 +570,10 @@ public class TaskOptimizationServiceTest
         _mockMcpFillLevelService.SetFillLevel(mcp2Id, 0.5f);
 
         // Task with later deadline
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp1Id, DateTime.Now.AddHours(10)); // Later deadline
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp1Id, DateTime.Now.AddHours(10)); // Later deadline
 
         // Task with earlier deadline
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp2Id, DateTime.Now.AddHours(1)); // Earlier deadline
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp2Id, DateTime.Now.AddHours(1)); // Earlier deadline
 
         #endregion
 
@@ -639,9 +637,9 @@ public class TaskOptimizationServiceTest
         _mockMcpFillLevelService.SetFillLevel(mcp3Id, 0.4f);
 
         // Set deadline for tasks
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp1Id, DateTime.Now.AddHours(10));
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp2Id, DateTime.Now.AddHours(2));
-        _mockTaskService.AddTaskWithWorker(supervisorId, workerId, mcp3Id, DateTime.Now.AddHours(2));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp1Id, DateTime.Now.AddHours(10));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp2Id, DateTime.Now.AddHours(2));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, workerId, mcp3Id, DateTime.Now.AddHours(2));
 
         #endregion
 
@@ -705,7 +703,7 @@ public class TaskOptimizationServiceTest
         _mockMcpFillLevelService.SetFillLevel(mcp1Id, 0.9f);
 
         // Set deadline for tasks
-        _mockTaskService.AddTaskWithoutWorker(supervisorId, mcp1Id, DateTime.Now.AddHours(10));
+        _taskOptimizationServiceHelper.AddTaskWithoutWorker(supervisorId, mcp1Id, DateTime.Now.AddHours(10));
 
         #endregion
 
@@ -780,8 +778,8 @@ public class TaskOptimizationServiceTest
         _mockMcpFillLevelService.SetFillLevel(mcp1Id, 0.7f);
 
         // Assign task to worker
-        _mockTaskService.AddTaskWithWorker(supervisorId, worker1Id, mcp1Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithoutWorker(supervisorId, mcp2Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, worker1Id, mcp1Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithoutWorker(supervisorId, mcp2Id, DateTime.Now.AddHours(1));
 
         // Tasks count before distribution of worker 2 (worker 1 has no tasks)
         int tasksCountBeforeWorker1 = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker1Id).Count;
@@ -862,8 +860,8 @@ public class TaskOptimizationServiceTest
         _mockMcpFillLevelService.SetFillLevel(mcp1Id, 0.7f);
 
         // Assign task to worker
-        _mockTaskService.AddTaskWithWorker(supervisorId, worker1Id, mcp1Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithoutWorker(supervisorId, mcp2Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, worker1Id, mcp1Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithoutWorker(supervisorId, mcp2Id, DateTime.Now.AddHours(1));
 
         // Tasks count before distribution of worker 2 (worker 1 has no tasks)
         int tasksCountBeforeWorker1 = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker1Id).Count;
@@ -944,9 +942,9 @@ public class TaskOptimizationServiceTest
         _mockMcpFillLevelService.SetFillLevel(mcp3Id, 0.5f);
 
         // Assign task to worker
-        _mockTaskService.AddTaskWithWorker(supervisorId, worker1Id, mcp1Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithWorker(supervisorId, worker2Id, mcp2Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithoutWorker(supervisorId, mcp3Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, worker1Id, mcp1Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, worker2Id, mcp2Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithoutWorker(supervisorId, mcp3Id, DateTime.Now.AddHours(1));
 
         // Tasks count before distribution of worker 2 (worker 1 has no tasks)
         int tasksCountBeforeWorker1 = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker1Id).Count;
@@ -1032,10 +1030,10 @@ public class TaskOptimizationServiceTest
         _mockMcpFillLevelService.SetFillLevel(mcp4Id, 0.5f);
 
         // Assign task to worker
-        _mockTaskService.AddTaskWithWorker(supervisorId, worker1Id, mcp1Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithWorker(supervisorId, worker1Id, mcp4Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithWorker(supervisorId, worker2Id, mcp2Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithoutWorker(supervisorId, mcp3Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, worker1Id, mcp1Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, worker1Id, mcp4Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, worker2Id, mcp2Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithoutWorker(supervisorId, mcp3Id, DateTime.Now.AddHours(1));
 
         // Tasks count before distribution of worker 2 (worker 1 has no tasks)
         int tasksCountBeforeWorker1 = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker1Id).Count;
@@ -1117,9 +1115,9 @@ public class TaskOptimizationServiceTest
         _mockMcpFillLevelService.SetFillLevel(mcp3Id, 0.5f);
 
         // Assign task to worker
-        _mockTaskService.AddTaskWithWorker(supervisorId, worker1Id, mcp1Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithWorker(supervisorId, worker1Id, mcp2Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithoutWorker(supervisorId, mcp3Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, worker1Id, mcp1Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, worker1Id, mcp2Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithoutWorker(supervisorId, mcp3Id, DateTime.Now.AddHours(1));
 
         // Tasks count before distribution of worker 2 (worker 1 has no tasks)
         int tasksCountBeforeWorker1 = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker1Id).Count;
@@ -1198,9 +1196,9 @@ public class TaskOptimizationServiceTest
         _mockMcpFillLevelService.SetFillLevel(mcp3Id, 0.5f);
 
         // Assign task to worker
-        _mockTaskService.AddTaskWithWorker(supervisorId, worker1Id, mcp1Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithWorker(supervisorId, worker1Id, mcp2Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithoutWorker(supervisorId, mcp3Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, worker1Id, mcp1Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithWorker(supervisorId, worker1Id, mcp2Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithoutWorker(supervisorId, mcp3Id, DateTime.Now.AddHours(1));
 
         // Tasks count before distribution of worker 2 (worker 1 has no tasks)
         int tasksCountBeforeWorker1 = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker1Id).Count;
@@ -1274,9 +1272,9 @@ public class TaskOptimizationServiceTest
         _mockMcpFillLevelService.SetFillLevel(mcp3Id, 0.5f);
 
         // Assign task to worker
-        _mockTaskService.AddTaskWithoutWorker(supervisorId, mcp1Id, DateTime.Now.AddHours(1));
-        _mockTaskService.AddTaskWithoutWorker(supervisorId, mcp2Id, DateTime.Now.AddHours(5));
-        _mockTaskService.AddTaskWithoutWorker(supervisorId, mcp3Id, DateTime.Now.AddHours(2));
+        _taskOptimizationServiceHelper.AddTaskWithoutWorker(supervisorId, mcp1Id, DateTime.Now.AddHours(1));
+        _taskOptimizationServiceHelper.AddTaskWithoutWorker(supervisorId, mcp2Id, DateTime.Now.AddHours(5));
+        _taskOptimizationServiceHelper.AddTaskWithoutWorker(supervisorId, mcp3Id, DateTime.Now.AddHours(2));
 
         // Tasks count before distribution of worker 2 (worker 1 has no tasks)
         int tasksCountBeforeWorker1 = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(worker1Id).Count;

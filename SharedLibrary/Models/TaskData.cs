@@ -14,6 +14,8 @@ namespace Commons.Models
         public int McpDataId { get; set; }
         public McpData McpData { get; set; }
 
+        public int? GroupId { get; set; }
+
         public DateTime CreatedTimestamp { get; set; } = DateTime.Now;
         public DateTime CompleteByTimestamp { get; set; }
         public DateTime LastStatusChangeTimestamp { get; set; } = DateTime.Now;
