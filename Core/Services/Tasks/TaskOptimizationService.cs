@@ -16,9 +16,11 @@ public class TaskOptimizationService : ITaskOptimizationService
     private readonly ITaskService _taskService;
     private readonly ILocationService _locationService;
     private readonly IMcpFillLevelService _mcpFillLevelService;
-    
-    private int routeGen = 1;
-    float threshold = 0.85f;
+
+    private const float FILL_LEVEL_ASSIGNMENT_THRESHOLD = 0.85f;
+
+    private Timer? _autoDistributionTimer;
+    private const int AUTO_DISTRIBUTION_INTERVAL_SECONDS = 10;
 
     public TaskOptimizationService(IUnitOfWork unitOfWork, ITaskService taskService, ILocationService locationService,
         IMcpFillLevelService mcpFillLevelService)
@@ -78,7 +80,7 @@ public class TaskOptimizationService : ITaskOptimizationService
                 if (workerTask[index].McpDataId == taskData.McpDataId) return;
             }
         }
-        
+
         _taskService.AssignWorkerToTask(new AssignWorkerToTaskRequest
         {
             TaskId = taskData.Id,
@@ -91,7 +93,8 @@ public class TaskOptimizationService : ITaskOptimizationService
     {
         Coordinate workerLocation = GetWorkerLocation(workerProfile.Id);
         Coordinate mcpLocation = GetMcpCoordinateById(taskData.McpDataId);
-        double cost = Double.Sqrt(Double.Pow(workerLocation.Latitude - mcpLocation.Latitude, 2) + Double.Pow(workerLocation.Longitude - mcpLocation.Longitude, 2));
+        double cost = Double.Sqrt(Double.Pow(workerLocation.Latitude - mcpLocation.Latitude, 2) +
+                                  Double.Pow(workerLocation.Longitude - mcpLocation.Longitude, 2));
         return cost;
     }
 
@@ -99,7 +102,8 @@ public class TaskOptimizationService : ITaskOptimizationService
     {
         Coordinate mcp1Location = GetMcpCoordinateById(taskData1.McpDataId);
         Coordinate mcp2Location = GetMcpCoordinateById(taskData2.McpDataId);
-        double cost = Double.Sqrt(Double.Pow(mcp1Location.Latitude - mcp2Location.Latitude, 2) + Double.Pow(mcp1Location.Longitude - mcp2Location.Longitude, 2));
+        double cost = Double.Sqrt(Double.Pow(mcp1Location.Latitude - mcp2Location.Latitude, 2) +
+                                  Double.Pow(mcp1Location.Longitude - mcp2Location.Longitude, 2));
         return cost;
     }
 
@@ -128,6 +132,7 @@ public class TaskOptimizationService : ITaskOptimizationService
             graph[0].Add((index + 1, cost));
             graph[index + 1].Add((0, cost));
         }
+
         for (int i = 0; i < assignedTasks.Count - 1; i++)
         {
             for (int j = i + 1; j < assignedTasks.Count; j++)
@@ -137,7 +142,7 @@ public class TaskOptimizationService : ITaskOptimizationService
                 graph[j + 1].Add((i + 1, cost));
             }
         }
-        
+
         // Dijkstra to optimize
         dist[start] = 0;
 
@@ -145,7 +150,7 @@ public class TaskOptimizationService : ITaskOptimizationService
         {
             (int loc, double cost) = pq.Min;
             pq.Remove((loc, cost));
-            
+
             foreach ((int neighbor, double neighborCost) in graph[loc])
             {
                 if (cost + neighborCost < dist[neighbor])
@@ -156,6 +161,7 @@ public class TaskOptimizationService : ITaskOptimizationService
                 }
             }
         }
+
         // Reorder the task list and return the optimized list
         List<(TaskData, double)> combined = new List<(TaskData, double)>();
 
@@ -163,9 +169,10 @@ public class TaskOptimizationService : ITaskOptimizationService
         {
             combined.Add((assignedTasks[i], dist[i + 1]));
         }
+
         combined.Sort((a, b) => a.Item2.CompareTo((b.Item2)));
         List<TaskData> sortedTaskList = combined.Select(pair => pair.Item1).ToList();
-        
+
         return dist;
     }
 
@@ -175,15 +182,15 @@ public class TaskOptimizationService : ITaskOptimizationService
 
         // Run the optimization algorithm, passing the assigned Task list as reference
         List<TaskData> result = new List<TaskData>();
-        
+
         // Create the visited list to avoid edge case and sinkhole (if happens)
         List<bool> visited = new List<bool>(assignedTasks.Count + 1);
-        for(int i = 0; i < assignedTasks.Count + 1; i++) visited.Add(false);
+        for (int i = 0; i < assignedTasks.Count + 1; i++) visited.Add(false);
         visited[0] = true;
-        
+
         int index = 0;
         double totalCost = 0;
-        
+
         for (int i = 0; i < assignedTasks.Count; i++)
         {
             List<TaskData> cloneAssignedTasks = copiedAssignedTasks;
@@ -192,7 +199,7 @@ public class TaskOptimizationService : ITaskOptimizationService
 
             assignedTasks = cloneAssignedTasks;
             List<double> dist = Dijkstra(workerProfile, assignedTasks, start);
-            
+
             for (int j = 0; j < dist.Count; j++)
             {
                 if (cost > dist[j] && visited[j] is false)
@@ -201,21 +208,22 @@ public class TaskOptimizationService : ITaskOptimizationService
                     index = j;
                 }
             }
-            
+
             result.Add(copiedAssignedTasks[index - 1]);
             visited[index] = true;
             totalCost = totalCost + cost;
         }
+
         return Tuple.Create(result, totalCost);
     }
-    
+
     private List<TaskData> OptimizeRouteGen2WithDijkstra(UserProfile workerProfile)
     {
         // Get the worker taskList
         List<TaskData> assignedTasks = GetWorkerTasksIn24Hours(workerProfile.Id);
         return OptimizeRouteGen2WithDijkstraList(workerProfile, ref assignedTasks).Item1;
     }
-    
+
     // ----------------------------------- GEN2 WITH PERMUTATION SOLUTION ----------------------------------------------
     private double TotalDistance(UserProfile workerProfile, List<TaskData> dataList)
     {
@@ -245,7 +253,7 @@ public class TaskOptimizationService : ITaskOptimizationService
                 var temp = list[index];
                 list[index] = list[i];
                 list[i] = temp;
-                
+
                 Recurse(index + 1);
 
                 temp = list[index];
@@ -253,7 +261,7 @@ public class TaskOptimizationService : ITaskOptimizationService
                 list[i] = temp;
             }
         }
-        
+
         Recurse(0);
         return result;
     }
@@ -281,22 +289,22 @@ public class TaskOptimizationService : ITaskOptimizationService
         {
             totalCost = 0;
         }
-        
+
         return Tuple.Create(minCostPermutation, totalCost);
     }
-    
+
     private List<TaskData> OptimizeRouteGen2WithPermutation(UserProfile workerProfile)
     {
         List<TaskData> assignedTasks = GetWorkerTasksIn24Hours(workerProfile.Id);
         return OptimizeRouteGen2WithPermutationList(workerProfile, ref assignedTasks).Item1;
     }
-    
+
     // ------------------------------------ GEN 2 PRIORITY HANDLING ----------------------------------------------------
     public List<TaskData> OptimizeRouteForWorker(UserProfile workerProfile)
     {
         return new List<TaskData>();
     }
-    
+
     private List<TaskData> OptimizeRouteForWorker(UserProfile workerProfile, List<bool> priority = null)
     {
         List<TaskData> assignedTasks = GetWorkerTasksIn24Hours(workerProfile.Id);
@@ -306,7 +314,7 @@ public class TaskOptimizationService : ITaskOptimizationService
         Coordinate workerLocation = GetWorkerLocation(workerProfile.Id);
 
         List<TaskData> optimizedTasks = new List<TaskData>();
-        
+
         // Example: Sort tasks by fill level of mcp and deadline
         if (priority[0] is true && priority[1] is true)
         {
@@ -324,7 +332,7 @@ public class TaskOptimizationService : ITaskOptimizationService
                 optimizedTasks = assignedTasks.OrderByDescending(task => mcpFillLevels[task.McpDataId]).ToList();
             }
         }
-        
+
         return optimizedTasks;
     }
 
@@ -333,7 +341,7 @@ public class TaskOptimizationService : ITaskOptimizationService
     {
         // Priority[0] => deadline prioritization
         // Priority[1] => fill level prioritization
-        routeGen = 2;
+
         // No priority --> use distance as normal
         if (priority is null)
         {
@@ -344,8 +352,9 @@ public class TaskOptimizationService : ITaskOptimizationService
             else
             {
                 return OptimizeRouteGen2WithPermutation(workerProfile);
-            }    
+            }
         }
+
         if (priority[0] is false && priority[1] is false)
         {
             if (option)
@@ -355,24 +364,21 @@ public class TaskOptimizationService : ITaskOptimizationService
             else
             {
                 return OptimizeRouteGen2WithPermutation(workerProfile);
-            }            
+            }
         }
         else
         {
             return OptimizeRouteForWorker(workerProfile, priority);
         }
     }
-    
+
     // --------------------------- GEN3: TASK DISTRIBUTION FROM THE COMMON POOL ----------------------------------------
     // Maybe - refactor: Code is longer than 150 lines
-    public List<List<TaskData>> DistributeTasksFromPoolGen3(Dictionary<int, UserProfile> workerProfiles, bool costOrFast = true, bool option = true, List<bool> priority = null, bool stopAutomation = true)
+    public List<List<TaskData>> DistributeTasksFromPoolGen3(Dictionary<int, UserProfile> workerProfiles, bool costOrFast = true, bool option = true,
+        List<bool> priority = null, bool stopAutomation = true)
     {
         // Cost: Minimize the cost of the additional task
         // Fast: Minimize the maximum travel time of any driver
-        if (stopAutomation is true)
-        {
-            routeGen = 3;
-        }
 
         List<TaskData> unassignedTasks = GetUnassignedTaskIn24Hours();
         List<TaskData> sortedUnassignedTasks = new List<TaskData>();
@@ -385,7 +391,7 @@ public class TaskOptimizationService : ITaskOptimizationService
         {
             Dictionary<int, float> allMcpFillLevels = GetAllMcpFillLevels();
             Dictionary<int, float> mcpFillLevels = new Dictionary<int, float>();
-        
+
             foreach (var task in unassignedTasks)
             {
                 int mcpDataId = task.McpDataId;
@@ -409,15 +415,15 @@ public class TaskOptimizationService : ITaskOptimizationService
             {
                 combined.Add((unassignedTasks[idx], mcpFillLevels[unassignedTasks[idx].McpDataId]));
             }
-        
+
             combined.Sort((a, b) => b.Item2.CompareTo((a.Item2)));
             sortedUnassignedTasks = combined.Select(pair => pair.Item1).ToList();
         }
-        
+
         // Distribute task from the pool to either
         // 1. Minimize the additional cost of the task
         // 2. Minimize the maximal travel time of any worker
-        
+
         double minMaxCost = 1e9;
         int index = 0;
 
@@ -425,83 +431,83 @@ public class TaskOptimizationService : ITaskOptimizationService
         {
             foreach (var (workerId, workerProfile) in workerProfiles)
             {
-                 if (workerProfile.UserRole != UserRole.Driver)
-                 {
-                     continue;
-                 }
-                 
-                 // Switch case based on CostOrFast
-                 // Cost: Compare delta(cost after - cost before)
-                 // Fast: Compare (total time after - total time before)
-            
-                 // Run Dijkstra to optimize: Cost before
-                 List<TaskData> tempTaskList = GetWorkerTasksIn24Hours(workerProfile.Id);
-                 
-                 double costBefore = 1e9;
-                 if (option)
-                 {
-                     Tuple<List<TaskData>, double> optimizedTempTaskList =
-                         OptimizeRouteGen2WithDijkstraList(workerProfile, ref tempTaskList);
+                if (workerProfile.UserRole != UserRole.Driver)
+                {
+                    continue;
+                }
 
-                     costBefore = optimizedTempTaskList.Item2;
-                 }
-                 else
-                 {
-                     Tuple<List<TaskData>, double> optimizedTempTaskList =
-                         OptimizeRouteGen2WithPermutationList(workerProfile, ref tempTaskList);
+                // Switch case based on CostOrFast
+                // Cost: Compare delta(cost after - cost before)
+                // Fast: Compare (total time after - total time before)
 
-                     costBefore = optimizedTempTaskList.Item2;
-                 }
-                 
-                 // Run Dijkstra to optimize: Cost after
-                 tempTaskList = GetWorkerTasksIn24Hours(workerProfile.Id);
-                 
-                 
-                 TaskData trialAndError = new TaskData
-                 {
-                     AssigneeId = workerProfile.Id,
-                     AssigneeProfile = workerProfile,
-                     McpDataId = sortedUnassignedTasks[i].McpDataId,
-                     CreatedTimestamp = DateTime.Now,
-                     CompleteByTimestamp = DateTime.Now.AddHours(1)
-                 };
-                 tempTaskList.Add(trialAndError);
+                // Run Dijkstra to optimize: Cost before
+                List<TaskData> tempTaskList = GetWorkerTasksIn24Hours(workerProfile.Id);
 
-                 double costAfter = 1e9;
-                 if (option)
-                 {
-                     Tuple<List<TaskData>, double> optimizedTempTaskList =
-                         OptimizeRouteGen2WithDijkstraList(workerProfile, ref tempTaskList);
+                double costBefore = 1e9;
+                if (option)
+                {
+                    Tuple<List<TaskData>, double> optimizedTempTaskList =
+                        OptimizeRouteGen2WithDijkstraList(workerProfile, ref tempTaskList);
 
-                     costAfter = optimizedTempTaskList.Item2;
-                 }
-                 else
-                 {
-                     Tuple<List<TaskData>, double> optimizedTempTaskList =
-                         OptimizeRouteGen2WithPermutationList(workerProfile, ref tempTaskList);
+                    costBefore = optimizedTempTaskList.Item2;
+                }
+                else
+                {
+                    Tuple<List<TaskData>, double> optimizedTempTaskList =
+                        OptimizeRouteGen2WithPermutationList(workerProfile, ref tempTaskList);
 
-                     costAfter = optimizedTempTaskList.Item2;
-                 }
+                    costBefore = optimizedTempTaskList.Item2;
+                }
 
-                 if (costOrFast)
-                 {
-                     double deltaCost = costAfter - costBefore;
-                     
-                     if (deltaCost < minMaxCost)
-                     {
-                         minMaxCost = deltaCost;
-                         index = workerId;
-                     }
-                 }
-                 else
-                 {
-                     double totalCost = costAfter;
-                     if (totalCost < minMaxCost)
-                     {
-                         minMaxCost = totalCost;
-                         index = workerId;
-                     }
-                 }
+                // Run Dijkstra to optimize: Cost after
+                tempTaskList = GetWorkerTasksIn24Hours(workerProfile.Id);
+
+
+                TaskData trialAndError = new TaskData
+                {
+                    AssigneeId = workerProfile.Id,
+                    AssigneeProfile = workerProfile,
+                    McpDataId = sortedUnassignedTasks[i].McpDataId,
+                    CreatedTimestamp = DateTime.Now,
+                    CompleteByTimestamp = DateTime.Now.AddHours(1)
+                };
+                tempTaskList.Add(trialAndError);
+
+                double costAfter = 1e9;
+                if (option)
+                {
+                    Tuple<List<TaskData>, double> optimizedTempTaskList =
+                        OptimizeRouteGen2WithDijkstraList(workerProfile, ref tempTaskList);
+
+                    costAfter = optimizedTempTaskList.Item2;
+                }
+                else
+                {
+                    Tuple<List<TaskData>, double> optimizedTempTaskList =
+                        OptimizeRouteGen2WithPermutationList(workerProfile, ref tempTaskList);
+
+                    costAfter = optimizedTempTaskList.Item2;
+                }
+
+                if (costOrFast)
+                {
+                    double deltaCost = costAfter - costBefore;
+
+                    if (deltaCost < minMaxCost)
+                    {
+                        minMaxCost = deltaCost;
+                        index = workerId;
+                    }
+                }
+                else
+                {
+                    double totalCost = costAfter;
+                    if (totalCost < minMaxCost)
+                    {
+                        minMaxCost = totalCost;
+                        index = workerId;
+                    }
+                }
             }
 
             if (index != 0)
@@ -512,6 +518,7 @@ public class TaskOptimizationService : ITaskOptimizationService
                     {
                         continue;
                     }
+
                     if (index == workerId)
                     {
                         AssignWorkerToTask(sortedUnassignedTasks[i], index);
@@ -523,7 +530,7 @@ public class TaskOptimizationService : ITaskOptimizationService
 
         List<List<TaskData>> result = new List<List<TaskData>>();
         foreach (var (workerId, workerProfile) in workerProfiles)
-        { 
+        {
             List<TaskData> optimizedTaskList = OptimizeRouteGen2(workerProfile, option);
             result.Add(optimizedTaskList);
         }
@@ -531,78 +538,67 @@ public class TaskOptimizationService : ITaskOptimizationService
         return result;
     }
 
-    public void DistributeTasksFromPool()
+
+    public void ProcessAddTaskRequest(AddTasksRequest request)
     {
-    }
-    
-    // ------------------------------------ GEN 4: ADD TASKS TO POOL ---------------------------------------------------
-    private bool ShouldContinueAutomation()
-    {
-        if (routeGen == 4)
+        if (request.OptimizeRouting == OptimizeRouting.None)
         {
-            return true;
+            // GEN 1
         }
         else
         {
-            return false;
+            if (request.AssigneeAccountId != null)
+            {
+                // GEN 2
+            }
+            else
+            {
+                // GEN 3
+            }
         }
     }
-    
-    public void Automation(Dictionary<int, UserProfile> workerProfiles = null)
-    {
-        routeGen = 4;
-        
-        while (true)
-        {
-            Dictionary<int, float> mcpFillLevels = GetAllMcpFillLevels();
-            bool assign = false;
-            
-            foreach (var (mcpId, mcpFillLevel) in mcpFillLevels)
-            {
-                if (mcpFillLevel >= threshold)
-                {
-                    // Assign task
-                    assign = true;
-                    
-                    SetFillLevelRequest mcpSetFillLevel = new SetFillLevelRequest
-                    {
-                        McpId = mcpId,
-                        FillLevel = mcpFillLevel - 0.01f
-                    };
-                    _mcpFillLevelService.SetFillLevel(mcpSetFillLevel);
-                    
-                    var addTaskRequest = new AddTasksRequest
-                    {
-                        AssignerAccountId = 1,
-                        AssigneeAccountId = null,
-                        McpDataIds = new List<int>() { mcpId },
-                        CompleteByTimestamp = DateTime.Now.AddHours(1),
-                    };
-                    _taskService.AddTask(addTaskRequest);
-                }
-            }
 
-            if (workerProfiles is null)
-            {
-                workerProfiles = GetAllWorkerProfiles();
-            }
-            List<List<TaskData>> optimizedTaskListForAllWorkers = DistributeTasksFromPoolGen3(workerProfiles, true, true, stopAutomation:false);
-            
-            // 1. I need to return the optimizedTaskListForAllWorkers back to the server
-            // Because the automation here just add tasks and have not optimized.
-            
-            // 2. I should use multi-threaded programming to evaluate whether I should stop the automation or not.
-            if (assign is false)
-            {
-                break;
-            }
-            
-            if (!ShouldContinueAutomation())
-            {
-                break;
-            }
-            
-            Thread.Sleep(10);
+    public void ToggleAutoTaskDistribution(bool isOn)
+    {
+        if (isOn)
+        {
+            _autoDistributionTimer = new Timer(Automation, null, 0, AUTO_DISTRIBUTION_INTERVAL_SECONDS);
         }
+    }
+
+    // ------------------------------------ GEN 4: ADD TASKS TO POOL ---------------------------------------------------
+    public void Automation(object? state = null)
+    {
+        DistributeTasksFromPool();
+    }
+
+    public void DistributeTasksFromPool()
+    {
+        Dictionary<int, float> mcpFillLevels = GetAllMcpFillLevels();
+
+        foreach (var (mcpId, mcpFillLevel) in mcpFillLevels)
+        {
+            if (mcpFillLevel >= FILL_LEVEL_ASSIGNMENT_THRESHOLD)
+            {
+                SetFillLevelRequest mcpSetFillLevel = new SetFillLevelRequest
+                {
+                    McpId = mcpId,
+                    FillLevel = mcpFillLevel - 0.01f
+                };
+                _mcpFillLevelService.SetFillLevel(mcpSetFillLevel);
+
+                var addTaskRequest = new AddTasksRequest
+                {
+                    AssignerAccountId = 1,
+                    AssigneeAccountId = null,
+                    McpDataIds = new List<int>() { mcpId },
+                    CompleteByTimestamp = DateTime.Now.AddHours(1),
+                };
+                _taskService.AddTask(addTaskRequest);
+            }
+        }
+
+        List<List<TaskData>> optimizedTaskListForAllWorkers =
+            DistributeTasksFromPoolGen3(GetAllWorkerProfiles(), true, true, stopAutomation: false);
     }
 }

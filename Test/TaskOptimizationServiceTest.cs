@@ -1377,12 +1377,8 @@ public class TaskOptimizationServiceTest
 
         
         #region Act
-
-        Dictionary<int, UserProfile> workerProfiles = new Dictionary<int, UserProfile>();
-        workerProfiles.Add(worker1Id, _mockUnitOfWork.UserProfileRepository.GetById(worker1Id));
-        workerProfiles.Add(worker2Id, _mockUnitOfWork.UserProfileRepository.GetById(worker2Id));
         
-        _routeOptimizationService.Automation(workerProfiles);
+        _routeOptimizationService.DistributeTasksFromPool();
 
         #endregion
         

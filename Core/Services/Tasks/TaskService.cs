@@ -13,18 +13,18 @@ namespace Services.Tasks;
 public class TaskService : ITaskService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly ITaskOptimizationService _taskOptimizationService;
     private readonly IHubContext<BaseHub> _hubContext;
 
-    public TaskService(IUnitOfWork unitOfWork, IHubContext<BaseHub> hubContext)
+    public TaskService(IUnitOfWork unitOfWork, ITaskOptimizationService taskOptimizationService, IHubContext<BaseHub> hubContext)
     {
         _unitOfWork = unitOfWork;
+        _taskOptimizationService = taskOptimizationService;
         _hubContext = hubContext;
     }
 
     public ParamRequestResult<GetTasksOfWorkerResponse> GetTasksOfWorker(GetTasksOfWorkerRequest request)
     {
-        Console.WriteLine(JsonConvert.SerializeObject(_unitOfWork.TaskDataDataRepository.GetTasksFromTodayOrFuture()));
-
         if (!_unitOfWork.AccountRepository.DoesIdExist(request.WorkerId))
             return new ParamRequestResult<GetTasksOfWorkerResponse>(new DataEntryNotFound());
 
@@ -37,8 +37,6 @@ public class TaskService : ITaskService
 
     public ParamRequestResult<GetAllTasksResponse> GetAllTasks()
     {
-        Console.WriteLine(JsonConvert.SerializeObject(_unitOfWork.TaskDataDataRepository.GetTasksFromTodayOrFuture()));
-
         return new ParamRequestResult<GetAllTasksResponse>(new Success(), new GetAllTasksResponse()
         {
             Tasks = _unitOfWork.TaskDataDataRepository.GetTasksFromTodayOrFuture(),
