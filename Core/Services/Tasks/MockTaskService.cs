@@ -34,7 +34,7 @@ public class MockTaskService : ITaskService
             McpDataIds = new List<int>() { mcpId },
             CompleteByTimestamp = deadline,
         };
-        ProcessAddTaskRequest(addTaskRequest);
+        AddTask(addTaskRequest);
     }
 
     public void AddTaskWithoutWorker(int supervisorId, int mcpId, DateTime deadline)
@@ -46,10 +46,10 @@ public class MockTaskService : ITaskService
             McpDataIds = new List<int>() { mcpId },
             CompleteByTimestamp = deadline,
         };
-        ProcessAddTaskRequest(addTaskRequest);
+        AddTask(addTaskRequest);
     }
 
-    public RequestResult ProcessAddTaskRequest(AddTasksRequest request)
+    public RequestResult AddTask(AddTasksRequest request)
     {
         foreach (var mcpDataId in request.McpDataIds)
         {

@@ -1,27 +1,32 @@
 ﻿using Commons.Communications.Map;
+using Commons.Communications.Tasks;
+using Commons.HubHandlers;
 using Commons.Models;
 using Commons.Types;
+using Hubs;
+using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using Repositories.Managers;
 using Services.Map;
 using Services.Mcps;
 using Services.Status;
+using TaskStatus = Commons.Types.TaskStatus;
 
 namespace Services.Tasks;
 
 public class TaskOptimizationServiceHelper
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly ITaskService _taskService;
+    private readonly IHubContext<BaseHub> _hubContext;
     private readonly ILocationService _locationService;
     private readonly IMcpFillLevelService _mcpFillLevelService;
     private readonly IOnlineStatusService _onlineStatusService;
 
-    public TaskOptimizationServiceHelper(IUnitOfWork unitOfWork, ITaskService taskService, ILocationService locationService,
+    public TaskOptimizationServiceHelper(IUnitOfWork unitOfWork, IHubContext<BaseHub> hubContext, ILocationService locationService,
         IMcpFillLevelService mcpFillLevelService, IOnlineStatusService onlineStatusService)
     {
         _unitOfWork = unitOfWork;
-        _taskService = taskService;
+        _hubContext = hubContext;
         _locationService = locationService;
         _mcpFillLevelService = mcpFillLevelService;
         _onlineStatusService = onlineStatusService;
@@ -76,5 +81,68 @@ public class TaskOptimizationServiceHelper
         var httpResponse = client.GetStringAsync(ConstructMapboxMatrixRequest(coordinates)).Result;
         var mapboxMatrixResponse = JsonConvert.DeserializeObject<MapboxMatrixResponse>(httpResponse);
         return mapboxMatrixResponse;
+    }
+
+    public void AddTaskWithWorker(int assignerId, int workerId, int mcpId, DateTime completeByTimestamp)
+    {
+        var taskData = new TaskData
+        {
+            AssignerId = assignerId,
+            AssigneeId = workerId,
+            McpDataId = mcpId,
+            CreatedTimestamp = DateTime.Now,
+            CompleteByTimestamp = completeByTimestamp,
+            TaskStatus = TaskStatus.NotStarted,
+        };
+
+        _unitOfWork.TaskDataDataRepository.Add(taskData);
+        _unitOfWork.Complete();
+
+        if (BaseHub.ConnectionIds.TryGetValue(workerId, out var connectionId))
+        {
+            _hubContext.Clients.Client(connectionId)
+                .SendAsync(HubHandlers.Tasks.ADD_TASK, new AddTasksBroadcastData
+                {
+                    NewTasks = _unitOfWork.TaskDataDataRepository.GetTasksByWorkerId(workerId).ToList()
+                });
+        }
+    }
+
+    public void AddTaskWithoutWorker(int assignerId, int mcpId, DateTime completeByTimestamp)
+    {
+        var taskData = new TaskData
+        {
+            AssignerId = assignerId,
+            AssigneeId = null,
+            McpDataId = mcpId,
+            CreatedTimestamp = DateTime.Now,
+            CompleteByTimestamp = completeByTimestamp,
+            TaskStatus = TaskStatus.NotStarted,
+        };
+
+        _unitOfWork.TaskDataDataRepository.Add(taskData);
+        _unitOfWork.Complete();
+    }
+
+    public void AssignWorkerToTask(int taskId, int workerId)
+    {
+        if (!_unitOfWork.TaskDataDataRepository.DoesIdExist(taskId)) throw new Exception("Task not found");
+        if (!_unitOfWork.AccountRepository.DoesIdExist(workerId)) throw new Exception("Worker not found");
+
+        var taskData = _unitOfWork.TaskDataDataRepository.GetById(taskId);
+
+        if (taskData.AssigneeId.HasValue) throw new Exception("Task already has a worker assigned");
+
+        taskData.AssigneeId = workerId;
+        _unitOfWork.Complete();
+
+        if (BaseHub.ConnectionIds.TryGetValue(workerId, out var connectionId))
+        {
+            _hubContext.Clients.Client(connectionId)
+                .SendAsync(HubHandlers.Tasks.ADD_TASK, new AddTasksBroadcastData
+                {
+                    NewTasks = _unitOfWork.TaskDataDataRepository.GetTasksByWorkerId(workerId).ToList()
+                });
+        }
     }
 }

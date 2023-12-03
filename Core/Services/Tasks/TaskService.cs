@@ -42,10 +42,10 @@ public class TaskService : ITaskService
         });
     }
 
-    public RequestResult ProcessAddTaskRequest(AddTasksRequest request)
+    public RequestResult AddTask(AddTasksRequest request)
     {
         _taskOptimizationService.ProcessAddTaskRequest(request);
-
+        
         if (request.AssigneeAccountId.HasValue)
             _hubContext.Clients.Client(BaseHub.ConnectionIds[request.AssigneeAccountId.Value])
                 .SendAsync(HubHandlers.Tasks.ADD_TASK, new AddTasksBroadcastData
@@ -54,57 +54,6 @@ public class TaskService : ITaskService
                 });
 
         return new RequestResult(new Success());
-    }
-
-    public void AddTaskWithWorker(int assignerId, int workerId, int mcpId, DateTime completeByTimestamp)
-    {
-        var taskData = new TaskData
-        {
-            AssignerId = assignerId,
-            AssigneeId = workerId,
-            McpDataId = mcpId,
-            CreatedTimestamp = DateTime.Now,
-            CompleteByTimestamp = completeByTimestamp,
-            TaskStatus = TaskStatus.NotStarted,
-        };
-
-        _unitOfWork.TaskDataDataRepository.Add(taskData);
-        _unitOfWork.Complete();
-    }
-
-    public void AddTaskWithoutWorker(int assignerId, int mcpId, DateTime completeByTimestamp)
-    {
-        var taskData = new TaskData
-        {
-            AssignerId = assignerId,
-            AssigneeId = null,
-            McpDataId = mcpId,
-            CreatedTimestamp = DateTime.Now,
-            CompleteByTimestamp = completeByTimestamp,
-            TaskStatus = TaskStatus.NotStarted,
-        };
-
-        _unitOfWork.TaskDataDataRepository.Add(taskData);
-        _unitOfWork.Complete();
-    }
-
-    public void AssignWorkerToTask(int taskId, int workerId)
-    {
-        if (!_unitOfWork.TaskDataDataRepository.DoesIdExist(taskId)) throw new Exception("Task not found");
-        if (!_unitOfWork.AccountRepository.DoesIdExist(workerId)) throw new Exception("Worker not found");
-
-        var taskData = _unitOfWork.TaskDataDataRepository.GetById(taskId);
-
-        if (taskData.AssigneeId.HasValue) throw new Exception("Task already has a worker assigned");
-
-        taskData.AssigneeId = workerId;
-        _unitOfWork.Complete();
-
-        _hubContext.Clients.Client(BaseHub.ConnectionIds[workerId])
-            .SendAsync(HubHandlers.Tasks.ADD_TASK, new AddTasksBroadcastData
-            {
-                NewTasks = _unitOfWork.TaskDataDataRepository.GetTasksByWorkerId(workerId).ToList()
-            });
     }
 
     public RequestResult FocusTask(FocusTaskRequest request)

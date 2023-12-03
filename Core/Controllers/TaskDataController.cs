@@ -35,7 +35,7 @@ public class TaskDataController : Controller
     [HttpPost(Endpoints.TaskData.ADD_TASK)]
     public IActionResult AddTask(AddTasksRequest request)
     {
-        var result = _taskService.ProcessAddTaskRequest(request);
+        var result = _taskService.AddTask(request);
         return ProcessRequestResult(result);
     }
 
