@@ -8,6 +8,7 @@ namespace Commons.Types
         [JsonProperty("name")] public string Name { get; set; }
 
         [JsonProperty("location")] public List<double> Location { get; set; }
+        public Coordinate Coordinate => new Coordinate(Location[1], Location[0]);
 
         [JsonProperty("distance")] public float Distance { get; set; }
     }
@@ -28,6 +29,7 @@ namespace Commons.Types
         [JsonProperty("name")] public string Name { get; set; }
 
         [JsonProperty("location")] public List<double> Location { get; set; }
+        public Coordinate Coordinate => new Coordinate(Location[1], Location[0]);
 
         [JsonProperty("distance")] public float Distance { get; set; }
     }
