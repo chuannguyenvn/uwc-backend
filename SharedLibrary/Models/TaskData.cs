@@ -14,6 +14,10 @@ namespace Commons.Models
         public int McpDataId { get; set; }
         public McpData McpData { get; set; }
 
+        /// <summary>
+        /// Lower number means higher priority
+        /// </summary>
+        public int Priority { get; set; }
         public int? GroupId { get; set; }
 
         public DateTime CreatedTimestamp { get; set; } = DateTime.Now;
