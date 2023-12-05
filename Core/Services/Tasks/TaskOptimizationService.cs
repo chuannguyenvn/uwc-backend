@@ -729,6 +729,7 @@ public class TaskOptimizationService : ITaskOptimizationService
                     if (mcpIds[index] == taskPriority[j].McpDataId)
                     {
                         taskPriority[j].Priority = taskPriority.Count - mcpIds.Count + index;
+                        _helper.UpdatePriority(taskPriority[j].Id, taskPriority.Count - mcpIds.Count + index);
                     }
                 }
             }
@@ -751,10 +752,11 @@ public class TaskOptimizationService : ITaskOptimizationService
                 Dictionary<int, UserProfile> workerProfiles = _helper.GetAllWorkerProfiles();
                 UserProfile workerProfile = workerProfiles[workerId];
                 var res = OptimizeRouteGen2WithSelectedPermutation(workerProfile);
-
+                
                 for (int index = 0; index < res.Item1.Count; index++)
                 {
                     res.Item1[index].Priority = index;
+                    _helper.UpdatePriority(res.Item1[index].Id, index);
                 }
             }
             else
@@ -808,6 +810,7 @@ public class TaskOptimizationService : ITaskOptimizationService
                     for (int index = 0; index < res.Count; index++)
                     {
                         res[index].Priority = index;
+                        _helper.UpdatePriority(res[index].Id, index);
                     }
                 }
                 else
@@ -817,6 +820,7 @@ public class TaskOptimizationService : ITaskOptimizationService
                     for (int index = 0; index < res.Item1.Count; index++)
                     {
                         res.Item1[index].Priority = index;
+                        _helper.UpdatePriority(res.Item1[index].Id, index);
                     }
                 }
                 
