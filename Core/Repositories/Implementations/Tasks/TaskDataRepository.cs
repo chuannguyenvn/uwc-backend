@@ -6,9 +6,9 @@ using TaskStatus = Commons.Types.TaskStatus;
 
 namespace Repositories.Implementations.Tasks;
 
-public class TaskDataDataRepository : GenericRepository<TaskData>, ITaskDataRepository
+public class TaskDataRepository : GenericRepository<TaskData>, ITaskDataRepository
 {
-    public TaskDataDataRepository(UwcDbContext context) : base(context)
+    public TaskDataRepository(UwcDbContext context) : base(context)
     {
     }
 
@@ -28,7 +28,7 @@ public class TaskDataDataRepository : GenericRepository<TaskData>, ITaskDataRepo
     public List<TaskData> GetWorkerRemainingTasksIn24Hours(int workerId)
     {
         return Context.TaskDataTable.Where(task =>
-                task.AssigneeId == workerId && DateTime.Now.AddHours(24) >= task.CompleteByTimestamp && task.TaskStatus != TaskStatus.Completed)
+                task.AssigneeId == workerId && DateTime.Now.AddHours(24) >= task.CompleteByTimestamp && task.TaskStatus == TaskStatus.NotStarted)
             .Include(task => task.McpData)
             .Include(task => task.AssigneeProfile)
             .Include(task => task.AssignerProfile).ToList();
@@ -37,7 +37,7 @@ public class TaskDataDataRepository : GenericRepository<TaskData>, ITaskDataRepo
     public List<TaskData> GetUnassignedTasksIn24Hours()
     {
         return Context.TaskDataTable.Where(task =>
-                task.AssigneeId == null && DateTime.Now.AddHours(24) >= task.CompleteByTimestamp && task.TaskStatus != TaskStatus.Completed)
+                task.AssigneeId == null && DateTime.Now.AddHours(24) >= task.CompleteByTimestamp && task.TaskStatus == TaskStatus.NotStarted)
             .Include(task => task.McpData)
             .Include(task => task.AssigneeProfile)
             .Include(task => task.AssignerProfile).ToList();
