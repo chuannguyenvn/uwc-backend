@@ -128,4 +128,21 @@ public abstract class BaseMock : IHostedService
             });
         return result;
     }
+
+    protected async Task FocusTask(int workerId, int taskId)
+    {
+        await RequestHelper.Post(Endpoints.TaskData.FocusTask, new FocusTaskRequest()
+        {
+            WorkerId = workerId,
+            TaskId = taskId
+        });
+    }
+
+    protected async Task CompleteTask(int workerId, int taskId)
+    {
+        await RequestHelper.Post(Endpoints.TaskData.CompleteTask, new CompleteTaskRequest()
+        {
+            TaskId = taskId
+        });
+    }
 }

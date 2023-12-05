@@ -7,6 +7,7 @@ namespace MockApplication.WorkerActivity;
 public class WorkerActivityMock : BaseMock
 {
     private readonly Dictionary<int, Direction> _ongoingDirectionByDriverAccountIds = new();
+    private readonly Dictionary<int, int> _ongoingTaskIdByDriverAccountIds = new();
     private readonly Dictionary<int, Direction> _ongoingDirectionByCleanerAccountIds = new();
 
     protected override async Task Main()
@@ -26,11 +27,13 @@ public class WorkerActivityMock : BaseMock
         //     var newDirection = new Direction();
         //     newDirection.CurrentCoordinate = new Coordinate(10.7670552457392, 106.656326672901);
         //     _ongoingDirectionByDriverAccountIds[randomDriver.AccountId] = newDirection;
+        //     _ongoingTaskIdByDriverAccountIds[randomDriver.AccountId] = -1;
         // }
-        
+
         var direction = new Direction();
         direction.CurrentCoordinate = new Coordinate(10.7670552457392, 106.656326672901);
         _ongoingDirectionByDriverAccountIds[11] = direction;
+        _ongoingTaskIdByDriverAccountIds[11] = -1;
     }
 
     private async Task PickRandomCleaners(int countToPick)
@@ -63,12 +66,18 @@ public class WorkerActivityMock : BaseMock
         {
             if (direction.IsCompleted)
             {
+                if (_ongoingTaskIdByDriverAccountIds[id] != -1) await CompleteTask(id, _ongoingTaskIdByDriverAccountIds[id]);
+
                 var task = GetWorkerPrioritizedTask(id).Result.Task;
                 if (task == null)
                 {
                     Console.WriteLine("No more tasks for driver {0}", id);
                     continue;
                 }
+
+                _ongoingTaskIdByDriverAccountIds[id] = task.Id;
+
+                await FocusTask(id, task.Id);
 
                 var newDirection = await GetDirection(id, direction.CurrentCoordinate, new List<int> { task.McpData.Id });
 
@@ -84,7 +93,7 @@ public class WorkerActivityMock : BaseMock
             }
             else
             {
-                var newCoordinate = _ongoingDirectionByDriverAccountIds[id].TravelBy(0.0001);
+                var newCoordinate = _ongoingDirectionByDriverAccountIds[id].TravelBy(0.00005);
                 Console.WriteLine("Driver {0} is at {1}", id, newCoordinate);
                 UpdateLocation(id, newCoordinate);
             }
