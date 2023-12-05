@@ -61,6 +61,17 @@ public class TaskDataDataRepository : GenericRepository<TaskData>, ITaskDataRepo
             .First(task => task.AssigneeId == workerId && task.TaskStatus == TaskStatus.InProgress);
     }
 
+    public TaskData? GetPrioritizedTaskByWorkerId(int workerId)
+    {
+        if (!Context.TaskDataTable.Any(task => task.AssigneeId == workerId && task.TaskStatus == TaskStatus.NotStarted)) return null;
+        return Context.TaskDataTable
+            .Include(task => task.McpData)
+            .Include(task => task.AssigneeProfile)
+            .Include(task => task.AssignerProfile)
+            .Where(task => task.AssigneeId == workerId && task.TaskStatus == TaskStatus.NotStarted)
+            .MaxBy(task => task.Priority);
+    }
+
     public void RemoveAllTasksOfWorker(int workerId)
     {
         var tasks = Context.TaskDataTable.Where(task => task.AssigneeId == workerId).ToList();

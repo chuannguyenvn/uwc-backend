@@ -27,6 +27,10 @@ public class WorkerActivityMock : BaseMock
             newDirection.CurrentCoordinate = new Coordinate(10.7670552457392, 106.656326672901);
             _ongoingDirectionByDriverAccountIds[randomDriver.AccountId] = newDirection;
         }
+        
+        var direction = new Direction();
+        direction.CurrentCoordinate = new Coordinate(10.7670552457392, 106.656326672901);
+        _ongoingDirectionByDriverAccountIds[11] = direction;
     }
 
     private async Task PickRandomCleaners(int countToPick)
@@ -59,8 +63,14 @@ public class WorkerActivityMock : BaseMock
         {
             if (direction.IsCompleted)
             {
-                var randomMcps = (await GetAllMcpData()).Results.GetRandom(1);
-                var newDirection = await GetDirection(id, direction.CurrentCoordinate, randomMcps.Select(mcp => mcp.Id).ToList());
+                var task = GetWorkerPrioritizedTask(id).Result.Task;
+                if (task == null)
+                {
+                    Console.WriteLine("No more tasks for driver {0}", id);
+                    continue;
+                }
+
+                var newDirection = await GetDirection(id, direction.CurrentCoordinate, new List<int> { task.McpData.Id });
 
                 if (newDirection == null)
                 {
@@ -87,8 +97,14 @@ public class WorkerActivityMock : BaseMock
         {
             if (direction.IsCompleted)
             {
-                var randomMcps = (await GetAllMcpData()).Results.GetRandom();
-                var newDirection = await GetDirection(id, direction.CurrentCoordinate, randomMcps.Select(mcp => mcp.Id).ToList());
+                var task = GetWorkerPrioritizedTask(id).Result.Task;
+                if (task == null)
+                {
+                    Console.WriteLine("No more tasks for cleaner {0}", id);
+                    continue;
+                }
+
+                var newDirection = await GetDirection(id, direction.CurrentCoordinate, new List<int> { task.McpData.Id });
 
                 if (newDirection == null)
                 {

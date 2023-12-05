@@ -34,6 +34,18 @@ public class TaskService : ITaskService
         });
     }
 
+    public ParamRequestResult<GetWorkerPrioritizedTaskResponse> GetWorkerPrioritizedTask(GetWorkerPrioritizedTaskRequest request)
+    {
+        if (!_unitOfWork.AccountRepository.DoesIdExist(request.WorkerId))
+            return new ParamRequestResult<GetWorkerPrioritizedTaskResponse>(new DataEntryNotFound());
+
+        var task = _unitOfWork.TaskDataDataRepository.GetPrioritizedTaskByWorkerId(request.WorkerId);
+        return new ParamRequestResult<GetWorkerPrioritizedTaskResponse>(new Success(), new GetWorkerPrioritizedTaskResponse
+        {
+            Task = task
+        });
+    }
+
     public ParamRequestResult<GetAllTasksResponse> GetAllTasks()
     {
         return new ParamRequestResult<GetAllTasksResponse>(new Success(), new GetAllTasksResponse()

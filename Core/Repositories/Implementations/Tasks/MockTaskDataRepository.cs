@@ -80,6 +80,14 @@ public class MockTaskDataRepository : MockGenericRepository<TaskData>, ITaskData
         return Context.TaskDataTable.First(task => task.AssigneeId == workerId && task.TaskStatus == TaskStatus.InProgress);
     }
 
+    public TaskData? GetPrioritizedTaskByWorkerId(int workerId)
+    {
+        if (!Context.TaskDataTable.Any(task => task.AssigneeId == workerId && task.TaskStatus == TaskStatus.NotStarted)) return null;
+        return Context.TaskDataTable
+            .Where(task => task.AssigneeId == workerId && task.TaskStatus == TaskStatus.NotStarted)
+            .MaxBy(task => task.Priority);
+    }
+
     public void RemoveAllTasksOfWorker(int workerId)
     {
         Context.TaskDataTable.RemoveAll(task => task.AssigneeId == workerId);

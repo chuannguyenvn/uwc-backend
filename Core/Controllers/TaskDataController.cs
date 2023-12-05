@@ -32,6 +32,13 @@ public class TaskDataController : Controller
         return ProcessRequestResult(result);
     }
 
+    [HttpPost(Endpoints.TaskData.GET_WORKER_PRIORITIZED_TASK)]
+    public IActionResult GetWorkerPrioritizedTask(GetWorkerPrioritizedTaskRequest request)
+    {
+        var result = _taskService.GetWorkerPrioritizedTask(request);
+        return ProcessRequestResult(result);
+    }
+
     [HttpPost(Endpoints.TaskData.ADD_TASK)]
     public IActionResult AddTask(AddTasksRequest request)
     {

@@ -17,6 +17,7 @@ namespace Commons.Extensions
                 var randomIndex = random.Next(0, list.Count);
                 var randomEntity = list[randomIndex];
                 randomElements.Add(randomEntity);
+                list.RemoveAt(randomIndex);
             }
 
             return randomElements;
