@@ -89,11 +89,14 @@ public class TaskOptimizationServiceHelper
 
     public void AddTaskWithWorker(int assignerId, int workerId, int mcpId, DateTime completeByTimestamp)
     {
+        CurrentTaskGroupId++;
+
         var taskData = new TaskData
         {
             AssignerId = assignerId,
             AssigneeId = workerId,
             McpDataId = mcpId,
+            GroupId = CurrentTaskGroupId,
             CreatedTimestamp = DateTime.Now,
             CompleteByTimestamp = completeByTimestamp,
             TaskStatus = TaskStatus.NotStarted,
@@ -114,7 +117,7 @@ public class TaskOptimizationServiceHelper
 
     public void AddTasksWithWorker(int assignerId, int workerId, List<int> mcpIds, DateTime completeByTimestamp, bool isGrouped)
     {
-        if (isGrouped) CurrentTaskGroupId++;
+        CurrentTaskGroupId++;
 
         foreach (var mcpId in mcpIds)
         {
@@ -123,13 +126,23 @@ public class TaskOptimizationServiceHelper
                 AssignerId = assignerId,
                 AssigneeId = workerId,
                 McpDataId = mcpId,
-                GroupId = isGrouped ? CurrentTaskGroupId : null,
+                GroupId = CurrentTaskGroupId,
                 CreatedTimestamp = DateTime.Now,
                 CompleteByTimestamp = completeByTimestamp,
                 TaskStatus = TaskStatus.NotStarted,
             };
 
             _unitOfWork.TaskDataDataRepository.Add(taskData);
+            
+            if (isGrouped is false)
+            {
+                CurrentTaskGroupId++;
+            }
+        }
+
+        if (isGrouped is false)
+        {
+            CurrentTaskGroupId--;
         }
 
         _unitOfWork.Complete();
@@ -150,6 +163,7 @@ public class TaskOptimizationServiceHelper
         {
             AssignerId = assignerId,
             McpDataId = mcpId,
+            GroupId = CurrentTaskGroupId,
             CreatedTimestamp = DateTime.Now,
             CompleteByTimestamp = completeByTimestamp,
             TaskStatus = TaskStatus.NotStarted,
@@ -161,7 +175,7 @@ public class TaskOptimizationServiceHelper
 
     public void AddTasksWithoutWorker(int assignerId, List<int> mcpIds, DateTime completeByTimestamp, bool isGrouped)
     {
-        if (isGrouped) CurrentTaskGroupId++;
+        CurrentTaskGroupId++;
 
         foreach (var mcpId in mcpIds)
         {
@@ -169,13 +183,34 @@ public class TaskOptimizationServiceHelper
             {
                 AssignerId = assignerId,
                 McpDataId = mcpId,
-                GroupId = isGrouped ? CurrentTaskGroupId : null,
+                GroupId = CurrentTaskGroupId,
                 CreatedTimestamp = DateTime.Now,
                 CompleteByTimestamp = completeByTimestamp,
                 TaskStatus = TaskStatus.NotStarted,
             };
 
             _unitOfWork.TaskDataDataRepository.Add(taskData);
+        }
+
+        _unitOfWork.Complete();
+    }
+    
+    public void UpdatePriority(int taskId, int priority)
+    {
+        if (!_unitOfWork.TaskDataDataRepository.DoesIdExist(taskId)) throw new Exception("Task not found");
+
+        var taskData = _unitOfWork.TaskDataDataRepository.GetById(taskId);
+        taskData.Priority = priority;
+        _unitOfWork.TaskDataDataRepository.Update(taskData);
+
+        _unitOfWork.Complete();
+    }
+
+    public void AutoAssignPriorities(List<int> taskIds)
+    {
+        for (var i = 0; i < taskIds.Count; i++)
+        {
+            UpdatePriority(taskIds[i], i);
         }
 
         _unitOfWork.Complete();
@@ -201,5 +236,89 @@ public class TaskOptimizationServiceHelper
                     NewTasks = _unitOfWork.TaskDataDataRepository.GetTasksByWorkerId(workerId).ToList()
                 });
         }
+    }
+
+    private void SwapLists(List<List<List<int>>> list, int index1, int index2)
+    {
+        if (index1 < 0 || index1 >= list.Count)
+        {
+            throw new ArgumentOutOfRangeException("Index 1 out of range");
+        }
+
+        if (index2 < 0 || index2 >= list.Count)
+        {
+            throw new ArgumentOutOfRangeException("Index 2 out of range");
+        }
+        
+        (list[index1], list[index2]) = (list[index2], list[index1]);
+    }
+
+    private int CompareListsInner(List<int> list1, List<int> list2)
+    {
+        for (int i = 0; i < Math.Min(list1.Count, list2.Count); i++)
+        {
+            int result = list1[i].CompareTo(list2[i]);
+
+            if (result != 0)
+            {
+                return result;
+            }
+        }
+
+        return list1.Count.CompareTo(list2.Count);
+    }
+
+    private int CompareLists(List<List<int>> list1, List<List<int>> list2)
+    {
+        for (int i = 0; i < Math.Min(list1.Count, list2.Count); i++)
+        {
+            int result = CompareListsInner(list1[i], list2[i]);
+
+            if (result != 0)
+            {
+                return result;
+            }
+        }
+
+        return list1.Count.CompareTo(list2.Count);
+    }
+
+    public bool NextPermutation(List<List<List<int>>> arr)
+    {
+        int index1 = arr.Count - 1;
+        while (index1 > 0 && CompareLists(arr[index1 - 1], arr[index1]) >= 0)
+        {
+            index1--;
+        }
+
+        if (index1 <= 0)
+        {
+            // return false;
+            arr.Reverse();
+            return true;
+        }
+
+        int index2 = arr.Count - 1;
+        while (CompareLists(arr[index2], arr[index1 - 1]) <= 0)
+        {
+            index2--;
+        }
+        
+        SwapLists(arr, index1 - 1, index2);
+
+        index2 = arr.Count - 1;
+        while (index1 < index2)
+        {
+            SwapLists(arr, index1, index2);
+            index1++;
+            index2--;
+        }
+
+        return true;
+    }
+
+    public McpData GetMcpDataById(int mcpId)
+    {
+        return _unitOfWork.McpDataRepository.GetById(mcpId);
     }
 }

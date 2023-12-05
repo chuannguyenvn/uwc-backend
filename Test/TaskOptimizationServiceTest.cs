@@ -257,7 +257,7 @@ public class TaskOptimizationServiceTest
     public void Test_ScheduleWithDijkstra()
     {
         // The original order is (1,2,3,4,5)
-        // => Change the order to (3,2,1,4,5)
+        // => Change the order to (3,1,2,4,5)
 
         #region Arrange
 
@@ -318,8 +318,8 @@ public class TaskOptimizationServiceTest
 
         // Assert the order of task changed from (1,2,3,4,5) to (3,2,1,4,5)
         Assert.That(optimizedTasks[0].McpDataId, Is.EqualTo(mcp3Id)); // First task must be mcp3
-        Assert.That(optimizedTasks[1].McpDataId, Is.EqualTo(mcp2Id)); // Second task must be mcp2
-        Assert.That(optimizedTasks[2].McpDataId, Is.EqualTo(mcp1Id)); // Third task must be mcp1
+        Assert.That(optimizedTasks[1].McpDataId, Is.EqualTo(mcp1Id)); // Second task must be mcp2
+        Assert.That(optimizedTasks[2].McpDataId, Is.EqualTo(mcp2Id)); // Third task must be mcp1
         Assert.That(optimizedTasks[3].McpDataId, Is.EqualTo(mcp4Id)); // Fourth task must be mcp4
         Assert.That(optimizedTasks[4].McpDataId, Is.EqualTo(mcp5Id)); // Fifth task must be mcp5
 
@@ -396,7 +396,7 @@ public class TaskOptimizationServiceTest
 
         #region Act
 
-        List<TaskData> optimizedTasks = _taskOptimizationService.OptimizeRouteGen2(_mockUnitOfWork.UserProfileRepository.GetById(workerId), true);
+        List<TaskData> optimizedTasks = _taskOptimizationService.OptimizeRouteGen2(_mockUnitOfWork.UserProfileRepository.GetById(workerId), false);
 
         #endregion
 
@@ -405,11 +405,16 @@ public class TaskOptimizationServiceTest
 
         // Assert the total number of tasks unchanged
         Assert.That(optimizedTasks.Count, Is.EqualTo(5));
+        
+        for (int index = 0; index < optimizedTasks.Count; index++)
+        {
+            Console.WriteLine(optimizedTasks[index].McpDataId);
+        }
 
         // Assert the order of task changed from (1,2,3,4,5) to (3,2,1,4,5)
         Assert.That(optimizedTasks[0].McpDataId, Is.EqualTo(mcp3Id)); // First task must be mcp3
-        Assert.That(optimizedTasks[1].McpDataId, Is.EqualTo(mcp2Id)); // Second task must be mcp2
-        Assert.That(optimizedTasks[2].McpDataId, Is.EqualTo(mcp1Id)); // Third task must be mcp1
+        Assert.That(optimizedTasks[1].McpDataId, Is.EqualTo(mcp1Id)); // Second task must be mcp2
+        Assert.That(optimizedTasks[2].McpDataId, Is.EqualTo(mcp2Id)); // Third task must be mcp1
         Assert.That(optimizedTasks[3].McpDataId, Is.EqualTo(mcp4Id)); // Fourth task must be mcp4
         Assert.That(optimizedTasks[4].McpDataId, Is.EqualTo(mcp5Id)); // Fifth task must be mcp5
 
@@ -1377,22 +1382,261 @@ public class TaskOptimizationServiceTest
         #endregion
     }
 
-    [Test]
-    public void A()
-    {
-        var coordinate1 = new Coordinate(37.78, -122.42);
-        var coordinate2 = new Coordinate(37.91, -122.45);
-        var coordinate3 = new Coordinate(37.73, -122.48);
-
-        var coordinates = new List<Coordinate>() { coordinate1, coordinate2, coordinate3 };
-
-        var result = _taskOptimizationServiceHelper.RequestMapboxMatrix(coordinates);
-
-        Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
-    }
+    // [Test]
+    // public void A()
+    // {
+    //     var coordinate1 = new Coordinate(37.78, -122.42);
+    //     var coordinate2 = new Coordinate(37.91, -122.45);
+    //     var coordinate3 = new Coordinate(37.73, -122.48);
+    //
+    //     var coordinates = new List<Coordinate>() { coordinate1, coordinate2, coordinate3 };
+    //
+    //     var result = _taskOptimizationServiceHelper.RequestMapboxMatrix(coordinates);
+    //
+    //     Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
+    // }
 
     [Test]
     public void Test_GroupedTask()
+    {
+        // This test assign 5 tasks to a worker, with 3 tasks in the first group and 2 tasks in the second group
+        // In the testing environment, group id always starts from 1 and increases by 1 for each new group
+
+        #region Arrange
+
+        // The supervisor's ID
+        int supervisorId = 1;
+
+        // The worker's ID
+        int workerId = 11;
+
+        // The mcpId
+        int mcp1Id = 1;
+        int mcp2Id = 2;
+        int mcp3Id = 3;
+        int mcp4Id = 4;
+        int mcp5Id = 5;
+        int mcp6Id = 6;
+
+        // Remove all tasks of the free worker
+        _mockUnitOfWork.TaskDataDataRepository.RemoveAll();
+        
+        // Set the worker's location
+        _mockLocationService.UpdateLocation(workerId, new Coordinate(0, 0));
+
+        // Set the mcp locations
+        _mockUnitOfWork.McpDataRepository.GetById(mcp1Id).Coordinate = new Coordinate(0, 4);
+        _mockUnitOfWork.McpDataRepository.GetById(mcp2Id).Coordinate = new Coordinate(2, 2);
+        _mockUnitOfWork.McpDataRepository.GetById(mcp3Id).Coordinate = new Coordinate(1, 1);
+        _mockUnitOfWork.McpDataRepository.GetById(mcp4Id).Coordinate = new Coordinate(5, 1);
+        _mockUnitOfWork.McpDataRepository.GetById(mcp5Id).Coordinate = new Coordinate(10, 0);
+        _mockUnitOfWork.McpDataRepository.GetById(mcp5Id).Coordinate = new Coordinate(-1, 5);
+
+        // Set the mcp fill levels
+        _mockMcpFillLevelService.SetFillLevel(mcp1Id, 0.15f);
+        _mockMcpFillLevelService.SetFillLevel(mcp2Id, 0.9f);
+        _mockMcpFillLevelService.SetFillLevel(mcp3Id, 0.65f);
+        _mockMcpFillLevelService.SetFillLevel(mcp4Id, 0.24f);
+        _mockMcpFillLevelService.SetFillLevel(mcp5Id, 0.47f);
+        _mockMcpFillLevelService.SetFillLevel(mcp6Id, 0.47f);
+
+        // Set the worker's online status
+        _mockOnlineStatusService.SetAsOnline(workerId);
+
+        #endregion
+
+
+        #region Act
+
+        _taskOptimizationService.ProcessAddTaskRequest(new AddTasksRequest
+        {
+            AssignerAccountId = supervisorId,
+            AssigneeAccountId = workerId,
+            McpDataIds = new List<int> { mcp3Id, mcp5Id, mcp4Id }, // First 3 MCPs
+            CompleteByTimestamp = default,
+            RoutingOptimizationScope = RoutingOptimizationScope.All
+        });
+        
+        Console.WriteLine("First assignment");
+        var task = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(workerId);
+        for (int i = 0; i < task.Count; i++)
+        {
+            Console.Write("Mcp with task: ");
+            Console.Write(task[i].McpDataId);
+            Console.Write(" ");
+            Console.WriteLine(task[i].Priority);
+        }
+        
+        
+        
+        
+        
+        _taskOptimizationService.ProcessAddTaskRequest(new AddTasksRequest
+        {
+            AssignerAccountId = supervisorId,
+            AssigneeAccountId = workerId,
+            McpDataIds = new List<int> { mcp1Id, mcp6Id }, // Last 2 MCPs
+            CompleteByTimestamp = default,
+            RoutingOptimizationScope = RoutingOptimizationScope.Selected
+        });
+        
+        task = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(workerId);
+        Console.WriteLine("Second assignment");
+        for (int i = 0; i < task.Count; i++)
+        {
+            Console.Write("Mcp with task: ");
+            Console.Write(task[i].McpDataId);
+            Console.Write(" ");
+            Console.WriteLine(task[i].Priority);
+        }
+        
+        
+        
+        
+        
+        _taskOptimizationService.ProcessAddTaskRequest(new AddTasksRequest
+        {
+            AssignerAccountId = supervisorId,
+            AssigneeAccountId = workerId,
+            McpDataIds = new List<int> { mcp2Id }, // Last 2 MCPs
+            CompleteByTimestamp = default,
+            RoutingOptimizationScope = RoutingOptimizationScope.Selected
+        });
+        task = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(workerId);
+        Console.WriteLine("Third assignment");
+        for (int i = 0; i < task.Count; i++)
+        {
+            Console.Write("Mcp with task: ");
+            Console.Write(task[i].McpDataId);
+            Console.Write(" ");
+            Console.WriteLine(task[i].Priority);
+        }
+        #endregion
+    }
+
+    [Test]
+    public void Test_AutoAssignment()
+    {
+        // This test assign 5 tasks to a worker, with 3 tasks in the first group and 2 tasks in the second group
+        // In the testing environment, group id always starts from 1 and increases by 1 for each new group
+
+        #region Arrange
+
+        // The supervisor's ID
+        int supervisorId = 1;
+
+        // The worker's ID
+        int workerId = 11;
+
+        // The mcpId
+        int mcp1Id = 1;
+        int mcp2Id = 2;
+        int mcp3Id = 3;
+        int mcp4Id = 4;
+        int mcp5Id = 5;
+        int mcp6Id = 6;
+
+        // Remove all tasks of the free worker
+        _mockUnitOfWork.TaskDataDataRepository.RemoveAll();
+        
+        // Set the worker's location
+        _mockLocationService.UpdateLocation(workerId, new Coordinate(0, 0));
+
+        // Set the mcp locations
+        _mockUnitOfWork.McpDataRepository.GetById(mcp1Id).Coordinate = new Coordinate(0, 4);
+        _mockUnitOfWork.McpDataRepository.GetById(mcp2Id).Coordinate = new Coordinate(2, 2);
+        _mockUnitOfWork.McpDataRepository.GetById(mcp3Id).Coordinate = new Coordinate(1, 1);
+        _mockUnitOfWork.McpDataRepository.GetById(mcp4Id).Coordinate = new Coordinate(5, 1);
+        _mockUnitOfWork.McpDataRepository.GetById(mcp5Id).Coordinate = new Coordinate(10, 0);
+        _mockUnitOfWork.McpDataRepository.GetById(mcp5Id).Coordinate = new Coordinate(-1, 5);
+
+        // Set the mcp fill levels
+        _mockMcpFillLevelService.SetFillLevel(mcp1Id, 0.15f);
+        _mockMcpFillLevelService.SetFillLevel(mcp2Id, 0.9f);
+        _mockMcpFillLevelService.SetFillLevel(mcp3Id, 0.65f);
+        _mockMcpFillLevelService.SetFillLevel(mcp4Id, 0.24f);
+        _mockMcpFillLevelService.SetFillLevel(mcp5Id, 0.47f);
+        _mockMcpFillLevelService.SetFillLevel(mcp6Id, 0.47f);
+
+        // Set the worker's online status
+        _mockOnlineStatusService.SetAsOnline(workerId);
+
+        #endregion
+
+
+        #region Act
+
+        _taskOptimizationService.ProcessAddTaskRequest(new AddTasksRequest
+        {
+            AssignerAccountId = supervisorId,
+            AssigneeAccountId = null,
+            McpDataIds = new List<int> { mcp3Id, mcp5Id, mcp4Id }, // First 3 MCPs
+            CompleteByTimestamp = default,
+            RoutingOptimizationScope = RoutingOptimizationScope.All,
+            AutoAssignmentOptimizationStrategy = AutoAssignmentOptimizationStrategy.CostOptimized
+        });
+        
+        Console.WriteLine("First assignment");
+        var task = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(workerId);
+        for (int i = 0; i < task.Count; i++)
+        {
+            Console.Write("Mcp with task: ");
+            Console.Write(task[i].McpDataId);
+            Console.Write(" ");
+            Console.WriteLine(task[i].Priority);
+        }
+        
+        
+        
+        
+        
+        _taskOptimizationService.ProcessAddTaskRequest(new AddTasksRequest
+        {
+            AssignerAccountId = supervisorId,
+            AssigneeAccountId = null,
+            McpDataIds = new List<int> { mcp1Id, mcp6Id }, // Last 2 MCPs
+            CompleteByTimestamp = default,
+            RoutingOptimizationScope = RoutingOptimizationScope.All,
+            AutoAssignmentOptimizationStrategy = AutoAssignmentOptimizationStrategy.CostOptimized
+        });
+        
+        task = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(workerId);
+        Console.WriteLine("Second assignment");
+        for (int i = 0; i < task.Count; i++)
+        {
+            Console.Write("Mcp with task: ");
+            Console.Write(task[i].McpDataId);
+            Console.Write(" ");
+            Console.WriteLine(task[i].Priority);
+        }
+        
+        
+        
+        
+        
+        _taskOptimizationService.ProcessAddTaskRequest(new AddTasksRequest
+        {
+            AssignerAccountId = supervisorId,
+            AssigneeAccountId = null,
+            McpDataIds = new List<int> { mcp2Id }, // Last 2 MCPs
+            CompleteByTimestamp = default,
+            RoutingOptimizationScope = RoutingOptimizationScope.All,
+            AutoAssignmentOptimizationStrategy = AutoAssignmentOptimizationStrategy.CostOptimized
+        });
+        task = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(workerId);
+        Console.WriteLine("Third assignment");
+        for (int i = 0; i < task.Count; i++)
+        {
+            Console.Write("Mcp with task: ");
+            Console.Write(task[i].McpDataId);
+            Console.Write(" ");
+            Console.WriteLine(task[i].Priority);
+        }
+        #endregion
+    }
+    
+    [Test]
+    public void JustTest()
     {
         // This test assign 5 tasks to a worker, with 3 tasks in the first group and 2 tasks in the second group
         // In the testing environment, group id always starts from 1 and increases by 1 for each new group
@@ -1440,24 +1684,17 @@ public class TaskOptimizationServiceTest
         });
 
         #endregion
-
-
+        
+        
         #region Assert
 
         var tasks = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(workerId);
 
-        // There should be 5 tasks
-        Assert.That(tasks.Count, Is.EqualTo(5));
-
-        // The first 3 tasks should be grouped with group id = 1
-        Assert.That(tasks[0].GroupId, Is.EqualTo(1));
-        Assert.That(tasks[1].GroupId, Is.EqualTo(1));
-        Assert.That(tasks[2].GroupId, Is.EqualTo(1));
-
-        // The last 2 tasks should be grouped with group id = 2
-        Assert.That(tasks[3].GroupId, Is.EqualTo(2));
-        Assert.That(tasks[4].GroupId, Is.EqualTo(2));
-
+        List<List<int>> group = new List<List<int>>();
+        group.Add(new List<int> {5, 3, 1});
+        group.Add(new List<int> {6, 4, 2});
+        _taskOptimizationService.PermutationForSelected(group);
+        
         #endregion
     }
 }

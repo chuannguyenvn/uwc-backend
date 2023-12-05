@@ -27,7 +27,8 @@ public class MockGenericRepository<T> : IGenericRepository<T> where T : IndexedE
 
     public void Update(T entity)
     {
-        throw new NotImplementedException();
+        var index = Context.Set<T>().FindIndex(t => t.Id == entity.Id);
+        Context.Set<T>()[index] = entity;
     }
 
     public IEnumerable<T> Find(Func<T, bool> condition)
