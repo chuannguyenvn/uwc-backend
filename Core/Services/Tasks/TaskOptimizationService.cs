@@ -688,7 +688,7 @@ public class TaskOptimizationService : ITaskOptimizationService
                         //_helper.AssignWorkerToTask(sortedUnassignedTasks[i].Id, index);
                         addTasksRequest.AssigneeAccountId = workerId;
                         addTasksRequest.McpDataIds = new List<int>(){sortedUnassignedTasks[i].McpDataId};
-                        ProcessAddTaskRequest(addTasksRequest);
+                        ProcessAddTaskRequest(addTasksRequest, true, sortedUnassignedTasks[i].Id);
                         break;
                     }
                 }
@@ -706,6 +706,11 @@ public class TaskOptimizationService : ITaskOptimizationService
     }
 
     public void ProcessAddTaskRequest(AddTasksRequest request)
+    {
+        ProcessAddTaskRequest(request, false, -1);
+    }
+
+    public void ProcessAddTaskRequest(AddTasksRequest request, bool avoidDuplication = false, int taskId = -1)
     {
         if (request.RoutingOptimizationScope == RoutingOptimizationScope.None)
         {
@@ -778,13 +783,21 @@ public class TaskOptimizationService : ITaskOptimizationService
                 var workerId = request.AssigneeAccountId.Value;
                 var mcpIds = request.McpDataIds;
                 var completeByTimestamp = request.CompleteByTimestamp;
-                
-                _helper.AddTasksWithWorker(supervisorId, workerId, mcpIds, completeByTimestamp, false);
-                
+
+                if (avoidDuplication is false)
+                {
+                    _helper.AddTasksWithWorker(supervisorId, workerId, mcpIds, completeByTimestamp, false);
+                }
+                else if (taskId != -1)
+                {
+                    _helper.AssignWorkerToTask(taskId, workerId);
+                }
+
                 Dictionary<int, UserProfile> workerProfiles = _helper.GetAllWorkerProfiles();
                 UserProfile workerProfile = workerProfiles[workerId];
 
                 List<TaskData> assignedTasks = _helper.GetWorkerTasksIn24Hours(workerId);
+                
                 HashSet<int?> set = new HashSet<int?>();
 
                 for (int i = 0; i < assignedTasks.Count; i++)

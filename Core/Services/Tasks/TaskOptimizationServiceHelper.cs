@@ -131,7 +131,7 @@ public class TaskOptimizationServiceHelper
                 CompleteByTimestamp = completeByTimestamp,
                 TaskStatus = TaskStatus.NotStarted,
             };
-
+            
             _unitOfWork.TaskDataDataRepository.Add(taskData);
             
             if (isGrouped is false)
@@ -144,7 +144,7 @@ public class TaskOptimizationServiceHelper
         {
             CurrentTaskGroupId--;
         }
-
+        
         _unitOfWork.Complete();
 
         if (BaseHub.ConnectionIds.TryGetValue(workerId, out var connectionId))
@@ -226,6 +226,7 @@ public class TaskOptimizationServiceHelper
         if (taskData.AssigneeId.HasValue) throw new Exception("Task already has a worker assigned");
 
         taskData.AssigneeId = workerId;
+        _unitOfWork.TaskDataDataRepository.Update(taskData);
         _unitOfWork.Complete();
 
         if (BaseHub.ConnectionIds.TryGetValue(workerId, out var connectionId))

@@ -1582,7 +1582,10 @@ public class TaskOptimizationServiceTest
         
         Console.WriteLine("First assignment");
         var task = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(workerId);
+        var unassigned = _mockUnitOfWork.TaskDataDataRepository.GetUnassignedTasksIn24Hours();
+        
         Assert.That(task.Count, Is.EqualTo(3));
+        Assert.That(unassigned.Count, Is.EqualTo(0));
         for (int i = 0; i < task.Count; i++)
         {
             Console.Write("Mcp with task: ");
@@ -1620,24 +1623,24 @@ public class TaskOptimizationServiceTest
         
         
         
-        // _taskOptimizationService.ProcessAddTaskRequest(new AddTasksRequest
-        // {
-        //     AssignerAccountId = supervisorId,
-        //     AssigneeAccountId = null,
-        //     McpDataIds = new List<int> { mcp2Id }, // Last 2 MCPs
-        //     CompleteByTimestamp = default,
-        //     RoutingOptimizationScope = RoutingOptimizationScope.All,
-        //     AutoAssignmentOptimizationStrategy = AutoAssignmentOptimizationStrategy.CostOptimized
-        // });
-        // task = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(workerId);
-        // Console.WriteLine("Third assignment");
-        // for (int i = 0; i < task.Count; i++)
-        // {
-        //     Console.Write("Mcp with task: ");
-        //     Console.Write(task[i].McpDataId);
-        //     Console.Write(" ");
-        //     Console.WriteLine(task[i].Priority);
-        // }
+        _taskOptimizationService.ProcessAddTaskRequest(new AddTasksRequest
+        {
+            AssignerAccountId = supervisorId,
+            AssigneeAccountId = null,
+            McpDataIds = new List<int> { mcp2Id }, // Last 2 MCPs
+            CompleteByTimestamp = default,
+            RoutingOptimizationScope = RoutingOptimizationScope.All,
+            AutoAssignmentOptimizationStrategy = AutoAssignmentOptimizationStrategy.CostOptimized
+        });
+        task = _mockUnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(workerId);
+        Console.WriteLine("Third assignment");
+        for (int i = 0; i < task.Count; i++)
+        {
+            Console.Write("Mcp with task: ");
+            Console.Write(task[i].McpDataId);
+            Console.Write(" ");
+            Console.WriteLine(task[i].Priority);
+        }
         #endregion
     }
     
