@@ -6,7 +6,7 @@ using Services.Tasks;
 
 namespace Controllers;
 
-[Authorize]
+// [Authorize]
 [ApiController]
 [Route("[controller]")]
 public class TaskDataController : Controller

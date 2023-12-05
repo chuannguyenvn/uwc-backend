@@ -12,21 +12,21 @@ public class WorkerActivityMock : BaseMock
     protected override async Task Main()
     {
         await PickRandomDrivers(10);
-        await PickRandomCleaners(10);
+        // await PickRandomCleaners(10);
         await MockBehavior();
     }
 
     private async Task PickRandomDrivers(int countToPick)
     {
-        var allDrivers = (await GetAllDriverProfiles()).DriverProfiles.Where(profile => profile.Id != 11).ToList();
-        var randomDrivers = allDrivers.GetRandom(countToPick);
-
-        foreach (var randomDriver in randomDrivers)
-        {
-            var newDirection = new Direction();
-            newDirection.CurrentCoordinate = new Coordinate(10.7670552457392, 106.656326672901);
-            _ongoingDirectionByDriverAccountIds[randomDriver.AccountId] = newDirection;
-        }
+        // var allDrivers = (await GetAllDriverProfiles()).DriverProfiles.Where(profile => profile.Id != 11).ToList();
+        // var randomDrivers = allDrivers.GetRandom(countToPick);
+        //
+        // foreach (var randomDriver in randomDrivers)
+        // {
+        //     var newDirection = new Direction();
+        //     newDirection.CurrentCoordinate = new Coordinate(10.7670552457392, 106.656326672901);
+        //     _ongoingDirectionByDriverAccountIds[randomDriver.AccountId] = newDirection;
+        // }
         
         var direction = new Direction();
         direction.CurrentCoordinate = new Coordinate(10.7670552457392, 106.656326672901);
@@ -53,7 +53,7 @@ public class WorkerActivityMock : BaseMock
             await Task.Delay(1000);
 
             await MockDriverBehavior();
-            await MockCleanerBehavior();
+            // await MockCleanerBehavior();
         }
     }
 
