@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MockApplication", "MockApplication\MockApplication.csproj", "{4DAB30B5-017A-4AEF-8118-C9A195CBFBF4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FacialRecognition", "FacialRecognition\FacialRecognition.csproj", "{3F953135-88CB-48E1-B68D-C6BDCAD87992}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{4DAB30B5-017A-4AEF-8118-C9A195CBFBF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4DAB30B5-017A-4AEF-8118-C9A195CBFBF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4DAB30B5-017A-4AEF-8118-C9A195CBFBF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F953135-88CB-48E1-B68D-C6BDCAD87992}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F953135-88CB-48E1-B68D-C6BDCAD87992}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F953135-88CB-48E1-B68D-C6BDCAD87992}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F953135-88CB-48E1-B68D-C6BDCAD87992}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
