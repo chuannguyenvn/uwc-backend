@@ -6,7 +6,6 @@ namespace Commons.Types
 {
     public class Direction
     {
-        private readonly Action<int> _mcpPassedCallback;
         public Coordinate CurrentCoordinate { get; set; }
         public Dictionary<int, List<Coordinate>> Legs { get; private set; }
 
@@ -18,10 +17,9 @@ namespace Commons.Types
         }
 
         public Direction(Coordinate currentCoordinate, List<int> assignedMcpIds,
-            RawMapboxDirectionResponse direction, Action<int> mcpPassedCallback = null) : this()
+            RawMapboxDirectionResponse direction) : this()
         {
             CurrentCoordinate = currentCoordinate;
-            _mcpPassedCallback = mcpPassedCallback;
 
             for (var i = 0; i < direction.Routes.First().Legs.Count; i++)
             {
@@ -44,7 +42,6 @@ namespace Commons.Types
             if (Legs.First().Value.Count == 0)
             {
                 Legs.Remove(Legs.First().Key);
-                _mcpPassedCallback?.Invoke(Legs.First().Key);
             }
 
             CurrentCoordinate = newCurrentCoordinate;

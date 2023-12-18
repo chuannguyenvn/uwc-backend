@@ -1,5 +1,6 @@
 ﻿using Commons.Communications.Map;
 using Commons.Communications.Mcps;
+using Commons.Communications.Tasks;
 using Commons.Communications.UserProfiles;
 using Commons.Endpoints;
 using Commons.Helpers;
@@ -88,7 +89,7 @@ public abstract class BaseMock : IHostedService
         });
         return result;
     }
-    
+
     protected async Task<Coordinate> GetLocation(int accountId)
     {
         var result = await RequestHelper.Post<GetLocationResponse>(Endpoints.Map.GetLocation, new GetLocationRequest()
@@ -97,7 +98,7 @@ public abstract class BaseMock : IHostedService
         });
         return result.Coordinate;
     }
-    
+
     protected async void UpdateLocation(int accountId, Coordinate coordinate)
     {
         await RequestHelper.Post(Endpoints.Map.UpdateLocation, new LocationUpdateRequest()
@@ -106,7 +107,7 @@ public abstract class BaseMock : IHostedService
             NewLocation = coordinate
         });
     }
-    
+
     protected async Task<GetDirectionResponse> GetDirection(int accountId, Coordinate currentLocation, List<int> mcpIds)
     {
         var result = await RequestHelper.Post<GetDirectionResponse>(Endpoints.Map.GetDirection, new GetDirectionRequest()
@@ -116,5 +117,32 @@ public abstract class BaseMock : IHostedService
             McpIds = mcpIds
         });
         return result;
+    }
+
+    protected async Task<GetWorkerPrioritizedTaskResponse> GetWorkerPrioritizedTask(int workerId)
+    {
+        var result = await RequestHelper.Post<GetWorkerPrioritizedTaskResponse>(Endpoints.TaskData.GetWorkerPrioritizedTask,
+            new GetWorkerPrioritizedTaskRequest()
+            {
+                WorkerId = workerId
+            });
+        return result;
+    }
+
+    protected async Task FocusTask(int workerId, int taskId)
+    {
+        await RequestHelper.Post(Endpoints.TaskData.FocusTask, new FocusTaskRequest()
+        {
+            WorkerId = workerId,
+            TaskId = taskId
+        });
+    }
+
+    protected async Task CompleteTask(int workerId, int taskId)
+    {
+        await RequestHelper.Post(Endpoints.TaskData.CompleteTask, new CompleteTaskRequest()
+        {
+            TaskId = taskId
+        });
     }
 }

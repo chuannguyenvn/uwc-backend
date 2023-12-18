@@ -27,7 +27,8 @@ public class McpDataRepository : GenericRepository<Commons.Models.McpData>, IMcp
 
     public IEnumerable<McpEmptyRecord> GetEmptyRecords(int mcpId, int countLimit, DateTime dateTimeLimit)
     {
-        var rawRecords = Context.McpDataTable.Include(data => data.McpEmptyRecords).First(data => data.Id == mcpId).McpEmptyRecords
+        var rawRecords = Context.McpDataTable.Include(data => data.McpEmptyRecords).ThenInclude(record => record.EmptyingWorker)
+            .First(data => data.Id == mcpId).McpEmptyRecords
             .TakeLast(countLimit).Where(record => record.Timestamp >= dateTimeLimit);
         var trimmedRecords = new List<McpEmptyRecord>();
 

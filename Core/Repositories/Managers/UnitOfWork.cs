@@ -24,7 +24,7 @@ public class UnitOfWork : IUnitOfWork, IDisposable
         McpEmptyRecordRecordRepository = new McpEmptyRecordRepository(_uwcDbContext);
         McpFillLevelLogRepository = new McpFillLevelLogRepository(_uwcDbContext);
         MessageRepository = new MessageRepository(_uwcDbContext);
-        TaskDataDataRepository = new TaskDataDataRepository(_uwcDbContext);
+        TaskDataDataRepository = new TaskDataRepository(_uwcDbContext);
         VehicleDataRepository = new VehicleDataRepository(_uwcDbContext);
         SettingRepository = new SettingRepository(_uwcDbContext);
     }

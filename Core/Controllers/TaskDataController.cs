@@ -6,7 +6,7 @@ using Services.Tasks;
 
 namespace Controllers;
 
-[Authorize]
+// [Authorize]
 [ApiController]
 [Route("[controller]")]
 public class TaskDataController : Controller
@@ -29,6 +29,13 @@ public class TaskDataController : Controller
     public IActionResult GetAllTasks()
     {
         var result = _taskService.GetAllTasks();
+        return ProcessRequestResult(result);
+    }
+
+    [HttpPost(Endpoints.TaskData.GET_WORKER_PRIORITIZED_TASK)]
+    public IActionResult GetWorkerPrioritizedTask(GetWorkerPrioritizedTaskRequest request)
+    {
+        var result = _taskService.GetWorkerPrioritizedTask(request);
         return ProcessRequestResult(result);
     }
 

@@ -34,6 +34,18 @@ public class TaskService : ITaskService
         });
     }
 
+    public ParamRequestResult<GetWorkerPrioritizedTaskResponse> GetWorkerPrioritizedTask(GetWorkerPrioritizedTaskRequest request)
+    {
+        if (!_unitOfWork.AccountRepository.DoesIdExist(request.WorkerId))
+            return new ParamRequestResult<GetWorkerPrioritizedTaskResponse>(new DataEntryNotFound());
+
+        var task = _unitOfWork.TaskDataDataRepository.GetPrioritizedTaskByWorkerId(request.WorkerId);
+        return new ParamRequestResult<GetWorkerPrioritizedTaskResponse>(new Success(), new GetWorkerPrioritizedTaskResponse
+        {
+            Task = task
+        });
+    }
+
     public ParamRequestResult<GetAllTasksResponse> GetAllTasks()
     {
         return new ParamRequestResult<GetAllTasksResponse>(new Success(), new GetAllTasksResponse()
@@ -45,13 +57,15 @@ public class TaskService : ITaskService
     public RequestResult AddTask(AddTasksRequest request)
     {
         _taskOptimizationService.ProcessAddTaskRequest(request);
-        
-        if (request.AssigneeAccountId.HasValue)
-            _hubContext.Clients.Client(BaseHub.ConnectionIds[request.AssigneeAccountId.Value])
+
+        if (request.AssigneeAccountId.HasValue && BaseHub.ConnectionIds.TryGetValue(request.AssigneeAccountId.Value, out var connectionId))
+        {
+            _hubContext.Clients.Client(connectionId)
                 .SendAsync(HubHandlers.Tasks.ADD_TASK, new AddTasksBroadcastData
                 {
                     NewTasks = _unitOfWork.TaskDataDataRepository.GetTasksByWorkerId(request.AssigneeAccountId.Value).ToList()
                 });
+        }
 
         return new RequestResult(new Success());
     }
@@ -86,11 +100,14 @@ public class TaskService : ITaskService
         taskData.LastStatusChangeTimestamp = DateTime.Now;
         _unitOfWork.Complete();
 
-        _hubContext.Clients.Client(BaseHub.ConnectionIds[taskData.AssignerId])
-            .SendAsync(HubHandlers.Tasks.COMPLETE_TASK, new CompleteTaskBroadcastData
-            {
-                TaskId = taskData.Id,
-            });
+        if (BaseHub.ConnectionIds.TryGetValue(taskData.AssignerId, out var connectionId))
+        {
+            _hubContext.Clients.Client(connectionId)
+                .SendAsync(HubHandlers.Tasks.COMPLETE_TASK, new CompleteTaskBroadcastData
+                {
+                    TaskId = taskData.Id,
+                });
+        }
 
         return new RequestResult(new Success());
     }
@@ -104,11 +121,14 @@ public class TaskService : ITaskService
         taskData.LastStatusChangeTimestamp = DateTime.Now;
         _unitOfWork.Complete();
 
-        _hubContext.Clients.Client(BaseHub.ConnectionIds[taskData.AssignerId])
-            .SendAsync(HubHandlers.Tasks.REJECT_TASK, new RejectTaskBroadcastData
-            {
-                TaskId = taskData.Id,
-            });
+        if (BaseHub.ConnectionIds.TryGetValue(taskData.AssignerId, out var connectionId))
+        {
+            _hubContext.Clients.Client(connectionId)
+                .SendAsync(HubHandlers.Tasks.REJECT_TASK, new RejectTaskBroadcastData
+                {
+                    TaskId = taskData.Id,
+                });
+        }
 
         return new RequestResult(new Success());
     }
