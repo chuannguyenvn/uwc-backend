@@ -1,4 +1,4 @@
-﻿using Commons.Communications.Map;
+using Commons.Communications.Map;
 using Commons.Communications.Tasks;
 using Commons.HubHandlers;
 using Commons.Models;
@@ -131,9 +131,9 @@ public class TaskOptimizationServiceHelper
                 CompleteByTimestamp = completeByTimestamp,
                 TaskStatus = TaskStatus.NotStarted,
             };
-
-            _unitOfWork.TaskDataDataRepository.Add(taskData);
             
+            _unitOfWork.TaskDataDataRepository.Add(taskData);
+
             if (isGrouped is false)
             {
                 CurrentTaskGroupId++;
@@ -144,7 +144,7 @@ public class TaskOptimizationServiceHelper
         {
             CurrentTaskGroupId--;
         }
-
+        
         _unitOfWork.Complete();
 
         if (BaseHub.ConnectionIds.TryGetValue(workerId, out var connectionId))
@@ -194,7 +194,7 @@ public class TaskOptimizationServiceHelper
 
         _unitOfWork.Complete();
     }
-    
+
     public void UpdatePriority(int taskId, int priority)
     {
         if (!_unitOfWork.TaskDataDataRepository.DoesIdExist(taskId)) throw new Exception("Task not found");
@@ -212,8 +212,6 @@ public class TaskOptimizationServiceHelper
         {
             UpdatePriority(taskIds[i], i);
         }
-
-        _unitOfWork.Complete();
     }
 
     public void AssignWorkerToTask(int taskId, int workerId)
@@ -226,6 +224,7 @@ public class TaskOptimizationServiceHelper
         if (taskData.AssigneeId.HasValue) throw new Exception("Task already has a worker assigned");
 
         taskData.AssigneeId = workerId;
+        _unitOfWork.TaskDataDataRepository.Update(taskData);
         _unitOfWork.Complete();
 
         if (BaseHub.ConnectionIds.TryGetValue(workerId, out var connectionId))
@@ -249,7 +248,7 @@ public class TaskOptimizationServiceHelper
         {
             throw new ArgumentOutOfRangeException("Index 2 out of range");
         }
-        
+
         (list[index1], list[index2]) = (list[index2], list[index1]);
     }
 
@@ -303,7 +302,7 @@ public class TaskOptimizationServiceHelper
         {
             index2--;
         }
-        
+
         SwapLists(arr, index1 - 1, index2);
 
         index2 = arr.Count - 1;
