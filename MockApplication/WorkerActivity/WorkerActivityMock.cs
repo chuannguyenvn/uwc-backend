@@ -12,30 +12,36 @@ public class WorkerActivityMock : BaseMock
 
     protected override async Task Main()
     {
-        await PickRandomDrivers(10);
+        await PickRandomDrivers();
         // await PickRandomCleaners(10);
         await MockBehavior();
     }
 
-    private async Task PickRandomDrivers(int countToPick)
+    private async Task PickRandomDrivers()
     {
-        // var allDrivers = (await GetAllDriverProfiles()).DriverProfiles.Where(profile => profile.Id != 11).ToList();
-        // var randomDrivers = allDrivers.GetRandom(countToPick);
-        //
-        // foreach (var randomDriver in randomDrivers)
-        // {
-        //     var newDirection = new Direction();
-        //     newDirection.CurrentCoordinate = new Coordinate(10.7670552457392, 106.656326672901);
-        //     _ongoingDirectionByDriverAccountIds[randomDriver.AccountId] = newDirection;
-        //     _ongoingTaskIdByDriverAccountIds[randomDriver.AccountId] = -1;
-        //     await Login(randomDriver.Account.Username, "password");
-        // }
+        var accountNamesByAccountId = new Dictionary<int, string>()
+        {
+            { 26, "deborah_davenport" },
+            { 27, "demi_davidson" },
+            { 28, "dakota_delgado" },
+            { 29, "destiny_drake" },
+            { 30, "diana_douglas" },
+        };
+        
+        foreach (var (accountId, accountName) in accountNamesByAccountId)
+        {
+            var newDirection = new Direction();
+            newDirection.CurrentCoordinate = new Coordinate(10.7670552457392, 106.656326672901);
+            _ongoingDirectionByDriverAccountIds[accountId] = newDirection;
+            _ongoingTaskIdByDriverAccountIds[accountId] = -1;
+            await Login(accountName, "password");
+        }
 
-        var direction = new Direction();
-        direction.CurrentCoordinate = new Coordinate(10.7670552457392, 106.656326672901);
-        _ongoingDirectionByDriverAccountIds[11] = direction;
-        _ongoingTaskIdByDriverAccountIds[11] = -1;
-        var token = await Login("driver_driver", "password");
+        // var direction = new Direction();
+        // direction.CurrentCoordinate = new Coordinate(10.7670552457392, 106.656326672901);
+        // _ongoingDirectionByDriverAccountIds[11] = direction;
+        // _ongoingTaskIdByDriverAccountIds[11] = -1;
+        // var token = await Login("driver_driver", "password");
     }
 
     private async Task PickRandomCleaners(int countToPick)
@@ -95,7 +101,7 @@ public class WorkerActivityMock : BaseMock
             }
             else
             {
-                var newCoordinate = _ongoingDirectionByDriverAccountIds[id].TravelBy(0.00005);
+                var newCoordinate = _ongoingDirectionByDriverAccountIds[id].TravelBy(0.0005);
                 Console.WriteLine("Driver {0} is at {1}", id, newCoordinate);
                 UpdateLocation(id, newCoordinate);
             }
