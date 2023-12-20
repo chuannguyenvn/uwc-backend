@@ -1,11 +1,12 @@
-﻿using Commons.Communications.Map;
+﻿using Commons.Communications.Authentication;
+using Commons.Communications.Map;
 using Commons.Communications.Mcps;
 using Commons.Communications.Tasks;
 using Commons.Communications.UserProfiles;
 using Commons.Endpoints;
 using Commons.Helpers;
-using Commons.Models;
 using Commons.Types;
+using Microsoft.AspNetCore.SignalR.Client;
 
 namespace MockApplication.Base;
 
@@ -22,6 +23,25 @@ public abstract class BaseMock : IHostedService
     public Task StopAsync(CancellationToken cancellationToken)
     {
         return Task.CompletedTask;
+    }
+
+    protected async Task<string> Login(string username, string password)
+    {
+        var result = await RequestHelper.Post<LoginResponse>(Endpoints.Authentication.Login, new LoginRequest
+        {
+            Username = username,
+            Password = password,
+            IsFromDesktop = false,
+        });
+
+        var connection = new HubConnectionBuilder()
+            .WithUrl("https://" + Endpoints.DOMAIN + "/hub",
+                options => options.AccessTokenProvider = () => Task.FromResult(result.Credentials.JwtToken)!)
+            .Build();
+
+        await connection.StartAsync();
+
+        return result.Credentials.JwtToken;
     }
 
     protected async Task<List<int>> GetMcpIds()

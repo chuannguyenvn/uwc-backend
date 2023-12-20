@@ -28,12 +28,14 @@ public class WorkerActivityMock : BaseMock
         //     newDirection.CurrentCoordinate = new Coordinate(10.7670552457392, 106.656326672901);
         //     _ongoingDirectionByDriverAccountIds[randomDriver.AccountId] = newDirection;
         //     _ongoingTaskIdByDriverAccountIds[randomDriver.AccountId] = -1;
+        //     await Login(randomDriver.Account.Username, "password");
         // }
 
         var direction = new Direction();
         direction.CurrentCoordinate = new Coordinate(10.7670552457392, 106.656326672901);
         _ongoingDirectionByDriverAccountIds[11] = direction;
         _ongoingTaskIdByDriverAccountIds[11] = -1;
+        var token = await Login("driver_driver", "password");
     }
 
     private async Task PickRandomCleaners(int countToPick)
