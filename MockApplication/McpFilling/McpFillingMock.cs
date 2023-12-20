@@ -5,21 +5,19 @@ namespace MockApplication.McpFilling;
 
 public class McpFillingMock : BaseMock
 {
-    private List<int> _mcpIds;
-    
     protected override async Task Main()
     {
-         _mcpIds = await GetMcpIds();
-        
         while (true)
         {
-            var randomMcpId = _mcpIds.GetRandom()[0];
-            var fillLevel = await GetMcpFillLevel(randomMcpId);
-            if (fillLevel < 0.9f)
+            var mcpIds = await GetMcpIds();
+            var randomMcpIds = mcpIds.GetRandom(5);
+
+            foreach (var randomMcpId in randomMcpIds)
             {
-                SetMcpFillLevel(randomMcpId, fillLevel + 0.1f);
+                var fillLevel = await GetMcpFillLevel(randomMcpId);
+                SetMcpFillLevel(randomMcpId, fillLevel + Random.Shared.NextSingle() * 0.5f);
             }
-            
+
             await Task.Delay(5000);
         }
     }

@@ -43,7 +43,7 @@ public class McpFillLevelService : IMcpFillLevelService, IHostedService, IDispos
 
     public RequestResult SetFillLevel(SetFillLevelRequest request)
     {
-        FillLevelsById[request.McpId] = request.FillLevel;
+        FillLevelsById[request.McpId] = Math.Clamp(request.FillLevel, 0f, 1f);
 
         using var scope = _serviceProvider.CreateScope();
         var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
