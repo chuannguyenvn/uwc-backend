@@ -1,10 +1,12 @@
-﻿using Commons.Communications.Tasks;
+﻿using Commons.Communications.Mcps;
+using Commons.Communications.Tasks;
 using Commons.HubHandlers;
 using Commons.Models;
 using Commons.RequestStatuses;
 using Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Repositories.Managers;
+using Services.Mcps;
 using TaskStatus = Commons.Types.TaskStatus;
 
 namespace Services.Tasks;
@@ -13,12 +15,15 @@ public class TaskService : ITaskService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ITaskOptimizationService _taskOptimizationService;
+    private readonly IMcpFillLevelService _mcpFillLevelService;
     private readonly IHubContext<BaseHub> _hubContext;
 
-    public TaskService(IUnitOfWork unitOfWork, ITaskOptimizationService taskOptimizationService, IHubContext<BaseHub> hubContext)
+    public TaskService(IUnitOfWork unitOfWork, ITaskOptimizationService taskOptimizationService, IMcpFillLevelService mcpFillLevelService,
+        IHubContext<BaseHub> hubContext)
     {
         _unitOfWork = unitOfWork;
         _taskOptimizationService = taskOptimizationService;
+        _mcpFillLevelService = mcpFillLevelService;
         _hubContext = hubContext;
     }
 
@@ -99,6 +104,12 @@ public class TaskService : ITaskService
         taskData.TaskStatus = TaskStatus.Completed;
         taskData.LastStatusChangeTimestamp = DateTime.Now;
         _unitOfWork.Complete();
+
+        _mcpFillLevelService.EmptyMcp(new EmptyMcpRequest
+        {
+            McpId = taskData.McpDataId,
+            WorkerId = taskData.AssigneeId.Value,
+        });
 
         if (BaseHub.ConnectionIds.TryGetValue(taskData.AssignerId, out var connectionId))
         {
