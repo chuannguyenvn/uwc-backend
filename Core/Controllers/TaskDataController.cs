@@ -25,6 +25,13 @@ public class TaskDataController : Controller
         return ProcessRequestResult(result);
     }
 
+    [HttpPost(Endpoints.TaskData.GET_TASKS_WITH_MCP)]
+    public IActionResult GetTasksWithMcp(GetTasksWithMcpRequest request)
+    {
+        var result = _taskService.GetTasksWithMcp(request);
+        return ProcessRequestResult(result);
+    }
+
     [HttpPost(Endpoints.TaskData.GET_ALL_TASKS)]
     public IActionResult GetAllTasks()
     {

@@ -25,6 +25,14 @@ public class TaskDataRepository : GenericRepository<TaskData>, ITaskDataReposito
             .Include(task => task.AssignerProfile).ToList();
     }
 
+    public List<TaskData> GetTasksByMcpId(int mcpId)
+    {
+        return Context.TaskDataTable.Where(task => task.McpDataId == mcpId)
+            .Include(task => task.McpData)
+            .Include(task => task.AssigneeProfile)
+            .Include(task => task.AssignerProfile).ToList();
+    }
+
     public List<TaskData> GetWorkerRemainingTasksIn24Hours(int workerId)
     {
         return Context.TaskDataTable.Where(task =>

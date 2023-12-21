@@ -57,10 +57,16 @@ public class MockTaskDataRepository : MockGenericRepository<TaskData>, ITaskData
         return Context.TaskDataTable.Where(task => task.AssigneeId == workerId).ToList();
     }
 
+    public List<TaskData> GetTasksByMcpId(int mcpId)
+    {
+        return Context.TaskDataTable.Where(task => task.McpDataId == mcpId).ToList();
+    }
+
     public List<TaskData> GetWorkerRemainingTasksIn24Hours(int workerId)
     {
         return Context.TaskDataTable.Where(task =>
-            task.AssigneeId == workerId && DateTime.Now.AddHours(24) >= task.CompleteByTimestamp && task.TaskStatus == TaskStatus.NotStarted).ToList();
+                task.AssigneeId == workerId && DateTime.Now.AddHours(24) >= task.CompleteByTimestamp && task.TaskStatus == TaskStatus.NotStarted)
+            .ToList();
     }
 
     public List<TaskData> GetUnassignedTasksIn24Hours()

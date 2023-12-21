@@ -39,6 +39,18 @@ public class TaskService : ITaskService
         });
     }
 
+    public ParamRequestResult<GetTasksWithMcpResponse> GetTasksWithMcp(GetTasksWithMcpRequest request)
+    {
+        if (!_unitOfWork.McpDataRepository.DoesIdExist(request.McpId))
+            return new ParamRequestResult<GetTasksWithMcpResponse>(new DataEntryNotFound());
+
+        var tasks = _unitOfWork.TaskDataDataRepository.GetTasksByMcpId(request.McpId);
+        return new ParamRequestResult<GetTasksWithMcpResponse>(new Success(), new GetTasksWithMcpResponse
+        {
+            Tasks = tasks
+        });
+    }
+
     public ParamRequestResult<GetWorkerPrioritizedTaskResponse> GetWorkerPrioritizedTask(GetWorkerPrioritizedTaskRequest request)
     {
         if (!_unitOfWork.AccountRepository.DoesIdExist(request.WorkerId))
