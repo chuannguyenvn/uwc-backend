@@ -9,7 +9,7 @@
 
         <LangVersion>8</LangVersion>
 
-        <PostBuildEvent>if exist C:\Users\chuan\UnityProjects\uwc-frontend\Assets\DLLs\SharedLibrary.dll copy SharedLibrary.dll C:\Users\chuan\UnityProjects\uwc-frontend\Assets\DLLs\SharedLibrary.dll</PostBuildEvent>
+<!--        <PostBuildEvent>if exist C:\Users\chuan\UnityProjects\uwc-frontend\Assets\DLLs\SharedLibrary.dll copy SharedLibrary.dll C:\Users\chuan\UnityProjects\uwc-frontend\Assets\DLLs\SharedLibrary.dll</PostBuildEvent>-->
 
         <TargetFramework>netstandard2.1</TargetFramework>
     </PropertyGroup>
