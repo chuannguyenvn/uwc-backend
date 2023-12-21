@@ -10,6 +10,6 @@ namespace Commons.Communications.Tasks
 
     public class GetTasksWithMcpResponse
     {
-        public List<TaskData> Tasks;
+        public List<TaskData> Tasks { get; set; }
     }
 }
