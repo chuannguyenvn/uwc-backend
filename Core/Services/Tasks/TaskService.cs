@@ -97,12 +97,12 @@ public class TaskService : ITaskService
             if (task.TaskStatus != TaskStatus.InProgress) continue;
 
             task.TaskStatus = TaskStatus.NotStarted;
-            task.LastStatusChangeTimestamp = DateTime.Now;
+            task.LastStatusChangeTimestamp = DateTime.UtcNow;
         }
 
         var taskData = _unitOfWork.TaskDataDataRepository.GetById(request.TaskId);
         taskData.TaskStatus = TaskStatus.InProgress;
-        taskData.LastStatusChangeTimestamp = DateTime.Now;
+        taskData.LastStatusChangeTimestamp = DateTime.UtcNow;
         _unitOfWork.Complete();
 
         return new RequestResult(new Success());
@@ -114,7 +114,7 @@ public class TaskService : ITaskService
 
         var taskData = _unitOfWork.TaskDataDataRepository.GetById(request.TaskId);
         taskData.TaskStatus = TaskStatus.Completed;
-        taskData.LastStatusChangeTimestamp = DateTime.Now;
+        taskData.LastStatusChangeTimestamp = DateTime.UtcNow;
         _unitOfWork.Complete();
 
         _mcpFillLevelService.EmptyMcp(new EmptyMcpRequest
@@ -141,7 +141,7 @@ public class TaskService : ITaskService
 
         var taskData = _unitOfWork.TaskDataDataRepository.GetById(request.TaskId);
         taskData.TaskStatus = TaskStatus.Rejected;
-        taskData.LastStatusChangeTimestamp = DateTime.Now;
+        taskData.LastStatusChangeTimestamp = DateTime.UtcNow;
         _unitOfWork.Complete();
 
         if (BaseHub.ConnectionIds.TryGetValue(taskData.AssignerId, out var connectionId))

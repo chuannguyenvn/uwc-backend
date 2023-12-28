@@ -51,7 +51,7 @@ public class McpFillLevelService : IMcpFillLevelService, IHostedService, IDispos
         {
             McpDataId = request.McpId,
             McpFillLevel = _fillLevelsById[request.McpId],
-            Timestamp = DateTime.Now,
+            Timestamp = DateTime.UtcNow,
         };
         unitOfWork.McpFillLevelLogRepository.Add(mcpFillLevelLog);
         unitOfWork.Complete();
@@ -72,14 +72,14 @@ public class McpFillLevelService : IMcpFillLevelService, IHostedService, IDispos
         {
             McpDataId = request.McpId,
             McpFillLevel = _fillLevelsById[request.McpId],
-            Timestamp = DateTime.Now,
+            Timestamp = DateTime.UtcNow,
         };
         unitOfWork.McpFillLevelLogRepository.Add(mcpFillLevelLog);
 
         var mcpEmptyRecord = new McpEmptyRecord
         {
             McpDataId = request.McpId,
-            Timestamp = DateTime.Now,
+            Timestamp = DateTime.UtcNow,
             EmptyingWorkerId = request.WorkerId,
         };
         unitOfWork.McpEmptyRecordRecordRepository.Add(mcpEmptyRecord);

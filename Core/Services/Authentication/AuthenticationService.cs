@@ -67,7 +67,7 @@ public class AuthenticationService : IAuthenticationService
                 Gender = request.Gender,
                 DateOfBirth = request.DateOfBirth,
                 Address = request.Address,
-                CreatedTimestamp = DateTime.Now,
+                CreatedTimestamp = DateTime.UtcNow,
                 AvatarColorHue = Random.Shared.NextSingle() * 360f,
             }
         };

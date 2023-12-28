@@ -65,19 +65,19 @@ public class MockTaskDataRepository : MockGenericRepository<TaskData>, ITaskData
     public List<TaskData> GetWorkerRemainingTasksIn24Hours(int workerId)
     {
         return Context.TaskDataTable.Where(task =>
-                task.AssigneeId == workerId && DateTime.Now.AddHours(24) >= task.CompleteByTimestamp && task.TaskStatus == TaskStatus.NotStarted)
+                task.AssigneeId == workerId && DateTime.UtcNow.AddHours(24) >= task.CompleteByTimestamp && task.TaskStatus == TaskStatus.NotStarted)
             .ToList();
     }
 
     public List<TaskData> GetUnassignedTasksIn24Hours()
     {
         return Context.TaskDataTable.Where(task =>
-            task.AssigneeId == null && DateTime.Now.AddHours(24) >= task.CompleteByTimestamp && task.TaskStatus == TaskStatus.NotStarted).ToList();
+            task.AssigneeId == null && DateTime.UtcNow.AddHours(24) >= task.CompleteByTimestamp && task.TaskStatus == TaskStatus.NotStarted).ToList();
     }
 
     public List<TaskData> GetTasksFromTodayOrFuture()
     {
-        return Context.TaskDataTable.Where(task => task.CompleteByTimestamp >= DateTime.Now.Date).ToList();
+        return Context.TaskDataTable.Where(task => task.CompleteByTimestamp >= DateTime.UtcNow.Date).ToList();
     }
 
     public TaskData? GetFocusedTaskByWorkerId(int workerId)

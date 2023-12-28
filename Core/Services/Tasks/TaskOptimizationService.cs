@@ -647,8 +647,8 @@ public class TaskOptimizationService : ITaskOptimizationService
                     AssigneeId = workerProfile.Id,
                     AssigneeProfile = workerProfile,
                     McpDataId = sortedUnassignedTasks[i].McpDataId,
-                    CreatedTimestamp = DateTime.Now,
-                    CompleteByTimestamp = DateTime.Now.AddHours(1)
+                    CreatedTimestamp = DateTime.UtcNow,
+                    CompleteByTimestamp = DateTime.UtcNow.AddHours(1)
                 };
                 tempTaskList.Add(trialAndError);
                 cloneTempTaskList = tempTaskList;
@@ -854,7 +854,7 @@ public class TaskOptimizationService : ITaskOptimizationService
 
                 for (int index = 0; index < mcpIds.Count; index++)
                 {
-                    _helper.AddTaskWithoutWorker(supervisorId, mcpIds[index], DateTime.Now.AddHours(10));
+                    _helper.AddTaskWithoutWorker(supervisorId, mcpIds[index], DateTime.UtcNow.AddHours(10));
                 }
 
                 var res = DistributeTasksFromPoolGen3(ref request, costOrFast: costOrFast);
@@ -897,7 +897,7 @@ public class TaskOptimizationService : ITaskOptimizationService
             {
                 // assignerId = 0 => system assigned
                 // TODO: Must do something dynamic about completeByTimestamp (can't just add 1 hour)
-                // _helper.AddTasksWithoutWorker(0, new() { mcpId }, DateTime.Now.AddHours(1), false);
+                // _helper.AddTasksWithoutWorker(0, new() { mcpId }, DateTime.UtcNow.AddHours(1), false);
                 fullMcpIds.Add(mcpId);
             }
         }
@@ -907,7 +907,7 @@ public class TaskOptimizationService : ITaskOptimizationService
             AssignerAccountId = 0,
             AssigneeAccountId = null,
             McpDataIds = fullMcpIds,
-            CompleteByTimestamp = DateTime.Now.AddHours(1),
+            CompleteByTimestamp = DateTime.UtcNow.AddHours(1),
             RoutingOptimizationScope = RoutingOptimizationScope.All,
             AutoAssignmentOptimizationStrategy = AutoAssignmentOptimizationStrategy.TimeEfficient
         };

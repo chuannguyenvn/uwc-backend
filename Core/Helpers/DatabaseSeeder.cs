@@ -61,7 +61,7 @@ public class DatabaseSeeder
                     DateOfBirth = dateOfBirth,
                     UserRole = UserRole.Supervisor,
                     Address = "123 Test road, Test city",
-                    CreatedTimestamp = DateTime.Now,
+                    CreatedTimestamp = DateTime.UtcNow,
                     AvatarColorHue = Random.Shared.NextSingle() * 360f,
                 }
             };
@@ -100,7 +100,7 @@ public class DatabaseSeeder
                     DateOfBirth = dateOfBirth,
                     UserRole = UserRole.Driver,
                     Address = "123 Test road, Test city",
-                    CreatedTimestamp = DateTime.Now,
+                    CreatedTimestamp = DateTime.UtcNow,
                     AvatarColorHue = Random.Shared.NextSingle() * 360f,
                 }
             };
@@ -139,7 +139,7 @@ public class DatabaseSeeder
                     DateOfBirth = dateOfBirth,
                     UserRole = UserRole.Cleaner,
                     Address = "123 Test road, Test city",
-                    CreatedTimestamp = DateTime.Now,
+                    CreatedTimestamp = DateTime.UtcNow,
                     AvatarColorHue = Random.Shared.NextSingle() * 360f,
                 }
             };
@@ -777,8 +777,8 @@ public class DatabaseSeeder
                     AssigneeProfile = _allAccounts[driverId].UserProfile,
                     McpDataId = mcpId,
                     McpData = _allMcps[mcpId],
-                    CreatedTimestamp = DateTime.Now,
-                    LastStatusChangeTimestamp = DateTime.Now,
+                    CreatedTimestamp = DateTime.UtcNow,
+                    LastStatusChangeTimestamp = DateTime.UtcNow,
                     CompleteByTimestamp = DateTime.Today.AddHours(randomHourOffset).AddMinutes(randomMinuteOffset),
                 };
 

@@ -97,7 +97,7 @@ public class TaskOptimizationServiceHelper
             AssigneeId = workerId,
             McpDataId = mcpId,
             GroupId = CurrentTaskGroupId,
-            CreatedTimestamp = DateTime.Now,
+            CreatedTimestamp = DateTime.UtcNow,
             CompleteByTimestamp = completeByTimestamp,
             TaskStatus = TaskStatus.NotStarted,
         };
@@ -127,7 +127,7 @@ public class TaskOptimizationServiceHelper
                 AssigneeId = workerId,
                 McpDataId = mcpId,
                 GroupId = CurrentTaskGroupId,
-                CreatedTimestamp = DateTime.Now,
+                CreatedTimestamp = DateTime.UtcNow,
                 CompleteByTimestamp = completeByTimestamp,
                 TaskStatus = TaskStatus.NotStarted,
             };
@@ -164,7 +164,7 @@ public class TaskOptimizationServiceHelper
             AssignerId = assignerId,
             McpDataId = mcpId,
             GroupId = CurrentTaskGroupId,
-            CreatedTimestamp = DateTime.Now,
+            CreatedTimestamp = DateTime.UtcNow,
             CompleteByTimestamp = completeByTimestamp,
             TaskStatus = TaskStatus.NotStarted,
         };
@@ -184,7 +184,7 @@ public class TaskOptimizationServiceHelper
                 AssignerId = assignerId,
                 McpDataId = mcpId,
                 GroupId = CurrentTaskGroupId,
-                CreatedTimestamp = DateTime.Now,
+                CreatedTimestamp = DateTime.UtcNow,
                 CompleteByTimestamp = completeByTimestamp,
                 TaskStatus = TaskStatus.NotStarted,
             };

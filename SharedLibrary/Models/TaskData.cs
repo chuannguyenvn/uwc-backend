@@ -20,9 +20,9 @@ namespace Commons.Models
         public int Priority { get; set; }
         public int? GroupId { get; set; }
 
-        public DateTime CreatedTimestamp { get; set; } = DateTime.Now;
+        public DateTime CreatedTimestamp { get; set; } = DateTime.UtcNow;
         public DateTime CompleteByTimestamp { get; set; }
-        public DateTime LastStatusChangeTimestamp { get; set; } = DateTime.Now;
+        public DateTime LastStatusChangeTimestamp { get; set; } = DateTime.UtcNow;
         public TaskStatus TaskStatus { get; set; } = TaskStatus.NotStarted;
     }
 }

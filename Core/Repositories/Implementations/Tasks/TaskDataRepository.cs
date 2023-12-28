@@ -36,7 +36,7 @@ public class TaskDataRepository : GenericRepository<TaskData>, ITaskDataReposito
     public List<TaskData> GetWorkerRemainingTasksIn24Hours(int workerId)
     {
         return Context.TaskDataTable.Where(task =>
-                task.AssigneeId == workerId && DateTime.Now.AddHours(24) >= task.CompleteByTimestamp && task.TaskStatus == TaskStatus.NotStarted)
+                task.AssigneeId == workerId && DateTime.UtcNow.AddHours(24) >= task.CompleteByTimestamp && task.TaskStatus == TaskStatus.NotStarted)
             .Include(task => task.McpData)
             .Include(task => task.AssigneeProfile)
             .Include(task => task.AssignerProfile).ToList();
@@ -45,7 +45,7 @@ public class TaskDataRepository : GenericRepository<TaskData>, ITaskDataReposito
     public List<TaskData> GetUnassignedTasksIn24Hours()
     {
         return Context.TaskDataTable.Where(task =>
-                task.AssigneeId == null && DateTime.Now.AddHours(24) >= task.CompleteByTimestamp && task.TaskStatus == TaskStatus.NotStarted)
+                task.AssigneeId == null && DateTime.UtcNow.AddHours(24) >= task.CompleteByTimestamp && task.TaskStatus == TaskStatus.NotStarted)
             .Include(task => task.McpData)
             .Include(task => task.AssigneeProfile)
             .Include(task => task.AssignerProfile).ToList();
@@ -53,7 +53,7 @@ public class TaskDataRepository : GenericRepository<TaskData>, ITaskDataReposito
 
     public List<TaskData> GetTasksFromTodayOrFuture()
     {
-        return Context.TaskDataTable.Where(task => task.CompleteByTimestamp >= DateTime.Now.Date)
+        return Context.TaskDataTable.Where(task => task.CompleteByTimestamp >= DateTime.UtcNow.Date)
             .Include(task => task.McpData)
             .Include(task => task.AssigneeProfile)
             .Include(task => task.AssignerProfile).ToList();
