@@ -49,7 +49,7 @@ public class MockTaskDataRepository : MockGenericRepository<TaskData>, ITaskData
 
     public List<TaskData> GetTasksByDate(DateTime date)
     {
-        return Context.TaskDataTable.Where(task => task.CompleteByTimestamp == date.Date).ToList();
+        return Context.TaskDataTable.Where(task => task.CompleteByTimestamp.Date == date.Date).ToList();
     }
 
     public List<TaskData> GetTasksByWorkerId(int workerId)

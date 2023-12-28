@@ -3,7 +3,9 @@ using Commons.Communications.Reports;
 using Commons.RequestStatuses;
 using Commons.Types;
 using Hubs;
+using Newtonsoft.Json;
 using Repositories.Managers;
+using Services.Mcps;
 using TaskStatus = Commons.Types.TaskStatus;
 
 namespace Services.Reports;
@@ -11,10 +13,12 @@ namespace Services.Reports;
 public class ReportService : IReportService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly McpFillLevelService _mcpFillLevelService;
 
-    public ReportService(IUnitOfWork unitOfWork)
+    public ReportService(IUnitOfWork unitOfWork, McpFillLevelService mcpFillLevelService)
     {
         _unitOfWork = unitOfWork;
+        _mcpFillLevelService = mcpFillLevelService;
     }
 
     public ParamRequestResult<GetDashboardReportResponse> GetTodayDashboardReport()
@@ -64,6 +68,9 @@ public class ReportService : IReportService
                 var assignedTimestamp = taskData.CompleteByTimestamp;
                 return (completedTimestamp - assignedTimestamp).Minutes;
             }));
+
+        Console.WriteLine(response.TotalTasksCreated);
+        Console.WriteLine(response.TotalTasksCompleted);
     }
 
     private void CalculateWorkerOnlineMetrics(GetDashboardReportResponse response)
@@ -79,24 +86,40 @@ public class ReportService : IReportService
 
     private void CalculateMcpFillLevelMetrics(GetDashboardReportResponse response)
     {
-        var fillLevelLogs = _unitOfWork.McpFillLevelLogRepository.GetLogsByDate(DateTime.Now);
+        if (_mcpFillLevelService.GetAllFillLevel().Data != null)
+            response.AverageMcpCapacity = _mcpFillLevelService.GetAllFillLevel().Data.FillLevelsById.Values.Average();
+
+        var fillLevelLogs = _unitOfWork.McpFillLevelLogRepository.GetLogsByDate(DateTime.UtcNow);
+        fillLevelLogs = fillLevelLogs.OrderBy(m => m.Timestamp).ToList();
         response.TotalMcpFillLevelTimestamps = fillLevelLogs.Select(m => m.Timestamp).ToList();
         response.TotalMcpFillLevelValues = fillLevelLogs.Select(m => m.McpFillLevel).ToList();
 
-        var mcpEmptied = _unitOfWork.McpEmptyRecordRecordRepository.GetRecordsByDate(DateTime.Now);
+        var mcpEmptied = _unitOfWork.McpEmptyRecordRecordRepository.GetRecordsByDate(DateTime.UtcNow);
+        mcpEmptied = mcpEmptied.OrderBy(m => m.Timestamp).ToList();
         response.McpEmptiedTimestamps = mcpEmptied.Select(m => m.Timestamp).ToList();
     }
 
     private void CalculateWeatherMetrics(GetDashboardReportResponse response)
     {
-        var random = new Random();
-        response.CurrentTemperature = random.Next(0, 40);
-        response.ChanceOfPrecipitation = random.Next(0, 4) switch
+        var weather = RequestWeather();
+
+        response.CurrentTemperature = (float)weather.Current.Temp;
+
+        var maxPrecipitation = weather.Hourly.Take(6).Max(h => h.Pop);
+        response.ChanceOfPrecipitation = maxPrecipitation switch
         {
-            0 => ChanceOfPrecipitation.None,
-            1 => ChanceOfPrecipitation.Slight,
-            2 => ChanceOfPrecipitation.Moderate,
+            < 0.25 => ChanceOfPrecipitation.None,
+            < 0.5 => ChanceOfPrecipitation.Slight,
+            < 0.75 => ChanceOfPrecipitation.Moderate,
             _ => ChanceOfPrecipitation.High,
         };
+    }
+
+    private OpenWeatherResponse RequestWeather()
+    {
+        var client = new HttpClient();
+        var httpResponse = client.GetStringAsync(Constants.OPEN_WEATHER_API).Result;
+        var openWeatherResponse = JsonConvert.DeserializeObject<OpenWeatherResponse>(httpResponse);
+        return openWeatherResponse;
     }
 }

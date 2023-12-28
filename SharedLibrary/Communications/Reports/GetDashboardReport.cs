@@ -10,6 +10,8 @@ namespace Commons.Communications.Reports
         public int TotalTasksCreated { get; set; }
         public float AverageTaskCompletionTimeInMinutes { get; set; }
         
+        public float AverageMcpCapacity { get; set; }
+        
         public int OnlineWorkers { get; set; }
         public int TotalWorkers { get; set; }
         
