@@ -14,4 +14,9 @@ public class MockMcpEmptyRecordRepository : MockGenericRepository<McpEmptyRecord
     {
         return Context.McpEmptyRecordTable.Where(record => record.Timestamp.Date == date.Date).ToList();
     }
+
+    public List<McpEmptyRecord> GetRecordsInTimeSpan(DateTime startDate, DateTime endDate)
+    {
+        return Context.McpEmptyRecordTable.Where(record => record.Timestamp >= startDate && record.Timestamp <= endDate).ToList();
+    }
 }

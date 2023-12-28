@@ -1,4 +1,5 @@
 ﻿using Commons.Models;
+using Microsoft.EntityFrameworkCore;
 using Repositories.Generics;
 using Repositories.Managers;
 
@@ -12,6 +13,11 @@ public class McpFillLevelLogRepository : GenericRepository<McpFillLevelLog>, IMc
 
     public List<McpFillLevelLog> GetLogsByDate(DateTime date)
     {
-        return Context.McpFillLevelLogTable.Where(log => log.Timestamp.Date == date.Date).ToList();
+        return Context.McpFillLevelLogTable.Where(log => log.Timestamp.Date == date.Date).Include(log => log.McpData).ToList();
+    }
+
+    public List<McpFillLevelLog> GetLogsInTimeSpan(DateTime startDate, DateTime endDate)
+    {
+        return Context.McpFillLevelLogTable.Where(log => log.Timestamp >= startDate && log.Timestamp <= endDate).Include(log => log.McpData).ToList();
     }
 }

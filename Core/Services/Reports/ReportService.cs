@@ -29,6 +29,28 @@ public class ReportService : IReportService
         return new ParamRequestResult<GetDashboardReportResponse>(new Success(), response);
     }
 
+    public ParamRequestResult<GetReportFileResponse> GetReportFile(GetReportFileRequest request)
+    {
+        var response = new GetReportFileResponse();
+
+        var fillLevelLogs = _unitOfWork.McpFillLevelLogRepository.GetLogsInTimeSpan(DateTime.UtcNow.AddDays(-7), DateTime.UtcNow);
+        fillLevelLogs = fillLevelLogs.OrderBy(m => m.Timestamp).ToList();
+        response.McpFillLevelTimestamps = fillLevelLogs.Select(m => m.Timestamp).ToList();
+        response.FillLevelMcpIds = fillLevelLogs.Select(m => m.McpDataId).ToList();
+        response.FillLevelMcpAddresses = fillLevelLogs.Select(m => m.McpData.Address).ToList();
+        response.McpFillLevelValues = fillLevelLogs.Select(m => m.McpFillLevel).ToList();
+
+        var mcpEmptied = _unitOfWork.McpEmptyRecordRecordRepository.GetRecordsInTimeSpan(DateTime.UtcNow.AddDays(-7), DateTime.UtcNow);
+        mcpEmptied = mcpEmptied.OrderBy(m => m.Timestamp).ToList();
+        response.McpEmptiedTimestamps = mcpEmptied.Select(m => m.Timestamp).ToList();
+        response.EmptyingMcpIds = mcpEmptied.Select(m => m.McpDataId).ToList();
+        response.EmptyingMcpAddresses = mcpEmptied.Select(m => m.McpData.Address).ToList();
+        response.WorkerIds = mcpEmptied.Select(m => m.EmptyingWorkerId).ToList();
+        response.WorkerNames = mcpEmptied.Select(m => m.EmptyingWorker.FirstName + " " + m.EmptyingWorker.FirstName).ToList();
+
+        return new ParamRequestResult<GetReportFileResponse>(new Success(), response);
+    }
+
     private void CalculateTaskMetrics(GetDashboardReportResponse response)
     {
         var tasks = _unitOfWork.TaskDataDataRepository.GetTasksByDate(DateTime.Now);

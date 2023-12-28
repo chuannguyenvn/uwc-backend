@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Commons.Communications.Reports;
+using Microsoft.AspNetCore.Mvc;
 using Commons.Endpoints;
 using Microsoft.AspNetCore.Authorization;
 using Services.Reports;
@@ -21,6 +22,13 @@ public class ReportController : Controller
     public IActionResult Get()
     {
         var result = _reportService.GetTodayDashboardReport();
+        return ProcessRequestResult(result);
+    }
+
+    [HttpPost(Endpoints.Report.GET_FILE)]
+    public IActionResult GetFile(GetReportFileRequest request)
+    {
+        var result = _reportService.GetReportFile(request);
         return ProcessRequestResult(result);
     }
 }

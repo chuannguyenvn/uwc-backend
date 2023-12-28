@@ -14,4 +14,9 @@ public class MockMcpFillLevelLogRepository : MockGenericRepository<McpFillLevelL
     {
         return Context.McpFillLevelLogTable.Where(log => log.Timestamp.Date == date.Date).ToList();
     }
+
+    public List<McpFillLevelLog> GetLogsInTimeSpan(DateTime startDate, DateTime endDate)
+    {
+        return Context.McpFillLevelLogTable.Where(log => log.Timestamp >= startDate && log.Timestamp <= endDate).ToList();
+    }
 }

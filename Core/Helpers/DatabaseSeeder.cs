@@ -31,6 +31,8 @@ public class DatabaseSeeder
         SeedMessages();
         SeedTasks();
         SeedSettings();
+        SeedEmptyingRecords();
+        SeedMcpFillLevelLogs();
     }
 
     private void SeedSupervisorProfiles()
@@ -825,6 +827,44 @@ public class DatabaseSeeder
             };
 
             _unitOfWork.SettingRepository.Add(setting);
+        }
+
+        _unitOfWork.Complete();
+    }
+
+    private void SeedEmptyingRecords()
+    {
+        for (int i = 0; i < 100; i++)
+        {
+            var log = new McpEmptyRecord
+            {
+                McpDataId = Random.Shared.Next(1, 16),
+                EmptyingWorkerId = Random.Shared.Next(11, 31),
+                Timestamp = DateTime.UtcNow.AddDays(-Random.Shared.Next(7)).AddHours(-Random.Shared.Next(24)).AddMinutes(-Random.Shared.Next(60))
+                    .AddSeconds(-Random.Shared.Next(60)),
+                McpFillLevelBeforeEmptying = (float)Random.Shared.NextDouble(),
+                McpFillLevelAfterEmptying = (float)Random.Shared.NextDouble(),
+            };
+
+            _unitOfWork.McpEmptyRecordRecordRepository.Add(log);
+        }
+
+        _unitOfWork.Complete();
+    }
+
+    private void SeedMcpFillLevelLogs()
+    {
+        for (int i = 0; i < 400; i++)
+        {
+            var log = new McpFillLevelLog
+            {
+                McpDataId = Random.Shared.Next(1, 16),
+                Timestamp = DateTime.UtcNow.AddDays(-Random.Shared.Next(7)).AddHours(-Random.Shared.Next(24)).AddMinutes(-Random.Shared.Next(60))
+                    .AddSeconds(-Random.Shared.Next(60)),
+                McpFillLevel = (float)Random.Shared.NextDouble(),
+            };
+
+            _unitOfWork.McpFillLevelLogRepository.Add(log);
         }
 
         _unitOfWork.Complete();
