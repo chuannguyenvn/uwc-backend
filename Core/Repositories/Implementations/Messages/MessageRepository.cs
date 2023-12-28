@@ -23,4 +23,10 @@ public class MessageRepository : GenericRepository<Message>, IMessageRepository
             .GroupBy(message => message.SenderProfileId == userAccountId ? message.ReceiverProfileId : message.SenderProfileId)
             .Select(group => group.OrderByDescending(message => message.Timestamp).First()).ToList();
     }
+
+    public IEnumerable<Message> GetAllUnseenMessages(int userAccountId)
+    {
+        var messages = Context.MessageTable.Where(message => message.ReceiverProfileId == userAccountId && !message.IsSeen).ToList();
+        return messages;
+    }
 }

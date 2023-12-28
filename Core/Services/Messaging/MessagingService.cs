@@ -42,13 +42,44 @@ public class MessagingService : IMessagingService
         return new RequestResult(new Success());
     }
 
+    public RequestResult ReadMessage(ReadAllMessagesRequest request)
+    {
+        var messages = _unitOfWork.MessageRepository.GetMessagesBetweenTwoUsers(request.SenderId, request.ReceiverId).ToList();
+
+        foreach (var message in messages)
+        {
+            if (message.ReceiverProfileId == request.ReceiverId) message.IsSeen = true;
+        }
+
+        _unitOfWork.Complete();
+
+        if (BaseHub.ConnectionIds.TryGetValue(request.SenderId, out var id))
+            _hubContext.Clients.Client(id)
+                .SendAsync(HubHandlers.Messaging.READ_MESSAGE, new ReadAllMessagesBroadcastData()
+                {
+                    ReceiverId = request.ReceiverId,
+                });
+
+        return new RequestResult(new Success());
+    }
+
     public ParamRequestResult<GetMessagesBetweenTwoUsersResponse> GetMessagesBetweenTwoUsers(GetMessagesBetweenTwoUsersRequest request)
     {
-        var messages = _unitOfWork.MessageRepository.GetMessagesBetweenTwoUsers(request.UserAccountId, request.OtherUserAccountId);
+        var messages = _unitOfWork.MessageRepository.GetMessagesBetweenTwoUsers(request.UserAccountId, request.OtherUserAccountId).ToList();
+
+        foreach (var message in messages)
+        {
+            if (message.ReceiverProfileId == request.UserAccountId) message.IsSeen = true;
+        }
+
+        _unitOfWork.Complete();
+
         var response = new GetMessagesBetweenTwoUsersResponse()
         {
-            Messages = messages.ToList(),
+            Messages = messages.Skip(request.CurrentMessageCount).Take(20).ToList(),
+            IsContinuous = request.CurrentMessageCount > 0,
         };
+
         return new ParamRequestResult<GetMessagesBetweenTwoUsersResponse>(new Success(), response);
     }
 

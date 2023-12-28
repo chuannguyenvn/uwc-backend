@@ -25,6 +25,13 @@ public class MessagingController : Controller
         return ProcessRequestResult(result);
     }
 
+    [HttpPost(Endpoints.Messaging.READ_MESSAGE)]
+    public IActionResult ReadMessage(ReadAllMessagesRequest request)
+    {
+        var result = _messagingService.ReadMessage(request);
+        return ProcessRequestResult(result);
+    }
+
     [HttpPost(Endpoints.Messaging.GET_MESSAGES_BETWEEN_TWO_USERS)]
     public IActionResult GetMessagesBetweenTwoUsers(GetMessagesBetweenTwoUsersRequest request)
     {

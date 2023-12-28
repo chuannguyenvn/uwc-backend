@@ -12,5 +12,6 @@ namespace Commons.Models
 
         public string Content { get; set; }
         public DateTime Timestamp { get; set; }
+        public bool IsSeen { get; set; } = false;
     }
 }

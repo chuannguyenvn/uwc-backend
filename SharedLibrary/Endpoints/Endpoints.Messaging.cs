@@ -7,10 +7,12 @@ namespace Commons.Endpoints
             private const string MESSAGING = "messaging";
             
             public const string SEND_MESSAGE = "send";
+            public const string READ_MESSAGE = "read";
             public const string GET_MESSAGES_BETWEEN_TWO_USERS = "get-messages-between-two-users";
             public const string GET_PREVIEW_MESSAGES = "get-preview-messages";
             
             public static string SendMessage => DOMAIN + "/" + MESSAGING + "/" + SEND_MESSAGE;
+            public static string ReadMessage => DOMAIN + "/" + MESSAGING + "/" + READ_MESSAGE;
             public static string GetMessagesBetweenTwoUsers => DOMAIN + "/" + MESSAGING + "/" + GET_MESSAGES_BETWEEN_TWO_USERS;
             public static string GetPreviewMessages => DOMAIN + "/" + MESSAGING + "/" + GET_PREVIEW_MESSAGES;
         }
