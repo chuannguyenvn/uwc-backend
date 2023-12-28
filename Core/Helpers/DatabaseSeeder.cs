@@ -173,42 +173,8 @@ public class DatabaseSeeder
             new() { Coordinate = new Coordinate(10.7612, 106.661), Address = "93 Lý Thường Kiệt, P.7, Q.10" }
         };
 
-        var random = new Random();
         foreach (var mcpData in mcpDataList)
         {
-            mcpData.McpFillLevelLogs = new List<McpFillLevelLog>();
-            mcpData.McpEmptyRecords = new List<McpEmptyRecord>();
-
-            for (int i = 0; i < random.Next(20); i++)
-            {
-                var fillLevelLog = new McpFillLevelLog
-                {
-                    McpDataId = mcpData.Id,
-                    McpData = mcpData,
-                    Timestamp = DateTime.UtcNow.AddHours(-random.Next(24)).AddMinutes(-random.Next(60)),
-                    McpFillLevel = (float)random.NextDouble() * 100
-                };
-
-                mcpData.McpFillLevelLogs.Add(fillLevelLog);
-            }
-
-            for (int i = 0; i < random.Next(5); i++)
-            {
-                var id = random.Next(10, 30);
-                var emptyRecord = new McpEmptyRecord
-                {
-                    McpDataId = mcpData.Id,
-                    McpData = mcpData,
-                    Timestamp = DateTime.UtcNow.AddHours(-random.Next(24)).AddMinutes(-random.Next(60)),
-                    McpFillLevelBeforeEmptying = (float)random.NextDouble() * 100,
-                    McpFillLevelAfterEmptying = (float)random.NextDouble() * 100,
-                    EmptyingWorkerId = id,
-                    EmptyingWorker = _allAccounts[id].UserProfile
-                };
-
-                mcpData.McpEmptyRecords.Add(emptyRecord);
-            }
-
             _unitOfWork.McpDataRepository.Add(mcpData);
             _allMcps.Add(mcpData);
         }
@@ -843,7 +809,7 @@ public class DatabaseSeeder
                 Timestamp = DateTime.UtcNow.AddDays(-Random.Shared.Next(7)).AddHours(-Random.Shared.Next(24)).AddMinutes(-Random.Shared.Next(60))
                     .AddSeconds(-Random.Shared.Next(60)),
                 McpFillLevelBeforeEmptying = (float)Random.Shared.NextDouble(),
-                McpFillLevelAfterEmptying = (float)Random.Shared.NextDouble(),
+                McpFillLevelAfterEmptying = 0,
             };
 
             _unitOfWork.McpEmptyRecordRecordRepository.Add(log);
@@ -856,12 +822,13 @@ public class DatabaseSeeder
     {
         for (int i = 0; i < 400; i++)
         {
+            var timestamp = DateTime.UtcNow.AddDays(-Random.Shared.Next(7)).AddHours(-Random.Shared.Next(24)).AddMinutes(-Random.Shared.Next(60))
+                .AddSeconds(-Random.Shared.Next(60));
             var log = new McpFillLevelLog
             {
                 McpDataId = Random.Shared.Next(1, 16),
-                Timestamp = DateTime.UtcNow.AddDays(-Random.Shared.Next(7)).AddHours(-Random.Shared.Next(24)).AddMinutes(-Random.Shared.Next(60))
-                    .AddSeconds(-Random.Shared.Next(60)),
-                McpFillLevel = (float)Random.Shared.NextDouble(),
+                Timestamp = timestamp,
+                McpFillLevel = (float)(Math.Sin(timestamp.Hour / 24f * Math.Tau) + 1) / 2,
             };
 
             _unitOfWork.McpFillLevelLogRepository.Add(log);

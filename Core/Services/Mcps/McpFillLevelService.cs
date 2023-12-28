@@ -15,7 +15,6 @@ public class McpFillLevelService : IMcpFillLevelService, IHostedService, IDispos
     public static Dictionary<int, float> FillLevelsById => _fillLevelsById;
     private static readonly Dictionary<int, float> _fillLevelsById = new();
 
-    private Timer? _fillTimer;
     private Timer? _broadcastTimer;
 
     public McpFillLevelService(IServiceProvider serviceProvider)
@@ -94,7 +93,6 @@ public class McpFillLevelService : IMcpFillLevelService, IHostedService, IDispos
     public Task StartAsync(CancellationToken cancellationToken)
     {
         InitializeFillLevelDictionary();
-        // _fillTimer = new Timer(FillMcps, null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
         _broadcastTimer = new Timer(BroadcastFillLevels, null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
         return Task.CompletedTask;
     }
@@ -106,14 +104,6 @@ public class McpFillLevelService : IMcpFillLevelService, IHostedService, IDispos
         foreach (var mcpData in unitOfWork.McpDataRepository.GetAll())
         {
             _fillLevelsById.Add(mcpData.Id, Random.Shared.NextSingle());
-        }
-    }
-
-    private void FillMcps(object? state)
-    {
-        foreach (var (id, _) in _fillLevelsById)
-        {
-            _fillLevelsById[id] += (float)new Random().NextDouble() * 10;
         }
     }
 
@@ -134,7 +124,6 @@ public class McpFillLevelService : IMcpFillLevelService, IHostedService, IDispos
 
     public void Dispose()
     {
-        _fillTimer?.Dispose();
         _broadcastTimer?.Dispose();
     }
 }
