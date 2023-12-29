@@ -22,6 +22,8 @@ public class MessagingService : IMessagingService
 
     public RequestResult SendMessage(SendMessageRequest request)
     {
+        Console.WriteLine("SendMessage: " + request.Content);
+        
         var message = new Message
         {
             SenderProfileId = request.SenderAccountId,
@@ -31,14 +33,28 @@ public class MessagingService : IMessagingService
         };
         _unitOfWork.MessageRepository.Add(message);
         _unitOfWork.Complete();
+        
+        var messages = GetMessagesBetweenTwoUsers(new GetMessagesBetweenTwoUsersRequest
+        {
+            UserAccountId = request.SenderAccountId,
+            OtherUserAccountId = request.ReceiverAccountId,
+            CurrentMessageCount = 0
+        }).Data.Messages;
 
         if (BaseHub.ConnectionIds.TryGetValue(request.ReceiverAccountId, out var id))
             _hubContext.Clients.Client(id)
                 .SendAsync(HubHandlers.Messaging.SEND_MESSAGE, new SendMessageBroadcastData()
                 {
-                    NewMessage = message,
+                    Messages = messages,
                 });
 
+        if (BaseHub.ConnectionIds.TryGetValue(request.SenderAccountId, out var id2))
+            _hubContext.Clients.Client(id2)
+                .SendAsync(HubHandlers.Messaging.SEND_MESSAGE, new SendMessageBroadcastData()
+                {
+                    Messages = messages,
+                });
+        
         return new RequestResult(new Success());
     }
 

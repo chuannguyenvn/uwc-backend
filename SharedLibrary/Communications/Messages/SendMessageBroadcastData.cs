@@ -1,9 +1,10 @@
-﻿using Commons.Models;
+﻿using System.Collections.Generic;
+using Commons.Models;
 
 namespace Commons.Communications.Messages
 {
     public class SendMessageBroadcastData
     {
-        public Message NewMessage { get; set; }
+        public List<Message> Messages { get; set; }
     }
 }
