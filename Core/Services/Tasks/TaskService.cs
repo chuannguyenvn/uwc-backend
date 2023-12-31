@@ -75,12 +75,21 @@ public class TaskService : ITaskService
     {
         _taskOptimizationService.ProcessAddTaskRequest(request);
 
-        if (request.AssigneeAccountId.HasValue && BaseHub.ConnectionIds.TryGetValue(request.AssigneeAccountId.Value, out var connectionId))
+        if (request.AssigneeAccountId.HasValue && BaseHub.ConnectionIds.TryGetValue(request.AssigneeAccountId.Value, out var assigneeConnectionId))
         {
-            _hubContext.Clients.Client(connectionId)
+            _hubContext.Clients.Client(assigneeConnectionId)
                 .SendAsync(HubHandlers.Tasks.ADD_TASK, new AddTasksBroadcastData
                 {
                     NewTasks = _unitOfWork.TaskDataDataRepository.GetTasksByWorkerId(request.AssigneeAccountId.Value).ToList()
+                });
+        }
+
+        if (BaseHub.ConnectionIds.TryGetValue(request.AssignerAccountId, out var assignerConnectionId))
+        {
+            _hubContext.Clients.Client(assignerConnectionId)
+                .SendAsync(HubHandlers.Tasks.ADD_TASK, new AddTasksBroadcastData
+                {
+                    NewTasks = _unitOfWork.TaskDataDataRepository.GetTasksFromTodayOrFuture(),
                 });
         }
 
@@ -104,6 +113,16 @@ public class TaskService : ITaskService
         taskData.TaskStatus = TaskStatus.InProgress;
         taskData.LastStatusChangeTimestamp = DateTime.UtcNow;
         _unitOfWork.Complete();
+
+        if (BaseHub.ConnectionIds.TryGetValue(taskData.AssignerId, out var connectionId))
+        {
+            _hubContext.Clients.Client(connectionId)
+                .SendAsync(HubHandlers.Tasks.FOCUS_TASK, new FocusTaskBroadcastData()
+                {
+                    TaskId = taskData.Id,
+                    WorkerId = taskData.AssigneeId ?? -1,
+                });
+        }
 
         return new RequestResult(new Success());
     }

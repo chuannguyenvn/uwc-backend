@@ -8,6 +8,8 @@ namespace Commons.Types
     {
         public Coordinate CurrentCoordinate { get; set; }
         public Dictionary<int, List<Coordinate>> Legs { get; private set; }
+        public double Duration { get; set; }
+        public double Distance { get; set; }
 
         public bool IsCompleted => Legs.Count == 0;
 
@@ -28,6 +30,9 @@ namespace Commons.Types
                     .Select(latLonPair => new Coordinate(latLonPair)).ToList();
                 Legs[assignedMcpIds[i]] = legCoordinates;
             }
+
+            Duration = direction.Routes.First().Duration * 2;
+            Distance = direction.Routes.First().Distance;
         }
 
         public Coordinate TravelBy(double distance)
