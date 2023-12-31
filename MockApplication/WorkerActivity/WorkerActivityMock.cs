@@ -27,7 +27,7 @@ public class WorkerActivityMock : BaseMock
             { 29, "destiny_drake" },
             { 30, "diana_douglas" },
         };
-        
+
         foreach (var (accountId, accountName) in accountNamesByAccountId)
         {
             var newDirection = new Direction();
@@ -102,6 +102,9 @@ public class WorkerActivityMock : BaseMock
             else
             {
                 var newCoordinate = _ongoingDirectionByDriverAccountIds[id].TravelBy(0.0005);
+                var nextCoordinate = _ongoingDirectionByDriverAccountIds[id].Legs.First().Value.First();
+                newCoordinate.Rotation = (float)CalculateRotationAngle(newCoordinate.Latitude, newCoordinate.Longitude, nextCoordinate.Latitude,
+                    nextCoordinate.Longitude);
                 Console.WriteLine("Driver {0} is at {1}", id, newCoordinate);
                 UpdateLocation(id, newCoordinate);
             }
@@ -136,5 +139,33 @@ public class WorkerActivityMock : BaseMock
                 UpdateLocation(id, _ongoingDirectionByCleanerAccountIds[id].TravelBy(0.00005));
             }
         }
+    }
+
+    private static double CalculateRotationAngle(double lat1, double lon1, double lat2, double lon2)
+    {
+        lat1 = DegreesToRadians(lat1);
+        lon1 = DegreesToRadians(lon1);
+        lat2 = DegreesToRadians(lat2);
+        lon2 = DegreesToRadians(lon2);
+
+        double dLon = lon2 - lon1;
+
+        double y = Math.Sin(dLon) * Math.Cos(lat2);
+        double x = Math.Cos(lat1) * Math.Sin(lat2) - Math.Sin(lat1) * Math.Cos(lat2) * Math.Cos(dLon);
+        double initialBearing = Math.Atan2(y, x);
+
+        initialBearing = (initialBearing + 2 * Math.PI) % (2 * Math.PI);
+
+        return RadiansToDegrees(initialBearing);
+    }
+
+    private static double DegreesToRadians(double degrees)
+    {
+        return degrees * Math.PI / 180.0;
+    }
+
+    private static double RadiansToDegrees(double radians)
+    {
+        return radians * 180.0 / Math.PI;
     }
 }
