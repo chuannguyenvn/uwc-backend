@@ -1,3 +1,4 @@
+using System.Text;
 using Commons.Categories;
 using Repositories.Managers;
 using Commons.Communications.Authentication;
@@ -7,6 +8,7 @@ using Commons.Communications.Status;
 using Commons.Models;
 using Commons.RequestStatuses;
 using Commons.RequestStatuses.Authentication;
+using Commons.Types;
 using Commons.Types.SettingOptions;
 using Hubs;
 using Newtonsoft.Json;
@@ -105,14 +107,67 @@ public class AuthenticationService : IAuthenticationService
 
     public ParamRequestResult<LoginResponse> LoginWithFace(LoginWithFaceRequest request)
     {
-        Console.WriteLine(JsonConvert.SerializeObject(request));
+        using var client = new HttpClient();
+        // Convert each image byte array to Base64
+        var base64Images = request.Images.Select(imageBytes => Convert.ToBase64String(imageBytes)).ToList();
+
+        // Create a JSON payload with the image data
+        var requestData = new
+        {
+            images = base64Images,
+            // Include any other necessary data in your request
+        };
+
+        // Convert the JSON payload to string
+        var jsonRequest = JsonConvert.SerializeObject(requestData);
+
+        // Set the content type to JSON
+        var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+        // Send the request to your Azure Function
+        var httpResponse = client.PostAsync(Constants.VERIFY_FACE_API, content).Result;
+
+        // Process the Azure Function response
+        var responseContent = httpResponse.Content.ReadAsStringAsync().Result;
+        Console.WriteLine(responseContent);
+
         return new ParamRequestResult<LoginResponse>(new Success());
     }
 
     public ParamRequestResult<RegisterFaceResponse> RegisterFace(RegisterFaceRequest request)
     {
-        Console.WriteLine(JsonConvert.SerializeObject(request));
-        return new ParamRequestResult<RegisterFaceResponse>(new Success());
+        using var client = new HttpClient();
+        // Convert each image byte array to Base64
+        var base64Images = request.Images.Select(imageBytes => Convert.ToBase64String(imageBytes)).ToList();
+
+        // Create a JSON payload with the image data
+        var requestData = new
+        {
+            images = base64Images,
+            // Include any other necessary data in your request
+        };
+
+        // Convert the JSON payload to string
+        var jsonRequest = JsonConvert.SerializeObject(requestData);
+
+        // Set the content type to JSON
+        var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json");
+
+        // Send the request to your Azure Function
+        var httpResponse = client.PostAsync(Constants.REGISTER_FACE_API, content).Result;
+
+        // Process the Azure Function response
+        var responseContent = httpResponse.Content.ReadAsStringAsync().Result;
+        Console.WriteLine();
+        Console.WriteLine();
+        Console.WriteLine(responseContent);
+        Console.WriteLine();
+        Console.WriteLine();
+
+        return new ParamRequestResult<RegisterFaceResponse>(new Success(), new RegisterFaceResponse
+        {
+            Success = true,
+        });
     }
 
     private Credentials CreateCredentials(Account account)

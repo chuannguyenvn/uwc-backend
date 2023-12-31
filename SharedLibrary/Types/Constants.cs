@@ -14,6 +14,12 @@
         private const string OPEN_WEATHER_API_KEY = "6e086f4dd9b2ca2ea6093b17fca79d21";
 
         public const string OPEN_WEATHER_API =
-            "https://api.openweathermap.org/data/3.0/onecall?lat=10.7730603&lon=106.6570281&exclude=minutely,alerts&units=metric&appid=" + OPEN_WEATHER_API_KEY;
+            "https://api.openweathermap.org/data/3.0/onecall?lat=10.7730603&lon=106.6570281&exclude=minutely,alerts&units=metric&appid=" +
+            OPEN_WEATHER_API_KEY;
+
+        private const string FACIAL_RECOGNITION_API = "https://uwc-facial-recognition.azurewebsites.net/api/";
+
+        public const string REGISTER_FACE_API = FACIAL_RECOGNITION_API + "register";
+        public const string VERIFY_FACE_API = FACIAL_RECOGNITION_API + "verify";
     }
 }

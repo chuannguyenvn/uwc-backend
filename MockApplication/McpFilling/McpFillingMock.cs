@@ -7,18 +7,24 @@ public class McpFillingMock : BaseMock
 {
     protected override async Task Main()
     {
-        while (true)
+        var allMcpIds = await GetMcpIds();
+        foreach (var randomMcpId in allMcpIds)
         {
-            var mcpIds = await GetMcpIds();
-            var randomMcpIds = mcpIds.GetRandom(5);
-
-            foreach (var randomMcpId in randomMcpIds)
-            {
-                var fillLevel = await GetMcpFillLevel(randomMcpId);
-                SetMcpFillLevel(randomMcpId, fillLevel + Random.Shared.NextSingle() * 0.5f);
-            }
-
-            await Task.Delay(5000);
+            SetMcpFillLevel(randomMcpId, Random.Shared.NextSingle());
         }
+        
+        // while (true)
+        // {
+        //     var mcpIds = await GetMcpIds();
+        //     var randomMcpIds = mcpIds.GetRandom(5);
+        //
+        //     foreach (var randomMcpId in randomMcpIds)
+        //     {
+        //         var fillLevel = await GetMcpFillLevel(randomMcpId);
+        //         SetMcpFillLevel(randomMcpId, fillLevel + Random.Shared.NextSingle() * 0.5f);
+        //     }
+        //
+        //     await Task.Delay(5000);
+        // }
     }
 }
