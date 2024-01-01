@@ -68,9 +68,6 @@ public class ReportService : IReportService
                 var assignedTimestamp = taskData.CompleteByTimestamp;
                 return (completedTimestamp - assignedTimestamp).Minutes;
             }));
-
-        Console.WriteLine(response.TotalTasksCreated);
-        Console.WriteLine(response.TotalTasksCompleted);
     }
 
     private void CalculateWorkerOnlineMetrics(GetDashboardReportResponse response)
@@ -89,12 +86,12 @@ public class ReportService : IReportService
         if (_mcpFillLevelService.GetAllFillLevel().Data != null)
             response.AverageMcpCapacity = _mcpFillLevelService.GetAllFillLevel().Data.FillLevelsById.Values.Average();
 
-        var fillLevelLogs = _unitOfWork.McpFillLevelLogRepository.GetLogsByDate(DateTime.UtcNow);
+        var fillLevelLogs = _unitOfWork.McpFillLevelLogRepository.GetLogsInTimeSpan(DateTime.UtcNow.AddHours(-24), DateTime.UtcNow);
         fillLevelLogs = fillLevelLogs.OrderBy(m => m.Timestamp).ToList();
         response.TotalMcpFillLevelTimestamps = fillLevelLogs.Select(m => m.Timestamp).ToList();
         response.TotalMcpFillLevelValues = fillLevelLogs.Select(m => m.McpFillLevel).ToList();
 
-        var mcpEmptied = _unitOfWork.McpEmptyRecordRecordRepository.GetRecordsByDate(DateTime.UtcNow);
+        var mcpEmptied = _unitOfWork.McpEmptyRecordRecordRepository.GetRecordsInTimeSpan(DateTime.UtcNow.AddHours(-24), DateTime.UtcNow);
         mcpEmptied = mcpEmptied.OrderBy(m => m.Timestamp).ToList();
         response.McpEmptiedTimestamps = mcpEmptied.Select(m => m.Timestamp).ToList();
     }

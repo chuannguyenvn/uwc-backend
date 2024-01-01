@@ -215,10 +215,65 @@ public class DatabaseSeeder
 
     private void SeedMessages()
     {
-        // Between ID 1 and ID 11
+        // Between ID 1 and ID 
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
+            SenderUserProfile = _allAccounts[0].UserProfile,
+            ReceiverUserProfile = _allAccounts[10].UserProfile,
+            Timestamp = DateTime.UtcNow.AddDays(-2).Date.AddHours(10).AddMinutes(15).AddSeconds(30),
+            Content = "Good morning! Just checking in to make sure everything is going smoothly today."
+        });
+
+        _unitOfWork.MessageRepository.Add(new Message
+        {
+            IsSeen = true,
+            SenderUserProfile = _allAccounts[10].UserProfile,
+            ReceiverUserProfile = _allAccounts[0].UserProfile,
+            Timestamp = DateTime.UtcNow.AddDays(-2).Date.AddHours(10).AddMinutes(45).AddSeconds(5),
+            Content = "Morning! All good on this end. Trucks are ready to roll. Any specific instructions for today?"
+        });
+
+        _unitOfWork.MessageRepository.Add(new Message
+        {
+            IsSeen = true,
+            SenderUserProfile = _allAccounts[0].UserProfile,
+            ReceiverUserProfile = _allAccounts[10].UserProfile,
+            Timestamp = DateTime.UtcNow.AddDays(-2).Date.AddHours(11).AddMinutes(5).AddSeconds(18),
+            Content = "No specific instructions, just the usual routes. Keep an eye out for any issues and report back. Thanks!"
+        });
+
+        _unitOfWork.MessageRepository.Add(new Message
+        {
+            IsSeen = true,
+            SenderUserProfile = _allAccounts[10].UserProfile,
+            ReceiverUserProfile = _allAccounts[0].UserProfile,
+            Timestamp = DateTime.UtcNow.AddDays(-2).Date.AddHours(12).AddMinutes(30).AddSeconds(10),
+            Content = "Checking in at 12:30. Let me know if anything comes up!"
+        });
+
+        _unitOfWork.MessageRepository.Add(new Message
+        {
+            IsSeen = true,
+            SenderUserProfile = _allAccounts[0].UserProfile,
+            ReceiverUserProfile = _allAccounts[10].UserProfile,
+            Timestamp = DateTime.UtcNow.AddDays(-2).Date.AddHours(13).AddMinutes(30).AddSeconds(20),
+            Content = "Received your message. All quiet on this end. Will keep you posted."
+        });
+
+        _unitOfWork.MessageRepository.Add(new Message
+        {
+            IsSeen = true,
+            SenderUserProfile = _allAccounts[10].UserProfile,
+            ReceiverUserProfile = _allAccounts[0].UserProfile,
+            Timestamp = DateTime.UtcNow.AddDays(-2).Date.AddHours(14).AddMinutes(0).AddSeconds(5),
+            Content = "Thanks for the update. Let me know if you need anything. Stay safe out there!"
+        });
+
+        _unitOfWork.MessageRepository.Add(new Message
+        {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[10].UserProfile,
             ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(7).AddMinutes(30).AddSeconds(5),
@@ -227,6 +282,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[10].UserProfile,
             ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(8).AddMinutes(35).AddSeconds(14),
@@ -235,6 +291,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[10].UserProfile,
             ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(8).AddMinutes(54).AddSeconds(2),
@@ -244,6 +301,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[0].UserProfile,
             ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(9).AddMinutes(2).AddSeconds(1),
@@ -252,6 +310,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[0].UserProfile,
             ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(9).AddMinutes(2).AddSeconds(27),
@@ -260,6 +319,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[10].UserProfile,
             ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(9).AddMinutes(2).AddSeconds(59),
@@ -268,6 +328,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[0].UserProfile,
             ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(9).AddMinutes(3).AddSeconds(35),
@@ -277,6 +338,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[10].UserProfile,
             ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(11).AddMinutes(57).AddSeconds(5),
@@ -285,6 +347,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[0].UserProfile,
             ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(11).AddMinutes(59).AddSeconds(1),
@@ -294,6 +357,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[10].UserProfile,
             ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(11).AddMinutes(59).AddSeconds(59),
@@ -302,6 +366,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[0].UserProfile,
             ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(14).AddMinutes(5).AddSeconds(14),
@@ -311,6 +376,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[10].UserProfile,
             ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(14).AddMinutes(35).AddSeconds(7),
@@ -319,6 +385,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[0].UserProfile,
             ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(14).AddMinutes(36).AddSeconds(55),
@@ -327,6 +394,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[10].UserProfile,
             ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(15).AddMinutes(5).AddSeconds(5),
@@ -335,6 +403,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[0].UserProfile,
             ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(15).AddMinutes(10).AddSeconds(8),
@@ -343,6 +412,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[10].UserProfile,
             ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(15).AddMinutes(11).AddSeconds(9),
@@ -351,6 +421,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[0].UserProfile,
             ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(15).AddMinutes(24).AddSeconds(57),
@@ -359,6 +430,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[10].UserProfile,
             ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(15).AddMinutes(25).AddSeconds(18),
@@ -367,6 +439,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[0].UserProfile,
             ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(16).AddMinutes(36).AddSeconds(27),
@@ -375,6 +448,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[10].UserProfile,
             ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(16).AddMinutes(36).AddSeconds(45),
@@ -386,6 +460,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[0].UserProfile,
             ReceiverUserProfile = _allAccounts[11].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(7).AddMinutes(1).AddSeconds(1),
@@ -394,6 +469,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[0].UserProfile,
             ReceiverUserProfile = _allAccounts[12].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(9).AddMinutes(25).AddSeconds(45),
@@ -402,6 +478,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[13].UserProfile,
             ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(12).AddMinutes(5).AddSeconds(51),
@@ -411,6 +488,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[0].UserProfile,
             ReceiverUserProfile = _allAccounts[14].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(14).AddMinutes(7).AddSeconds(6),
@@ -419,6 +497,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[15].UserProfile,
             ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(16).AddMinutes(6).AddSeconds(9),
@@ -427,6 +506,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[0].UserProfile,
             ReceiverUserProfile = _allAccounts[31].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(9).AddMinutes(9).AddSeconds(9),
@@ -435,6 +515,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[0].UserProfile,
             ReceiverUserProfile = _allAccounts[33].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(13).AddMinutes(45).AddSeconds(52),
@@ -443,6 +524,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[35].UserProfile,
             ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(15).AddMinutes(4).AddSeconds(41),
@@ -451,6 +533,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[37].UserProfile,
             ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(16).AddMinutes(26).AddSeconds(26),
@@ -459,6 +542,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[39].UserProfile,
             ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(16).AddMinutes(45).AddSeconds(10),
@@ -467,6 +551,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[0].UserProfile,
             ReceiverUserProfile = _allAccounts[16].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(8).AddMinutes(4).AddSeconds(15),
@@ -476,6 +561,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[0].UserProfile,
             ReceiverUserProfile = _allAccounts[17].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(8).AddMinutes(5).AddSeconds(17),
@@ -484,6 +570,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[0].UserProfile,
             ReceiverUserProfile = _allAccounts[18].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(9).AddMinutes(48).AddSeconds(58),
@@ -492,6 +579,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[0].UserProfile,
             ReceiverUserProfile = _allAccounts[19].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(11).AddMinutes(6).AddSeconds(19),
@@ -500,6 +588,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[0].UserProfile,
             ReceiverUserProfile = _allAccounts[20].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(11).AddMinutes(7).AddSeconds(25),
@@ -508,6 +597,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[32].UserProfile,
             ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(13).AddMinutes(6).AddSeconds(5),
@@ -516,6 +606,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[34].UserProfile,
             ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(8).AddMinutes(15).AddSeconds(15),
@@ -524,6 +615,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[0].UserProfile,
             ReceiverUserProfile = _allAccounts[36].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(7).AddMinutes(9).AddSeconds(48),
@@ -532,6 +624,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[38].UserProfile,
             ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(14).AddMinutes(22).AddSeconds(11),
@@ -541,6 +634,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[40].UserProfile,
             ReceiverUserProfile = _allAccounts[0].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(15).AddMinutes(11).AddSeconds(8),
@@ -552,6 +646,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[10].UserProfile,
             ReceiverUserProfile = _allAccounts[7].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(7).AddMinutes(5).AddSeconds(15),
@@ -560,6 +655,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[10].UserProfile,
             ReceiverUserProfile = _allAccounts[11].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(14).AddMinutes(22).AddSeconds(17),
@@ -568,6 +664,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[4].UserProfile,
             ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(8).AddMinutes(12).AddSeconds(34),
@@ -576,6 +673,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[10].UserProfile,
             ReceiverUserProfile = _allAccounts[18].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(10).AddMinutes(25).AddSeconds(17),
@@ -584,6 +682,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[22].UserProfile,
             ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(9).AddMinutes(8).AddSeconds(56),
@@ -592,6 +691,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[44].UserProfile,
             ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(11).AddMinutes(45).AddSeconds(23),
@@ -600,6 +700,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[10].UserProfile,
             ReceiverUserProfile = _allAccounts[46].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(12).AddMinutes(30).AddSeconds(59),
@@ -608,6 +709,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[35].UserProfile,
             ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(14).AddMinutes(15).AddSeconds(42),
@@ -616,6 +718,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[10].UserProfile,
             ReceiverUserProfile = _allAccounts[22].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(7).AddMinutes(40).AddSeconds(5),
@@ -624,6 +727,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[19].UserProfile,
             ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(13).AddMinutes(52).AddSeconds(19),
@@ -632,6 +736,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[10].UserProfile,
             ReceiverUserProfile = _allAccounts[17].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(15).AddMinutes(18).AddSeconds(7),
@@ -640,6 +745,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[26].UserProfile,
             ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(10).AddMinutes(59).AddSeconds(30),
@@ -648,6 +754,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[10].UserProfile,
             ReceiverUserProfile = _allAccounts[16].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(9).AddMinutes(30).AddSeconds(15),
@@ -656,6 +763,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[10].UserProfile,
             ReceiverUserProfile = _allAccounts[5].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(14).AddMinutes(2).AddSeconds(48),
@@ -664,6 +772,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[10].UserProfile,
             ReceiverUserProfile = _allAccounts[29].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(11).AddMinutes(23).AddSeconds(11),
@@ -672,6 +781,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[48].UserProfile,
             ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(8).AddMinutes(54).AddSeconds(26),
@@ -680,6 +790,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[10].UserProfile,
             ReceiverUserProfile = _allAccounts[33].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(15).AddMinutes(37).AddSeconds(53),
@@ -688,6 +799,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[39].UserProfile,
             ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(13).AddMinutes(10).AddSeconds(39),
@@ -696,6 +808,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[10].UserProfile,
             ReceiverUserProfile = _allAccounts[2].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(7).AddMinutes(20).AddSeconds(12),
@@ -704,6 +817,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[47].UserProfile,
             ReceiverUserProfile = _allAccounts[10].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(12).AddMinutes(5).AddSeconds(28),
@@ -713,6 +827,7 @@ public class DatabaseSeeder
 
         _unitOfWork.MessageRepository.Add(new Message
         {
+            IsSeen = true,
             SenderUserProfile = _allAccounts[10].UserProfile,
             ReceiverUserProfile = _allAccounts[37].UserProfile,
             Timestamp = DateTime.UtcNow.AddDays(-1).Date.AddHours(17).AddMinutes(5).AddSeconds(45),
@@ -824,11 +939,12 @@ public class DatabaseSeeder
         {
             var timestamp = DateTime.UtcNow.AddDays(-Random.Shared.Next(7)).AddHours(-Random.Shared.Next(24)).AddMinutes(-Random.Shared.Next(60))
                 .AddSeconds(-Random.Shared.Next(60));
+
             var log = new McpFillLevelLog
             {
                 McpDataId = Random.Shared.Next(1, 16),
                 Timestamp = timestamp,
-                McpFillLevel = (float)(Math.Sin(timestamp.Hour / 24f * Math.Tau) + 1) / 2,
+                McpFillLevel = (float)Random.Shared.NextDouble(),
             };
 
             _unitOfWork.McpFillLevelLogRepository.Add(log);

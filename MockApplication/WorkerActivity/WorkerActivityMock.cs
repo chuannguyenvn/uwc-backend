@@ -80,6 +80,7 @@ public class WorkerActivityMock : BaseMock
                 if (task == null)
                 {
                     Console.WriteLine("No more tasks for driver {0}", id);
+                    _ongoingTaskIdByDriverAccountIds[id] = -1;
                     continue;
                 }
 
