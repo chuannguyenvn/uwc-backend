@@ -102,9 +102,14 @@ public class WorkerActivityMock : BaseMock
             else
             {
                 var newCoordinate = _ongoingDirectionByDriverAccountIds[id].TravelBy(0.0005);
-                var nextCoordinate = _ongoingDirectionByDriverAccountIds[id].Legs.First().Value.First();
-                newCoordinate.Rotation = (float)CalculateRotationAngle(newCoordinate.Latitude, newCoordinate.Longitude, nextCoordinate.Latitude,
-                    nextCoordinate.Longitude);
+                
+                if (_ongoingDirectionByDriverAccountIds[id].Legs.Any() && _ongoingDirectionByDriverAccountIds[id].Legs.First().Value.Any())
+                {
+                    var nextCoordinate = _ongoingDirectionByDriverAccountIds[id].Legs.First().Value.First();
+                    newCoordinate.Rotation = (float)CalculateRotationAngle(newCoordinate.Latitude, newCoordinate.Longitude, nextCoordinate.Latitude,
+                        nextCoordinate.Longitude);
+                }
+           
                 Console.WriteLine("Driver {0} is at {1}", id, newCoordinate);
                 UpdateLocation(id, newCoordinate);
             }

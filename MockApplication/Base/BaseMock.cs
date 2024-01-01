@@ -132,7 +132,6 @@ public abstract class BaseMock : IHostedService
     {
         var result = await RequestHelper.Post<GetDirectionResponse>(Endpoints.Map.GetDirection, new GetDirectionRequest()
         {
-            AccountId = accountId,
             CurrentLocation = currentLocation,
             McpIds = mcpIds
         });

@@ -69,6 +69,16 @@ public class MockTaskDataRepository : MockGenericRepository<TaskData>, ITaskData
             .ToList();
     }
 
+    public List<TaskData> GetWorkerFiveUpcomingTasks(int workerId)
+    {
+        return Context.TaskDataTable.Where(task =>
+                task.AssigneeId == workerId && DateTime.UtcNow.AddHours(24) >= task.CompleteByTimestamp &&
+                (task.TaskStatus == TaskStatus.NotStarted || task.TaskStatus == TaskStatus.InProgress))
+            .OrderBy(task => task.Priority)
+            .Take(5)
+            .ToList();
+    }
+
     public List<TaskData> GetUnassignedTasksIn24Hours()
     {
         return Context.TaskDataTable.Where(task =>

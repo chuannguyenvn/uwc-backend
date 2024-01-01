@@ -42,6 +42,19 @@ public class TaskDataRepository : GenericRepository<TaskData>, ITaskDataReposito
             .Include(task => task.AssignerProfile).ToList();
     }
 
+    public List<TaskData> GetWorkerFiveUpcomingTasks(int workerId)
+    {
+        return Context.TaskDataTable.Where(task =>
+                task.AssigneeId == workerId && DateTime.UtcNow.AddHours(24) >= task.CompleteByTimestamp &&
+                (task.TaskStatus == TaskStatus.NotStarted || task.TaskStatus == TaskStatus.InProgress))
+            .Include(task => task.McpData)
+            .Include(task => task.AssigneeProfile)
+            .Include(task => task.AssignerProfile)
+            .OrderBy(task => task.Priority)
+            .Take(5)
+            .ToList();
+    }
+
     public List<TaskData> GetUnassignedTasksIn24Hours()
     {
         return Context.TaskDataTable.Where(task =>
@@ -78,7 +91,7 @@ public class TaskDataRepository : GenericRepository<TaskData>, ITaskDataReposito
                 .Include(task => task.AssigneeProfile)
                 .Include(task => task.AssignerProfile)
                 .First(task => task.AssigneeId == workerId && task.TaskStatus == TaskStatus.InProgress);
-        return GetWorkerRemainingTasksIn24Hours(workerId).MaxBy(task => task.Priority);
+        return GetWorkerRemainingTasksIn24Hours(workerId).MinBy(task => task.Priority);
     }
 
     public void RemoveAllTasksOfWorker(int workerId)

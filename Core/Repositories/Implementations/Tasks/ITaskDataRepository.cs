@@ -9,6 +9,7 @@ public interface ITaskDataRepository : IGenericRepository<TaskData>
     public List<TaskData> GetTasksByWorkerId(int workerId);
     public List<TaskData> GetTasksByMcpId(int mcpId);
     public List<TaskData> GetWorkerRemainingTasksIn24Hours(int workerId);
+    public List<TaskData> GetWorkerFiveUpcomingTasks(int workerId);
     public List<TaskData> GetUnassignedTasksIn24Hours();
     public List<TaskData> GetTasksFromTodayOrFuture();
     public TaskData? GetFocusedTaskByWorkerId(int workerId);

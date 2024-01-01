@@ -46,6 +46,12 @@ public class WorkingStatusService : IWorkingStatusService
             var fromLocation = _locationService.GetLocation(new GetLocationRequest() { AccountId = request.WorkerId }).Data.Coordinate;
             var toLocation = focusedTask.McpData.Coordinate;
             getWorkingStatusResponse.DirectionToFocusedTask = _directionService.GetRawDirection(fromLocation, toLocation);
+            var fiveUpcomingTasks = _unitOfWork.TaskDataDataRepository.GetWorkerFiveUpcomingTasks(request.WorkerId);
+            if (fiveUpcomingTasks.Any())
+            {
+                getWorkingStatusResponse.DirectionToFiveUpcomingTasks = _directionService.GetRawDirection(fromLocation,
+                    fiveUpcomingTasks.Select(data => data.McpData.Coordinate).ToList());
+            }
         }
 
         return new ParamRequestResult<GetWorkingStatusResponse>(new Success(), getWorkingStatusResponse);
