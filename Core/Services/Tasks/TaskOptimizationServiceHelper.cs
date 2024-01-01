@@ -18,8 +18,8 @@ public class TaskOptimizationServiceHelper
 {
     private static int CurrentTaskGroupId = 0;
 
-    private readonly IUnitOfWork _unitOfWork;
-    private readonly IHubContext<BaseHub> _hubContext;
+    public readonly IUnitOfWork UnitOfWork;
+    public readonly IHubContext<BaseHub> HubContext;
     private readonly ILocationService _locationService;
     private readonly IMcpFillLevelService _mcpFillLevelService;
     private readonly IOnlineStatusService _onlineStatusService;
@@ -29,8 +29,8 @@ public class TaskOptimizationServiceHelper
     {
         CurrentTaskGroupId = unitOfWork.TaskDataDataRepository.GetMaxTaskGroupId();
 
-        _unitOfWork = unitOfWork;
-        _hubContext = hubContext;
+        UnitOfWork = unitOfWork;
+        HubContext = hubContext;
         _locationService = locationService;
         _mcpFillLevelService = mcpFillLevelService;
         _onlineStatusService = onlineStatusService;
@@ -38,12 +38,12 @@ public class TaskOptimizationServiceHelper
 
     public List<TaskData> GetWorkerTasksIn24Hours(int workerId)
     {
-        return _unitOfWork.TaskDataDataRepository.GetWorkerRemainingTasksIn24Hours(workerId);
+        return UnitOfWork.TaskDataDataRepository.GetWorkerRemainingTasksIn24Hours(workerId);
     }
 
     public List<TaskData> GetUnassignedTaskIn24Hours()
     {
-        return _unitOfWork.TaskDataDataRepository.GetUnassignedTasksIn24Hours();
+        return UnitOfWork.TaskDataDataRepository.GetUnassignedTasksIn24Hours();
     }
 
     public Dictionary<int, float> GetAllMcpFillLevels()
@@ -53,12 +53,12 @@ public class TaskOptimizationServiceHelper
     
     public TaskData? GetNextMcpTask(int mcpId)
     {
-        return _unitOfWork.TaskDataDataRepository.GetNextMcpTask(mcpId);
+        return UnitOfWork.TaskDataDataRepository.GetNextMcpTask(mcpId);
     }
 
     public Coordinate GetMcpCoordinateById(int mcpId)
     {
-        return _unitOfWork.McpDataRepository.GetById(mcpId).Coordinate;
+        return UnitOfWork.McpDataRepository.GetById(mcpId).Coordinate;
     }
 
     public Coordinate GetWorkerLocation(int workerId)
@@ -71,7 +71,7 @@ public class TaskOptimizationServiceHelper
 
     public Dictionary<int, UserProfile> GetAllWorkerProfiles()
     {
-        return _unitOfWork.UserProfileRepository.GetAllWorkers().ToDictionary(workerProfile => workerProfile.Id);
+        return UnitOfWork.UserProfileRepository.GetAllWorkers().ToDictionary(workerProfile => workerProfile.Id);
     }
 
     public bool IsWorkerOnline(int workerId)
@@ -106,16 +106,16 @@ public class TaskOptimizationServiceHelper
             CompleteByTimestamp = completeByTimestamp,
             TaskStatus = TaskStatus.NotStarted,
         };
-        _unitOfWork.TaskDataDataRepository.Add(taskData);
+        UnitOfWork.TaskDataDataRepository.Add(taskData);
 
-        _unitOfWork.Complete();
+        UnitOfWork.Complete();
 
         if (BaseHub.ConnectionIds.TryGetValue(workerId, out var connectionId))
         {
-            _hubContext.Clients.Client(connectionId)
+            HubContext.Clients.Client(connectionId)
                 .SendAsync(HubHandlers.Tasks.ADD_TASK, new AddTasksBroadcastData
                 {
-                    NewTasks = _unitOfWork.TaskDataDataRepository.GetTasksByWorkerId(workerId).ToList()
+                    NewTasks = UnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(workerId).ToList()
                 });
         }
     }
@@ -137,7 +137,7 @@ public class TaskOptimizationServiceHelper
                 TaskStatus = TaskStatus.NotStarted,
             };
             
-            _unitOfWork.TaskDataDataRepository.Add(taskData);
+            UnitOfWork.TaskDataDataRepository.Add(taskData);
 
             if (isGrouped is false)
             {
@@ -150,14 +150,14 @@ public class TaskOptimizationServiceHelper
             CurrentTaskGroupId--;
         }
         
-        _unitOfWork.Complete();
+        UnitOfWork.Complete();
 
         if (BaseHub.ConnectionIds.TryGetValue(workerId, out var connectionId))
         {
-            _hubContext.Clients.Client(connectionId)
+            HubContext.Clients.Client(connectionId)
                 .SendAsync(HubHandlers.Tasks.ADD_TASK, new AddTasksBroadcastData
                 {
-                    NewTasks = _unitOfWork.TaskDataDataRepository.GetTasksByWorkerId(workerId).ToList()
+                    NewTasks = UnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(workerId).ToList()
                 });
         }
     }
@@ -173,9 +173,9 @@ public class TaskOptimizationServiceHelper
             CompleteByTimestamp = completeByTimestamp,
             TaskStatus = TaskStatus.NotStarted,
         };
-        _unitOfWork.TaskDataDataRepository.Add(taskData);
+        UnitOfWork.TaskDataDataRepository.Add(taskData);
 
-        _unitOfWork.Complete();
+        UnitOfWork.Complete();
     }
 
     public void AddTasksWithoutWorker(int assignerId, List<int> mcpIds, DateTime completeByTimestamp, bool isGrouped)
@@ -194,21 +194,21 @@ public class TaskOptimizationServiceHelper
                 TaskStatus = TaskStatus.NotStarted,
             };
 
-            _unitOfWork.TaskDataDataRepository.Add(taskData);
+            UnitOfWork.TaskDataDataRepository.Add(taskData);
         }
 
-        _unitOfWork.Complete();
+        UnitOfWork.Complete();
     }
 
     public void UpdatePriority(int taskId, int priority)
     {
-        if (!_unitOfWork.TaskDataDataRepository.DoesIdExist(taskId)) throw new Exception("Task not found");
+        if (!UnitOfWork.TaskDataDataRepository.DoesIdExist(taskId)) throw new Exception("Task not found");
 
-        var taskData = _unitOfWork.TaskDataDataRepository.GetById(taskId);
+        var taskData = UnitOfWork.TaskDataDataRepository.GetById(taskId);
         taskData.Priority = priority;
-        _unitOfWork.TaskDataDataRepository.Update(taskData);
+        UnitOfWork.TaskDataDataRepository.Update(taskData);
 
-        _unitOfWork.Complete();
+        UnitOfWork.Complete();
     }
 
     public void AutoAssignPriorities(List<int> taskIds)
@@ -221,23 +221,23 @@ public class TaskOptimizationServiceHelper
 
     public void AssignWorkerToTask(int taskId, int workerId)
     {
-        if (!_unitOfWork.TaskDataDataRepository.DoesIdExist(taskId)) throw new Exception("Task not found");
-        if (!_unitOfWork.AccountRepository.DoesIdExist(workerId)) throw new Exception("Worker not found");
+        if (!UnitOfWork.TaskDataDataRepository.DoesIdExist(taskId)) throw new Exception("Task not found");
+        if (!UnitOfWork.AccountRepository.DoesIdExist(workerId)) throw new Exception("Worker not found");
 
-        var taskData = _unitOfWork.TaskDataDataRepository.GetById(taskId);
+        var taskData = UnitOfWork.TaskDataDataRepository.GetById(taskId);
 
         if (taskData.AssigneeId.HasValue) throw new Exception("Task already has a worker assigned");
 
         taskData.AssigneeId = workerId;
-        _unitOfWork.TaskDataDataRepository.Update(taskData);
-        _unitOfWork.Complete();
+        UnitOfWork.TaskDataDataRepository.Update(taskData);
+        UnitOfWork.Complete();
 
         if (BaseHub.ConnectionIds.TryGetValue(workerId, out var connectionId))
         {
-            _hubContext.Clients.Client(connectionId)
+            HubContext.Clients.Client(connectionId)
                 .SendAsync(HubHandlers.Tasks.ADD_TASK, new AddTasksBroadcastData
                 {
-                    NewTasks = _unitOfWork.TaskDataDataRepository.GetTasksByWorkerId(workerId).ToList()
+                    NewTasks = UnitOfWork.TaskDataDataRepository.GetTasksByWorkerId(workerId).ToList()
                 });
         }
     }
@@ -323,6 +323,6 @@ public class TaskOptimizationServiceHelper
 
     public McpData GetMcpDataById(int mcpId)
     {
-        return _unitOfWork.McpDataRepository.GetById(mcpId);
+        return UnitOfWork.McpDataRepository.GetById(mcpId);
     }
 }

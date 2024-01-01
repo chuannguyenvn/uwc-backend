@@ -1,5 +1,6 @@
 using Commons.Categories;
 using Commons.Communications.Tasks;
+using Commons.HubHandlers;
 using Commons.Models;
 using Commons.Types;
 using Hubs;
@@ -879,14 +880,14 @@ public class TaskOptimizationService : ITaskOptimizationService
         foreach (var (mcpId, mcpFillLevel) in mcpFillLevels)
         {
             if (!(mcpFillLevel >= FILL_LEVEL_ASSIGNMENT_THRESHOLD)) continue;
-            
+
             var nextTask = _helper.GetNextMcpTask(mcpId);
             if (nextTask == null)
             {
                 fullMcpIds.Add(mcpId);
                 continue;
             }
-            
+
             if (mcpFillLevel < 0.9f)
             {
                 if (nextTask.CompleteByTimestamp > DateTime.UtcNow.AddHours(3))
@@ -918,7 +919,15 @@ public class TaskOptimizationService : ITaskOptimizationService
             AutoAssignmentOptimizationStrategy = AutoAssignmentOptimizationStrategy.TimeEfficient
         };
 
-        var result = DistributeTasksFromPoolGen3(ref request);
-        Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
+        var result = DistributeTasksFromPoolGen3(ref request, costOrFast: false);
+
+        if (BaseHub.ConnectionIds.TryGetValue(1, out var assignerConnectionId))
+        {
+            _helper.HubContext.Clients.Client(assignerConnectionId)
+                .SendAsync(HubHandlers.Tasks.ADD_TASK, new AddTasksBroadcastData
+                {
+                    NewTasks = _helper.UnitOfWork.TaskDataDataRepository.GetTasksFromTodayOrFuture(),
+                });
+        }
     }
 }

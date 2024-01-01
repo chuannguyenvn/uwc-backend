@@ -29,7 +29,7 @@ public class DatabaseSeeder
         SeedMcpData();
         SeedVehicles();
         SeedMessages();
-        SeedTasks();
+        // SeedTasks();
         SeedSettings();
         SeedEmptyingRecords();
         SeedMcpFillLevelLogs();
@@ -843,7 +843,7 @@ public class DatabaseSeeder
         var doesDriverHaveInProgressTask = new bool[20];
         for (int driverId = 11; driverId <= 30; driverId++)
         {
-            var tasksCount = random.Next(5, 15);
+            var tasksCount = random.Next(1);
             for (int i = 0; i < tasksCount; i++)
             {
                 var supervisorId = random.Next(10);

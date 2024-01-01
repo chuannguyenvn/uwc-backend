@@ -109,8 +109,15 @@ public class TaskDataRepository : GenericRepository<TaskData>, ITaskDataReposito
             .Include(task => task.AssigneeProfile)
             .Include(task => task.AssignerProfile);
 
-        if (!possibleTasks.Any()) return null;
-        return possibleTasks.First();
+        try
+        {
+            if (!possibleTasks.Any()) return null;
+            return possibleTasks.First();
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     public void RemoveAllTasksOfWorker(int workerId)
