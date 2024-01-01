@@ -918,7 +918,7 @@ public class TaskOptimizationService : ITaskOptimizationService
             AutoAssignmentOptimizationStrategy = AutoAssignmentOptimizationStrategy.TimeEfficient
         };
 
-        var result = DistributeTasksFromPoolGen3(ref request);
+        var result = DistributeTasksFromPoolGen3(ref request, false);
         Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
     }
 }
