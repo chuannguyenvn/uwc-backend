@@ -8,11 +8,8 @@ using Repositories.Managers;
 using Services.Map;
 using Services.Mcps;
 using Services.Status;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.Tracing;
-using System.Linq;
-using Commons.Endpoints;
+using Commons.RequestStatuses;
+using Newtonsoft.Json;
 
 namespace Services.Tasks;
 
@@ -20,17 +17,18 @@ public class TaskOptimizationService : ITaskOptimizationService
 {
     private readonly TaskOptimizationServiceHelper _helper;
 
-    private const float FILL_LEVEL_ASSIGNMENT_THRESHOLD = 0.85f;
+    private const float FILL_LEVEL_ASSIGNMENT_THRESHOLD = 0.5f;
 
     private Timer? _autoDistributionTimer;
-    private const int AUTO_DISTRIBUTION_INTERVAL_SECONDS = 10;
+    public const int AUTO_DISTRIBUTION_INTERVAL_SECONDS = 10;
+
+    private bool _isAutoDistributionOn = true;
+    public bool IsAutoTaskDistributionEnabled => _isAutoDistributionOn;
 
     public TaskOptimizationService(IUnitOfWork unitOfWork, IHubContext<BaseHub> hubContext, ILocationService locationService,
         IMcpFillLevelService mcpFillLevelService, IOnlineStatusService onlineStatusService)
     {
-        // TODO: Injected services don't work with other threads
         _helper = new TaskOptimizationServiceHelper(unitOfWork, hubContext, locationService, mcpFillLevelService, onlineStatusService);
-        // ToggleAutoTaskDistribution(true);
     }
 
     // --------------------------------------- GEN2 WITH DIJKSTRA ALGORITHM --------------------------------------------
@@ -434,6 +432,7 @@ public class TaskOptimizationService : ITaskOptimizationService
     }
 
     // ------------------------------------ GEN 2 PRIORITY HANDLING ----------------------------------------------------
+
     public List<TaskData> OptimizeRouteForWorker(UserProfile workerProfile)
     {
         return new List<TaskData>();
@@ -719,6 +718,12 @@ public class TaskOptimizationService : ITaskOptimizationService
         ProcessAddTaskRequest(request, false, -1);
     }
 
+    public RequestResult ToggleAutoTaskDistribution(ToggleAutoTaskDistributionRequest request)
+    {
+        _isAutoDistributionOn = request.IsOn;
+        return new RequestResult(new Success());
+    }
+
     public void ProcessAddTaskRequest(AddTasksRequest request, bool avoidDuplication = false, int taskId = -1)
     {
         if (request.RoutingOptimizationScope == RoutingOptimizationScope.None)
@@ -864,26 +869,6 @@ public class TaskOptimizationService : ITaskOptimizationService
 
     // ------------------------------------ GEN 4: ADD TASKS TO POOL ---------------------------------------------------
 
-    // Supervisor use this to toggle the auto task distribution feature
-    public void ToggleAutoTaskDistribution(bool isOn)
-    {
-        if (isOn)
-        {
-            _autoDistributionTimer = new Timer(Automation, null, 0, AUTO_DISTRIBUTION_INTERVAL_SECONDS);
-        }
-        else
-        {
-            _autoDistributionTimer?.Dispose();
-        }
-    }
-
-    // This method run one optimization attempt every few seconds
-    // Not testable
-    private void Automation(object? state = null)
-    {
-        DistributeTasksFromPool();
-    }
-
     // A single optimization attempt
     // Testable
     public void DistributeTasksFromPool()
@@ -893,13 +878,34 @@ public class TaskOptimizationService : ITaskOptimizationService
         var fullMcpIds = new List<int>();
         foreach (var (mcpId, mcpFillLevel) in mcpFillLevels)
         {
-            if (mcpFillLevel >= FILL_LEVEL_ASSIGNMENT_THRESHOLD)
+            if (!(mcpFillLevel >= FILL_LEVEL_ASSIGNMENT_THRESHOLD)) continue;
+            
+            var nextTask = _helper.GetNextMcpTask(mcpId);
+            if (nextTask == null)
             {
-                // assignerId = 0 => system assigned
-                // TODO: Must do something dynamic about completeByTimestamp (can't just add 1 hour)
-                // _helper.AddTasksWithoutWorker(0, new() { mcpId }, DateTime.UtcNow.AddHours(1), false);
                 fullMcpIds.Add(mcpId);
+                continue;
             }
+            
+            if (mcpFillLevel < 0.9f)
+            {
+                if (nextTask.CompleteByTimestamp > DateTime.UtcNow.AddHours(3))
+                {
+                    fullMcpIds.Add(mcpId);
+                }
+            }
+            else
+            {
+                if (nextTask.CompleteByTimestamp > DateTime.UtcNow.AddHours(1))
+                {
+                    fullMcpIds.Add(mcpId);
+                }
+            }
+        }
+
+        foreach (var mcpId in fullMcpIds)
+        {
+            _helper.AddTaskWithoutWorker(1, mcpId, DateTime.UtcNow.AddHours(1));
         }
 
         var request = new AddTasksRequest
@@ -911,7 +917,8 @@ public class TaskOptimizationService : ITaskOptimizationService
             RoutingOptimizationScope = RoutingOptimizationScope.All,
             AutoAssignmentOptimizationStrategy = AutoAssignmentOptimizationStrategy.TimeEfficient
         };
-        
-        DistributeTasksFromPoolGen3(ref request);
+
+        var result = DistributeTasksFromPoolGen3(ref request);
+        Console.WriteLine(JsonConvert.SerializeObject(result, Formatting.Indented));
     }
 }

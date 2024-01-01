@@ -50,6 +50,11 @@ public class TaskOptimizationServiceHelper
     {
         return _mcpFillLevelService.GetAllFillLevel().Data.FillLevelsById;
     }
+    
+    public TaskData? GetNextMcpTask(int mcpId)
+    {
+        return _unitOfWork.TaskDataDataRepository.GetNextMcpTask(mcpId);
+    }
 
     public Coordinate GetMcpCoordinateById(int mcpId)
     {

@@ -12,10 +12,12 @@ namespace Controllers;
 public class TaskDataController : Controller
 {
     private readonly ITaskService _taskService;
+    private readonly ITaskOptimizationService _taskOptimizationService;
 
-    public TaskDataController(ITaskService taskService)
+    public TaskDataController(ITaskService taskService, ITaskOptimizationService taskOptimizationService)
     {
         _taskService = taskService;
+        _taskOptimizationService = taskOptimizationService;
     }
 
     [HttpPost(Endpoints.TaskData.GET_TASKS_OF_WORKER)]
@@ -71,6 +73,13 @@ public class TaskDataController : Controller
     public IActionResult RejectTask(RejectTaskRequest request)
     {
         var result = _taskService.RejectTask(request);
+        return ProcessRequestResult(result);
+    }
+
+    [HttpPost(Endpoints.TaskData.TOGGLE_AUTO_TASK_DISTRIBUTION)]
+    public IActionResult ToggleAutoTaskDistribution(ToggleAutoTaskDistributionRequest request)
+    {
+        var result = _taskOptimizationService.ToggleAutoTaskDistribution(request);
         return ProcessRequestResult(result);
     }
 }

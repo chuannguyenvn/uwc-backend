@@ -104,6 +104,20 @@ public class MockTaskDataRepository : MockGenericRepository<TaskData>, ITaskData
             .MaxBy(task => task.Priority);
     }
 
+    public TaskData? GetNextMcpTask(int mcpId)
+    {
+        if (Context.TaskDataTable.All(task => task.McpDataId != mcpId)) return null;
+
+        var possibleTasks = Context.TaskDataTable.Where(task =>
+            task.McpDataId == mcpId &&
+            (task.TaskStatus == TaskStatus.NotStarted || task.TaskStatus == TaskStatus.InProgress)
+            && task.CompleteByTimestamp >= DateTime.UtcNow.AddHours(-3)
+        ).OrderBy(task => task.CompleteByTimestamp).ToList();
+
+        if (!possibleTasks.Any()) return null;
+        return possibleTasks.First();
+    }
+
     public void RemoveAllTasksOfWorker(int workerId)
     {
         Context.TaskDataTable.RemoveAll(task => task.AssigneeId == workerId);

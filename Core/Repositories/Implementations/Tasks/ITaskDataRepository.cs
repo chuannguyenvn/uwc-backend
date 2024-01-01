@@ -14,6 +14,7 @@ public interface ITaskDataRepository : IGenericRepository<TaskData>
     public List<TaskData> GetTasksFromTodayOrFuture();
     public TaskData? GetFocusedTaskByWorkerId(int workerId);
     public TaskData? GetPrioritizedTaskByWorkerId(int workerId);
+    public TaskData? GetNextMcpTask(int mcpId);
     public void RemoveAllTasksOfWorker(int workerId);
     public int GetMaxTaskGroupId();
 }

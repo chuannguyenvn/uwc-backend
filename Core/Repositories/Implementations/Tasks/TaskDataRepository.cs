@@ -14,7 +14,9 @@ public class TaskDataRepository : GenericRepository<TaskData>, ITaskDataReposito
 
     public List<TaskData> GetTasksByDate(DateTime date)
     {
-        return Context.TaskDataTable.Where(task => DateTime.UtcNow.AddHours(24) >= task.CompleteByTimestamp && DateTime.UtcNow <= task.CompleteByTimestamp).Include(task => task.McpData).ToList();
+        return Context.TaskDataTable
+            .Where(task => DateTime.UtcNow.AddHours(24) >= task.CompleteByTimestamp && DateTime.UtcNow <= task.CompleteByTimestamp)
+            .Include(task => task.McpData).ToList();
     }
 
     public List<TaskData> GetTasksByWorkerId(int workerId)
@@ -94,6 +96,23 @@ public class TaskDataRepository : GenericRepository<TaskData>, ITaskDataReposito
         return GetWorkerRemainingTasksIn24Hours(workerId).MinBy(task => task.Priority);
     }
 
+    public TaskData? GetNextMcpTask(int mcpId)
+    {
+        if (!Context.TaskDataTable.Any(task => task.McpDataId == mcpId)) return null;
+
+        var possibleTasks = Context.TaskDataTable.Where(task =>
+                task.McpDataId == mcpId &&
+                (task.TaskStatus == TaskStatus.NotStarted || task.TaskStatus == TaskStatus.InProgress)
+                && task.CompleteByTimestamp >= DateTime.UtcNow.AddHours(-3)
+            ).OrderBy(task => task.CompleteByTimestamp)
+            .Include(task => task.McpData)
+            .Include(task => task.AssigneeProfile)
+            .Include(task => task.AssignerProfile);
+
+        if (!possibleTasks.Any()) return null;
+        return possibleTasks.First();
+    }
+
     public void RemoveAllTasksOfWorker(int workerId)
     {
         var tasks = Context.TaskDataTable.Where(task => task.AssigneeId == workerId).ToList();
@@ -102,6 +121,7 @@ public class TaskDataRepository : GenericRepository<TaskData>, ITaskDataReposito
 
     public int GetMaxTaskGroupId()
     {
+        if (!Context.TaskDataTable.Any()) return 0;
         return Context.TaskDataTable.Max(task => task.GroupId ?? 0);
     }
 }

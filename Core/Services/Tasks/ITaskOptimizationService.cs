@@ -5,8 +5,9 @@ namespace Services.Tasks;
 
 public interface ITaskOptimizationService
 {
+    public bool IsAutoTaskDistributionEnabled { get; }
     public List<TaskData> OptimizeRouteForWorker(UserProfile workerProfile);
     public void DistributeTasksFromPool();
     public void ProcessAddTaskRequest(AddTasksRequest request);
-    public void ToggleAutoTaskDistribution(bool isOn);
+    public RequestResult ToggleAutoTaskDistribution(ToggleAutoTaskDistributionRequest request);
 }
