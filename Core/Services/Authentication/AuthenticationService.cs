@@ -131,7 +131,15 @@ public class AuthenticationService : IAuthenticationService
         var responseContent = httpResponse.Content.ReadAsStringAsync().Result;
         Console.WriteLine(responseContent);
 
-        return new ParamRequestResult<LoginResponse>(new Success());
+        var account = _unitOfWork.AccountRepository.GetByUsername(request.Username);
+
+        var loginResponse = new LoginResponse
+        {
+            Credentials = CreateCredentials(account),
+            InitializationData = CreateInitializationData(account.Id),
+        };
+
+        return new ParamRequestResult<LoginResponse>(new Success(), loginResponse);
     }
 
     public ParamRequestResult<RegisterFaceResponse> RegisterFace(RegisterFaceRequest request)

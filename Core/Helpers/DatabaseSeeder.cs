@@ -29,7 +29,7 @@ public class DatabaseSeeder
         SeedMcpData();
         SeedVehicles();
         SeedMessages();
-        // SeedTasks();
+        SeedTasks();
         SeedSettings();
         SeedEmptyingRecords();
         SeedMcpFillLevelLogs();
