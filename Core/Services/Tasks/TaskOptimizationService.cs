@@ -10,6 +10,7 @@ using Services.Map;
 using Services.Mcps;
 using Services.Status;
 using Commons.RequestStatuses;
+using Commons.Types.SettingOptions;
 using Newtonsoft.Json;
 
 namespace Services.Tasks;
@@ -23,13 +24,14 @@ public class TaskOptimizationService : ITaskOptimizationService
     private Timer? _autoDistributionTimer;
     public const int AUTO_DISTRIBUTION_INTERVAL_SECONDS = 10;
 
-    private bool _isAutoDistributionOn = true;
+    private bool _isAutoDistributionOn = false;
     public bool IsAutoTaskDistributionEnabled => _isAutoDistributionOn;
 
     public TaskOptimizationService(IUnitOfWork unitOfWork, IHubContext<BaseHub> hubContext, ILocationService locationService,
         IMcpFillLevelService mcpFillLevelService, IOnlineStatusService onlineStatusService)
     {
         _helper = new TaskOptimizationServiceHelper(unitOfWork, hubContext, locationService, mcpFillLevelService, onlineStatusService);
+        _isAutoDistributionOn = unitOfWork.SettingRepository.GetAll().First().IsAutoTaskDistributionEnabled == ToggleOption.On;
     }
 
     // --------------------------------------- GEN2 WITH DIJKSTRA ALGORITHM --------------------------------------------
@@ -722,6 +724,14 @@ public class TaskOptimizationService : ITaskOptimizationService
     public RequestResult ToggleAutoTaskDistribution(ToggleAutoTaskDistributionRequest request)
     {
         _isAutoDistributionOn = request.IsOn;
+
+        foreach (var setting in _helper.UnitOfWork.SettingRepository.GetAll())
+        {
+            setting.IsAutoTaskDistributionEnabled = request.IsOn ? ToggleOption.On : ToggleOption.Off;
+        }
+
+        _helper.UnitOfWork.Complete();
+
         return new RequestResult(new Success());
     }
 

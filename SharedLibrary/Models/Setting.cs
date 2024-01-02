@@ -24,5 +24,8 @@ namespace Commons.Models
 
         // Account settings
         public OnlineStatusOption OnlineStatus { get; set; }
+        
+        // Task policy
+        public ToggleOption IsAutoTaskDistributionEnabled { get; set; }
     }
 }

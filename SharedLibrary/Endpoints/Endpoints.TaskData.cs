@@ -14,6 +14,7 @@
             public const string FOCUS_TASK = "focus-task";
             public const string COMPLETE_TASK = "complete-task";
             public const string REJECT_TASK = "reject-task";
+            public const string GET_AUTO_TASK_DISTRIBUTION_SETTING = "get-auto-task-distribution-setting";
             public const string TOGGLE_AUTO_TASK_DISTRIBUTION = "toggle-auto-task-distribution";
 
             public static string GetTasksOfWorker => DOMAIN + "/" + TASK_DATA + "/" + GET_TASKS_OF_WORKER;
@@ -24,6 +25,7 @@
             public static string FocusTask => DOMAIN + "/" + TASK_DATA + "/" + FOCUS_TASK;
             public static string CompleteTask => DOMAIN + "/" + TASK_DATA + "/" + COMPLETE_TASK;
             public static string RejectTask => DOMAIN + "/" + TASK_DATA + "/" + REJECT_TASK;
+            public static string GetAutoTaskDistributionSetting => DOMAIN + "/" + TASK_DATA + "/" + GET_AUTO_TASK_DISTRIBUTION_SETTING;
             public static string ToggleAutoTaskDistribution => DOMAIN + "/" + TASK_DATA + "/" + TOGGLE_AUTO_TASK_DISTRIBUTION;
         }
     }

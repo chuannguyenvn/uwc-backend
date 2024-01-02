@@ -904,7 +904,8 @@ public class DatabaseSeeder
                 McpsFull = ToggleOption.On,
                 McpsEmptied = ToggleOption.On,
                 SoftwareUpdateAvailable = ToggleOption.On,
-                OnlineStatus = OnlineStatusOption.Online
+                OnlineStatus = OnlineStatusOption.Online,
+                IsAutoTaskDistributionEnabled = ToggleOption.Off,
             };
 
             _unitOfWork.SettingRepository.Add(setting);
